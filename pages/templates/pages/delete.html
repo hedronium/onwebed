@@ -1,0 +1,23 @@
+{% extends "onwebed/base.html" %}
+
+{% block breadcrumbs %}
+<li>
+	<a href="{% url 'pages:list' %}">Pages</a>
+</li>
+<li class="is active">
+	<a href="">Delete</a>
+</li>
+{% endblock %}
+
+{% block heading %}
+Are you sure you want to delete the page "{{ page.title }}"?
+{% endblock %}
+
+{% block content %}
+<form action='' method='POST'>
+	{% csrf_token %}
+	<input type='submit' class="button is-danger is-outlined" value="Yes, delete it"/>
+	<a href="{% url 'pages:list' %}" class="button">Go back</a>
+</form>
+
+{% endblock %}

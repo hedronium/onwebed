@@ -1,0 +1,51 @@
+{% extends "onwebed/base.html" %}
+
+{% block breadcrumbs %}
+<li class="is active">
+	<a href="">Pages</a>
+</li>
+{% endblock %}
+
+{% block heading %}
+List of Pages
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'pages:create' %}" class="button">Create New Page</a>
+<hr/>
+<table class="table" width="100%">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Title</th>
+			<th>Name</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for page in pages %}
+		<tr>
+			<td>
+				{{ page.id }}
+			</td>
+			<td>
+				<a href="{% url 'pages:detail' page.id %}">
+					{{ page.title }}
+				</a>
+			</td>
+			<td>
+				{{ page.name }}
+			</td>
+			<td>
+				<a href="{% url 'pages:edit' page.id %}" class="button">
+					Edit
+				</a>
+				<a href="{% url 'pages:delete' page.id %}" class="button">
+					Delete
+				</a>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

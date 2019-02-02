@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% block head %}
+		<title>{% block title %}Onwebed{% endblock %}</title>
+		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+		{% endblock %}
+	</head>
+	<body>
+		{% block body %}
+
+		{% block main_menu %}
+		<div class="columns">
+			<div class="column is-full">
+				<section class="hero is-link is-large">
+					<div class="container">
+						<div class="hero-head">
+							<nav class="navbar" role="navigation" aria-label="main navigation">
+							    <div class="navbar-brand">
+							        <a class="navbar-item" href="{% url 'pages:list' %}">
+							            <b>Onwebed</b>
+							        </a>
+
+							        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+							            <span aria-hidden="true"></span>
+							            <span aria-hidden="true"></span>
+							            <span aria-hidden="true"></span>
+							        </a>
+							    </div>
+
+							    <div class="navbar-menu">
+							        <div class="navbar-start">
+							            <a class="navbar-item" href="{% url 'pages:list' %}">
+							                Pages
+							            </a>
+							        </div>
+							    </div>
+							</nav>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+		{% endblock %}
+
+		<div class="columns">
+			<div class="column is-full">
+				<div class='container column is-full'>
+					<nav class="breadcrumb" aria-label="breadcrumbs">
+					    <ul>
+						    {% block breadcrumbs %}
+						    {% endblock %}
+					    </ul>
+					</nav>
+
+					<h1 class='title'>{% block heading %}{% endblock %}</h1>
+
+					{% if messages %}
+					{% for message in messages %}
+					<article class="message is-{{ message.tags }}">
+					    <div class="message-body">
+					        {{ message }}
+					    </div>
+					</article>
+					{% endfor %}
+					{% endif %}
+
+				{% block content %}
+					Hello World!
+				{% endblock %}
+				</div>
+			</div>
+		</div>
+
+		{% block scripts %}
+		<!-- <script>
+			Elm.Main.init({
+		        node: document.querySelector(".content")
+		    })
+		</script> -->
+		{% endblock %}
+
+		{% endblock %}
+	</body>
+</html>

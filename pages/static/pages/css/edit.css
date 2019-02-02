@@ -1,0 +1,153 @@
+body {
+	margin: 0em;
+	/*padding: 1em;*/
+	font-family: 'Open Sans', sans-serif;
+	font-size: 15px;
+}
+
+#menu_header span > div[contenteditable='true'] {
+	background: #F5F5F5;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+#menu {
+	display: flex;
+	flex-direction: row;
+	position: fixed;
+	top: 0px;
+	padding: 1em;
+	background: white;
+	border-bottom: 1px solid #CCC;
+	z-index: 1;
+	min-width: 100%;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	max-width: 100%;
+	box-shadow: 0px 2px 10px #CCC;
+}
+
+#menu input {
+	margin-right: 1em;
+}
+
+#playground {
+	padding-top: 9em;
+}
+
+#playground .solid_box, .liquid_box {
+	margin: 0.7em;
+	border-radius: 3px;
+	min-height: 1em;
+}
+
+#playground > .solid_box, .liquid_box {
+	margin: 0.7em 0em 0.7em 0em;
+}
+
+.solid_box {
+	border: 1px solid #CCC;
+	/*margin: 1em;*/
+	/*margin-top: 1.5em;*/
+}
+
+.liquid_box {
+	margin-left: 0.7em;
+	padding: 0.1em 0.2em 0em 0.2em;
+	display: inline-block;
+	max-width: 98%;
+	background: #F0F0F0;
+	border: 1px solid #F0F0F0;
+	white-space: pre-wrap;
+	vertical-align: top;
+}
+
+/*.box-label {
+	border-radius: 3px;
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}*/
+
+.solid_box > .box-label {
+	background: #545BE2;
+	margin: 0.7em 0em 0.7em 0.7em;
+	padding: 0.3em 0.5em 0.3em 0.5em;
+	color: white;
+	border-radius: 3px;
+}
+
+.liquid_box > .box-label {
+	background: pink;
+	margin: 0.3em 0.3em 0.3em 0.3em;
+	padding: 0.1em 0.4em 0.1em 0.4em;
+	border-radius: 3px;
+	vertical-align: top;
+}
+
+
+#dummy_div {
+	white-space: pre-wrap;
+}
+
+.liquid_box > .content {
+	display: inline-block;
+	line-height: 1.5em;
+	padding: 0.3em;
+	resize: none;
+	border: 0px;
+	background: inherit;
+	font-size: 1em;
+	font-family: inherit;
+	max-width: 100%;
+}
+
+.textarea {
+	display: inline-block;
+	line-height: 1.5em;
+	padding: 0.3em;
+	resize: none;
+	border: 0px;
+	background: inherit;
+	font-size: 1em;
+	font-family: inherit;
+	max-width: 100%;
+}
+
+.box-label {
+	display: inline-block;
+	line-height: 1.5em;
+	padding: 0.3em;
+	border: 0px;
+	background: inherit;
+	font-size: 1.05em;
+	font-family: inherit;
+	max-width: 100%;
+}
+
+.selected {
+	border-color: #4d55c6;
+}
+.selected:hover {
+	cursor: pointer;
+}
+
+:focus, .box-label div:focus, input:focus, .content div:focus, .header div:focus {
+	outline: none;
+}
+
+.solid_box > .box-label:focus {
+	background: #4700C4;
+}
+
+.liquid_box > .box-label:focus {
+	background: #FF97D9;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

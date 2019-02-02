@@ -1,0 +1,1 @@
+elm make src/* --output=../pages/static/pages/js/edit.js

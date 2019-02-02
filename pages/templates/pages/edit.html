@@ -1,0 +1,111 @@
+{% extends "onwebed/base.html" %}
+
+{% block main_menu %}
+{% endblock %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block head %}
+{% load static %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'pages/css/edit.css' %}"/>
+<script type="text/javascript" src="{% static 'pages/js/edit.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+<div class="content"></div>
+
+<script>
+	var app = Elm.Main.init({
+        node: document.querySelector(".content"),
+        flags: {
+        	pageName: "{{ page.name }}",
+        	pageTitle: "{{ page.title }}",
+        	content: "{{ page.content|safe }}",
+            csrfToken: "{{ csrf_token }}"
+        }
+    });
+
+    app.ports.expandElements.subscribe(function(){
+        // console.log("Expand");
+        expand();
+    });
+
+
+    let autoexpand_textarea = function (target) {
+        dummy_div = document.createElement("div");
+        dummy_div.innerHTML = target.value;
+        dummy_div.setAttribute("id", "dummy_div");
+        dummy_div.setAttribute("class", ".textarea");
+        document.querySelector("body").appendChild(dummy_div);
+        dummy_div.style.visibility = "hidden";
+        dummy_div.style.position = "absolute";
+
+        // target.style.height = "inherit";
+
+        target.style.width = (10 + dummy_div.offsetWidth) + "px";
+        target.style.height = target.scrollHeight + 'px';
+        
+        document.getElementById("dummy_div").remove();
+    };
+
+    let autoexpand_input = function (target) {
+        dummy_div = document.createElement("div");
+        dummy_div.innerHTML = target.value;
+        dummy_div.setAttribute("id", "dummy_div");
+        dummy_div.setAttribute("class", "box-label");
+        document.querySelector("body").appendChild(dummy_div);
+        dummy_div.style.visibility = "hidden";
+        dummy_div.style.position = "absolute";
+
+        // target.style.height = "inherit";
+
+        target.style.width = (8 + dummy_div.offsetWidth) + "px";
+        
+        document.getElementById("dummy_div").remove();
+    };
+
+    document.addEventListener('input', function (event) {
+        let tag_name = event.target.tagName.toLowerCase();
+
+        if (tag_name === "textarea")
+            autoexpand_textarea(event.target);
+        else if (tag_name === "input")
+            autoexpand_input(event.target);
+    }, false);
+
+    let autoexpand_textareas = function () {
+        document.querySelectorAll("textarea.content").forEach(function(textarea){
+            autoexpand_textarea(textarea);
+        });
+    };
+
+    let autoexpand_inputs = function () {
+        document.querySelectorAll("input.box-label").forEach(function(input){
+            autoexpand_input(input);
+        });
+    };
+
+    let expand = function () {
+        autoexpand_inputs();
+        autoexpand_textareas();
+    };
+
+    window.onload = function () {
+        expand();
+
+        var document_validity_js = 0;
+
+        setInterval(function() {
+            let document_validity = document.getElementById("document_validity").value;
+
+            if (document_validity_js != document_validity) {
+                console.log("validified");
+                expand();
+                document_validity_js = document_validity;
+            }
+        }, 100);
+    };
+</script>
+{% endblock %}
