@@ -1,12 +1,21 @@
-module Box exposing (Box(..), BoxAttribute, BoxType(..), DocumentStatus(..), KeyInteractionType(..), MenuItem, Model, Msg(..), addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentValidityIncrement, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeLabel, updateBoxContent, updateBoxLabel)
+module Box exposing (addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentValidityIncrement, documentWithOneBox, duplicateBox, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, duplicateBoxStep, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeLabel, updateBoxContent, updateBoxLabel)
 
-import Debug exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Decode exposing (..)
 import Json.Encode as Encode exposing (..)
 import LabelProcessor exposing (..)
+import Types exposing (..)
+
+
+
+--import States exposing (..)
+
+
+documentWithOneBox : List Box
+documentWithOneBox =
+    [ generateBox 1 (Just "div") Nothing 0 SolidBox ]
 
 
 highestBoxId : List Box -> Maybe Int
@@ -25,136 +34,6 @@ highestBoxId document =
 innerHtmlDecoder : Decoder String
 innerHtmlDecoder =
     Decode.at [ "target", "innerHTML" ] Decode.string
-
-
-type DocumentStatus
-    = Default
-    | SolidBoxAdditionShowOptions
-    | LiquidBoxAdditionShowOptions
-    | SolidBoxAdditionBeforeChooseBox
-    | LiquidBoxAdditionBeforeChooseBox
-    | SolidBoxAdditionAfterChooseBox
-    | LiquidBoxAdditionAfterChooseBox
-    | SolidBoxAdditionInsideFirstChooseBox
-    | LiquidBoxAdditionInsideFirstChooseBox
-    | SolidBoxAdditionInsideLastChooseBox
-    | LiquidBoxAdditionInsideLastChooseBox
-    | RemoveLabelChooseBox
-    | AddLabelChooseBox
-    | RemoveBoxChooseBox
-    | DuplicateBoxChooseBox
-    | DuplicateBoxShowOptions
-    | DuplicateBoxBeforeChooseBox
-    | DuplicateBoxInsideFirstChooseBox
-    | DuplicateBoxInsideLastChooseBox
-    | DuplicateBoxAfterChooseBox
-    | MoveBoxChooseBox
-
-
-type alias MenuItem =
-    { name : String
-    , machineName : String
-    }
-
-
-
--- model
-
-
-type alias Model =
-    { document : List Box
-    , menu : List MenuItem
-    , status : DocumentStatus
-    , menuMessage : Maybe String
-    , selectedBoxId : Int
-    , export : String
-    , pageName : String
-    , pageTitle : String
-    , import_ : Bool
-    , importString : String
-    , csrfToken : String
-    , documentValidity : Int
-    , duplicateSubjectId : Maybe Int
-    }
-
-
-type KeyInteractionType
-    = Up
-    | Down
-    | Press
-
-
-
--- message
-
-
-type Msg
-    = AddBoxInside Box Int
-    | SetLabel Int (Maybe String)
-    | KeyInteraction KeyInteractionType String Bool
-    | SolidBoxAdditionBefore Int
-    | LiquidBoxAdditionBefore Int
-    | SolidBoxAdditionAfter Int
-    | LiquidBoxAdditionAfter Int
-    | SolidBoxAdditionInsideFirst Int
-    | LiquidBoxAdditionInsideFirst Int
-    | SolidBoxAdditionInsideLast Int
-    | LiquidBoxAdditionInsideLast Int
-    | SelectBox Int
-    | LabelUpdate Int String
-    | LiquidBoxUpdate Int String
-    | MenuItemClicked String
-    | RemoveLabel Int
-    | AddLabel Int
-    | RemoveBox Int
-    | ResetExport
-    | ResetImport
-    | PageNameChanged String
-    | PageTitleChanged String
-    | Import
-    | SetImport String
-    | AdjustHeight Int
-    | Expand
-    | DuplicateBoxSelectBox Int
-    | DuplicateBoxBefore Int
-    | DuplicateBoxInsideFirst Int
-    | DuplicateBoxInsideLast Int
-    | DuplicateBoxAfter Int
-    | MoveBoxSelectBox Int
-
-
-
--- box attribute
-
-
-type alias BoxAttribute =
-    { name : String
-    , value : String
-    }
-
-
-
--- Box type's type
-
-
-type BoxType
-    = SolidBox
-    | LiquidBox
-
-
-
--- Box type
-
-
-type Box
-    = Box
-        { id : Int
-        , label : Maybe String
-        , labelElements : List LabelElement
-        , content : Maybe String
-        , parent : Int
-        , type_ : BoxType
-        }
 
 
 documentValidityIncrement : Model -> Model
@@ -330,7 +209,7 @@ boxToHtml model (Box boxToBeConvertedToHtml) =
     div
         (attributes
             ++ [ class classes
-               , id ("box" ++ toString boxToBeConvertedToHtml.id)
+               , id ("box" ++ String.fromInt boxToBeConvertedToHtml.id)
                ]
         )
         (label
@@ -541,48 +420,6 @@ insertBoxBefore insertBeforeBoxId type_ model =
             | status = Default
             , selectedBoxId = 0
         }
-
-
-
---duplicateBoxStep : List Int -> Int -> Model -> Model
---duplicateBoxStep queue parentId model =
---let
---    head =
---        List.head queue
---    tail =
---        List.tail queue
---    maybeParent =
---        boxById parentId model
---    maybeLastBoxId =
---        highestBoxId model.document
---in
---case head of
---    Nothing ->
---        model
---    Just boxId ->
---        let
---            maybeBox =
---                boxById boxId model
---        in
---        case maybeLastBoxId of
---            Nothing ->
---                model
---            Just lastBoxId ->
---                case maybeBox of
---                    Nothing ->
---                        model
---                    Just (Box box) ->
---                        let
---                            newModel =
---                                insertBoxByIndex (lastBoxId + 1) parentId box.type_ model
---                            maybeNewBox =
---                                boxById (lastBoxId + 1) newModel
---                        in
---                        case maybeNewBox of
---                            Nothing ->
---                                newModel
---                            Just (Box newBox) ->
---                                duplicateBoxStep tail
 
 
 duplicateBoxStep : List Box -> List Box -> Model -> Model

@@ -35,17 +35,21 @@
 
     let autoexpand_textarea = function (target) {
         dummy_div = document.createElement("div");
-        dummy_div.innerHTML = target.value;
+        dummy_div.innerText = target.value;
         dummy_div.setAttribute("id", "dummy_div");
-        dummy_div.setAttribute("class", ".textarea");
+        // dummy_div.setAttribute("class", ".textarea");
         document.querySelector("body").appendChild(dummy_div);
         dummy_div.style.visibility = "hidden";
         dummy_div.style.position = "absolute";
+        // dummy_div.style.background = "yellow";
 
         // target.style.height = "inherit";
 
-        target.style.width = (10 + dummy_div.offsetWidth) + "px";
-        target.style.height = target.scrollHeight + 'px';
+        if (target.value[target.value.length - 1] == "\n")
+            dummy_div.innerHTML += "."
+
+        target.style.width = (12 + dummy_div.offsetWidth) + "px";
+        target.style.height = (5 + dummy_div.offsetHeight) + "px";
         
         document.getElementById("dummy_div").remove();
     };

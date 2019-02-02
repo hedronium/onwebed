@@ -1,39 +1,18 @@
-module LabelProcessor exposing (LabelElement, labelElementEndingTagToString, labelElementStartingTagToString, processLabel)
+module LabelProcessor exposing (dropOneCharacter, emptyElement, finalizeElement, handleElementEnd, handleElementStart, initialLPModel, isEndOfClass, isEndOfHtmlAttribute, isEndOfId, isEndOfName, isEndingTag, isLastCharacter, isStartOfClass, isStartOfHtmlAttribute, isStartOfId, isStringWhitespace, isWhitespace, labelElementEndingTagToString, labelElementStartingTagToString, processClass, processEndingTag, processHtmlAttribute, processId, processLabel, processLabelStep, processName)
 
-import Debug exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import ModuleHandler exposing (..)
+import Types exposing (..)
 
 
-
--- types and initiations
-
-
-type alias Model =
-    { firstCharacter : String
-    , restOfCharacters : String
-    , labelElement : LabelElement
-    , labelElements : List LabelElement
-    }
-
-
-initialModel : Model
-initialModel =
+initialLPModel : LPModel
+initialLPModel =
     { firstCharacter = ""
     , restOfCharacters = ""
     , labelElement = emptyElement
     , labelElements = []
-    }
-
-
-type alias LabelElement =
-    { name : String
-    , classes : String
-    , id : String
-    , htmlAttributes : String
-    , endingTag : Bool
     }
 
 
@@ -51,7 +30,7 @@ emptyElement =
 -- functions
 
 
-finalizeElement : Model -> Model
+finalizeElement : LPModel -> LPModel
 finalizeElement model =
     { model
         | labelElements = List.append model.labelElements [ model.labelElement ]
@@ -59,7 +38,7 @@ finalizeElement model =
     }
 
 
-isStartOfClass : Model -> Bool
+isStartOfClass : LPModel -> Bool
 isStartOfClass model =
     let
         secondCharacter =
@@ -79,7 +58,7 @@ isStartOfClass model =
         False
 
 
-isStartOfId : Model -> Bool
+isStartOfId : LPModel -> Bool
 isStartOfId model =
     let
         secondCharacter =
@@ -99,7 +78,7 @@ isStartOfId model =
         False
 
 
-isEndingTag : Model -> Bool
+isEndingTag : LPModel -> Bool
 isEndingTag model =
     let
         secondCharacter =
@@ -118,12 +97,12 @@ isEndingTag model =
         False
 
 
-isWhitespace : Model -> Bool
+isWhitespace : LPModel -> Bool
 isWhitespace model =
     isStringWhitespace model.firstCharacter
 
 
-isLastCharacter : Model -> Bool
+isLastCharacter : LPModel -> Bool
 isLastCharacter model =
     String.length model.restOfCharacters == 0
 
@@ -141,7 +120,7 @@ isStringWhitespace string =
         False
 
 
-dropOneCharacter : Model -> Model
+dropOneCharacter : LPModel -> LPModel
 dropOneCharacter model =
     { model
         | firstCharacter = String.left 1 model.restOfCharacters
@@ -149,7 +128,7 @@ dropOneCharacter model =
     }
 
 
-isEndOfName : Model -> Bool
+isEndOfName : LPModel -> Bool
 isEndOfName model =
     if
         isWhitespace model
@@ -164,7 +143,7 @@ isEndOfName model =
         False
 
 
-processName : Model -> Model
+processName : LPModel -> LPModel
 processName model =
     let
         currentElement =
@@ -192,7 +171,7 @@ processName model =
         processName newModel
 
 
-isEndOfId : Model -> Bool
+isEndOfId : LPModel -> Bool
 isEndOfId model =
     if
         isWhitespace model
@@ -207,7 +186,7 @@ isEndOfId model =
         False
 
 
-processId : Model -> Model
+processId : LPModel -> LPModel
 processId model =
     let
         currentElement =
@@ -235,7 +214,7 @@ processId model =
         processId newModel
 
 
-isEndOfClass : Model -> Bool
+isEndOfClass : LPModel -> Bool
 isEndOfClass model =
     if
         isWhitespace model
@@ -250,7 +229,7 @@ isEndOfClass model =
         False
 
 
-processClass : Model -> Bool -> Model
+processClass : LPModel -> Bool -> LPModel
 processClass model isfirstCharacterOfClass =
     let
         prefix =
@@ -288,7 +267,7 @@ processClass model isfirstCharacterOfClass =
         processClass newModel False
 
 
-processEndingTag : Model -> Model
+processEndingTag : LPModel -> LPModel
 processEndingTag model =
     let
         currentElement =
@@ -309,7 +288,7 @@ processEndingTag model =
     processLabelStep newModel
 
 
-isStartOfHtmlAttribute : Model -> Bool
+isStartOfHtmlAttribute : LPModel -> Bool
 isStartOfHtmlAttribute model =
     if model.firstCharacter == "[" then
         True
@@ -318,7 +297,7 @@ isStartOfHtmlAttribute model =
         False
 
 
-isEndOfHtmlAttribute : Model -> Bool
+isEndOfHtmlAttribute : LPModel -> Bool
 isEndOfHtmlAttribute model =
     if model.firstCharacter == "]" then
         True
@@ -327,7 +306,7 @@ isEndOfHtmlAttribute model =
         False
 
 
-processHtmlAttribute : Model -> Model
+processHtmlAttribute : LPModel -> LPModel
 processHtmlAttribute model =
     let
         currentElement =
@@ -357,7 +336,7 @@ processHtmlAttribute model =
         processHtmlAttribute newModel
 
 
-processLabelStep : Model -> Model
+processLabelStep : LPModel -> LPModel
 processLabelStep model =
     if String.length model.firstCharacter == 0 then
         finalizeElement model
@@ -388,7 +367,7 @@ processLabel : String -> List LabelElement
 processLabel label =
     let
         model =
-            { initialModel
+            { initialLPModel
                 | firstCharacter = String.left 1 label
                 , restOfCharacters = String.dropLeft 1 label
             }
@@ -476,13 +455,3 @@ labelElementEndingTagToString labelElement =
         "</"
             ++ labelElement.name
             ++ ">"
-
-
-
---main =
---    div
---        []
---        ("link[rel='stylesheet' href='style.css']. b[x-m-id='fuck my ass'].hey#now.brown.cow"
---            |> processLabel
---            |> List.map labelElementToHtml
---        )

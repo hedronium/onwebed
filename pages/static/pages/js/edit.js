@@ -4298,12 +4298,6 @@ function _Browser_load(url)
 		}
 	}));
 }
-var author$project$Box$Default = {$: 'Default'};
-var author$project$Box$LiquidBox = {$: 'LiquidBox'};
-var author$project$Box$SolidBox = {$: 'SolidBox'};
-var author$project$Box$Box = function (a) {
-	return {$: 'Box', a: a};
-};
 var elm$core$Basics$True = {$: 'True'};
 var author$project$LabelProcessor$emptyElement = {classes: '', endingTag: true, htmlAttributes: '', id: '', name: ''};
 var elm$core$Basics$EQ = {$: 'EQ'};
@@ -4386,7 +4380,7 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$LabelProcessor$initialModel = {firstCharacter: '', labelElement: author$project$LabelProcessor$emptyElement, labelElements: _List_Nil, restOfCharacters: ''};
+var author$project$LabelProcessor$initialLPModel = {firstCharacter: '', labelElement: author$project$LabelProcessor$emptyElement, labelElements: _List_Nil, restOfCharacters: ''};
 var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
@@ -4719,12 +4713,15 @@ var author$project$LabelProcessor$processName = function (model) {
 };
 var author$project$LabelProcessor$processLabel = function (label) {
 	var model = _Utils_update(
-		author$project$LabelProcessor$initialModel,
+		author$project$LabelProcessor$initialLPModel,
 		{
 			firstCharacter: A2(elm$core$String$left, 1, label),
 			restOfCharacters: A2(elm$core$String$dropLeft, 1, label)
 		});
 	return author$project$LabelProcessor$processLabelStep(model).labelElements;
+};
+var author$project$Types$Box = function (a) {
+	return {$: 'Box', a: a};
 };
 var elm$core$Basics$identity = function (x) {
 	return x;
@@ -4740,7 +4737,7 @@ var elm$core$Maybe$withDefault = F2(
 	});
 var author$project$Box$generateBox = F5(
 	function (id, label, content, parent, type_) {
-		return author$project$Box$Box(
+		return author$project$Types$Box(
 			{
 				content: content,
 				id: id,
@@ -4751,6 +4748,8 @@ var author$project$Box$generateBox = F5(
 				type_: type_
 			});
 	});
+var author$project$Types$LiquidBox = {$: 'LiquidBox'};
+var author$project$Types$SolidBox = {$: 'SolidBox'};
 var elm$core$Array$branchFactor = 32;
 var elm$core$Array$Array_elm_builtin = F4(
 	function (a, b, c, d) {
@@ -5134,11 +5133,11 @@ var author$project$Box$jsonStringToDocument = function (jsonString) {
 			function (typeString) {
 				switch (typeString) {
 					case 'solid_box':
-						return elm$json$Json$Decode$succeed(author$project$Box$SolidBox);
+						return elm$json$Json$Decode$succeed(author$project$Types$SolidBox);
 					case 'liquid_box':
-						return elm$json$Json$Decode$succeed(author$project$Box$LiquidBox);
+						return elm$json$Json$Decode$succeed(author$project$Types$LiquidBox);
 					default:
-						return elm$json$Json$Decode$succeed(author$project$Box$SolidBox);
+						return elm$json$Json$Decode$succeed(author$project$Types$SolidBox);
 				}
 			},
 			elm$json$Json$Decode$string));
@@ -5173,9 +5172,10 @@ var author$project$Menu$menuItem = F2(
 	function (name, machineName) {
 		return {machineName: machineName, name: name};
 	});
+var author$project$Types$Default = {$: 'Default'};
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Main$initialModel = function (flags) {
+var author$project$State$initialModel = function (flags) {
 	return _Utils_Tuple2(
 		{
 			csrfToken: flags.csrfToken,
@@ -5201,18 +5201,18 @@ var author$project$Main$initialModel = function (flags) {
 			pageName: flags.pageName,
 			pageTitle: flags.pageTitle,
 			selectedBoxId: 0,
-			status: author$project$Box$Default
+			status: author$project$Types$Default
 		},
 		elm$core$Platform$Cmd$none);
 };
-var author$project$Box$Down = {$: 'Down'};
-var author$project$Box$KeyInteraction = F3(
+var author$project$Rest$keyDecoder = A2(elm$json$Json$Decode$field, 'key', elm$json$Json$Decode$string);
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var author$project$Rest$shiftKeyDecoder = A2(elm$json$Json$Decode$field, 'shiftKey', elm$json$Json$Decode$bool);
+var author$project$Types$Down = {$: 'Down'};
+var author$project$Types$KeyInteraction = F3(
 	function (a, b, c) {
 		return {$: 'KeyInteraction', a: a, b: b, c: c};
 	});
-var author$project$Main$keyDecoder = A2(elm$json$Json$Decode$field, 'key', elm$json$Json$Decode$string);
-var elm$json$Json$Decode$bool = _Json_decodeBool;
-var author$project$Main$shiftKeyDecoder = A2(elm$json$Json$Decode$field, 'shiftKey', elm$json$Json$Decode$bool);
 var elm$browser$Browser$Events$Document = {$: 'Document'};
 var elm$browser$Browser$Events$MySub = F3(
 	function (a, b, c) {
@@ -5854,48 +5854,28 @@ var elm$browser$Browser$Events$on = F3(
 	});
 var elm$browser$Browser$Events$onKeyDown = A2(elm$browser$Browser$Events$on, elm$browser$Browser$Events$Document, 'keydown');
 var elm$core$Platform$Sub$batch = _Platform_batch;
-var author$project$Main$subscriptions = function (model) {
+var author$project$State$subscriptions = function (model) {
 	return elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
 				elm$browser$Browser$Events$onKeyDown(
 				A3(
 					elm$json$Json$Decode$map2,
-					author$project$Box$KeyInteraction(author$project$Box$Down),
-					author$project$Main$keyDecoder,
-					author$project$Main$shiftKeyDecoder))
+					author$project$Types$KeyInteraction(author$project$Types$Down),
+					author$project$Rest$keyDecoder,
+					author$project$Rest$shiftKeyDecoder))
 			]));
 };
-var author$project$Box$AddLabelChooseBox = {$: 'AddLabelChooseBox'};
-var author$project$Box$DuplicateBoxAfterChooseBox = {$: 'DuplicateBoxAfterChooseBox'};
-var author$project$Box$DuplicateBoxBeforeChooseBox = {$: 'DuplicateBoxBeforeChooseBox'};
-var author$project$Box$DuplicateBoxChooseBox = {$: 'DuplicateBoxChooseBox'};
-var author$project$Box$DuplicateBoxInsideFirstChooseBox = {$: 'DuplicateBoxInsideFirstChooseBox'};
-var author$project$Box$DuplicateBoxInsideLastChooseBox = {$: 'DuplicateBoxInsideLastChooseBox'};
-var author$project$Box$DuplicateBoxShowOptions = {$: 'DuplicateBoxShowOptions'};
-var author$project$Box$LiquidBoxAdditionAfterChooseBox = {$: 'LiquidBoxAdditionAfterChooseBox'};
-var author$project$Box$LiquidBoxAdditionBeforeChooseBox = {$: 'LiquidBoxAdditionBeforeChooseBox'};
-var author$project$Box$LiquidBoxAdditionInsideFirstChooseBox = {$: 'LiquidBoxAdditionInsideFirstChooseBox'};
-var author$project$Box$LiquidBoxAdditionInsideLastChooseBox = {$: 'LiquidBoxAdditionInsideLastChooseBox'};
-var author$project$Box$LiquidBoxAdditionShowOptions = {$: 'LiquidBoxAdditionShowOptions'};
-var author$project$Box$MoveBoxChooseBox = {$: 'MoveBoxChooseBox'};
-var author$project$Box$RemoveBoxChooseBox = {$: 'RemoveBoxChooseBox'};
-var author$project$Box$RemoveLabelChooseBox = {$: 'RemoveLabelChooseBox'};
-var author$project$Box$SolidBoxAdditionAfterChooseBox = {$: 'SolidBoxAdditionAfterChooseBox'};
-var author$project$Box$SolidBoxAdditionBeforeChooseBox = {$: 'SolidBoxAdditionBeforeChooseBox'};
-var author$project$Box$SolidBoxAdditionInsideFirstChooseBox = {$: 'SolidBoxAdditionInsideFirstChooseBox'};
-var author$project$Box$SolidBoxAdditionInsideLastChooseBox = {$: 'SolidBoxAdditionInsideLastChooseBox'};
-var author$project$Box$SolidBoxAdditionShowOptions = {$: 'SolidBoxAdditionShowOptions'};
 var author$project$Box$addLabel = F2(
 	function (boxId, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Box$Box(
+		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
 			_Utils_update(
 				box,
 				{
 					label: elm$core$Maybe$Just('div'),
 					labelElements: author$project$LabelProcessor$processLabel('div')
-				})) : author$project$Box$Box(box);
+				})) : author$project$Types$Box(box);
 	});
 var author$project$Box$boxSetLabel = F3(
 	function (boxId, maybeLabel, model) {
@@ -5911,12 +5891,12 @@ var author$project$Box$boxSetLabel = F3(
 			elm$core$List$map,
 			function (_n0) {
 				var box = _n0.a;
-				return _Utils_eq(box.id, boxId) ? author$project$Box$Box(
+				return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
 					_Utils_update(
 						box,
 						{
 							label: elm$core$Maybe$Just(label)
-						})) : author$project$Box$Box(box);
+						})) : author$project$Types$Box(box);
 			},
 			model.document);
 	});
@@ -5985,6 +5965,16 @@ var author$project$Box$documentValidityIncrement = function (model) {
 		model,
 		{documentValidity: model.documentValidity + 1});
 };
+var author$project$Box$documentWithOneBox = _List_fromArray(
+	[
+		A5(
+		author$project$Box$generateBox,
+		1,
+		elm$core$Maybe$Just('div'),
+		elm$core$Maybe$Nothing,
+		0,
+		author$project$Types$SolidBox)
+	]);
 var author$project$Box$boxByIdStep = F2(
 	function (boxBeingSearchedId, boxesToSearch) {
 		boxByIdStep:
@@ -5996,7 +5986,7 @@ var author$project$Box$boxByIdStep = F2(
 				var restOfBoxesToSearch = boxesToSearch.b;
 				if (_Utils_eq(boxToSearch.id, boxBeingSearchedId)) {
 					return elm$core$Maybe$Just(
-						author$project$Box$Box(boxToSearch));
+						author$project$Types$Box(boxToSearch));
 				} else {
 					var $temp$boxBeingSearchedId = boxBeingSearchedId,
 						$temp$boxesToSearch = restOfBoxesToSearch;
@@ -6297,11 +6287,11 @@ var author$project$Box$duplicateBoxStep = F3(
 						var _n5 = A2(author$project$Box$boxById, firstNewBox.id, model);
 						if (_n5.$ === 'Just') {
 							var fnb2 = _n5.a.a;
-							return author$project$Box$Box(fnb2);
+							return author$project$Types$Box(fnb2);
 						} else {
 							return A2(
 								elm$core$Maybe$withDefault,
-								author$project$Box$Box(firstNewBox),
+								author$project$Types$Box(firstNewBox),
 								A2(author$project$Box$boxById, lastBoxId + 1, addedFirstNewBox));
 						}
 					}();
@@ -6313,7 +6303,7 @@ var author$project$Box$duplicateBoxStep = F3(
 						elm$core$List$map,
 						function (_n3) {
 							var child = _n3.a;
-							return author$project$Box$Box(
+							return author$project$Types$Box(
 								_Utils_update(
 									child,
 									{id: 0, parent: newFirstNewBoxId}));
@@ -6323,10 +6313,10 @@ var author$project$Box$duplicateBoxStep = F3(
 						elm$core$List$map,
 						function (_n2) {
 							var box = _n2.a;
-							return (_Utils_eq(box.id, newFirstNewBoxId) && _Utils_eq(box.type_, author$project$Box$LiquidBox)) ? A2(
+							return (_Utils_eq(box.id, newFirstNewBoxId) && _Utils_eq(box.type_, author$project$Types$LiquidBox)) ? A2(
 								elm$core$Debug$log,
 								'updatedContentAndLabel',
-								author$project$Box$Box(
+								author$project$Types$Box(
 									_Utils_update(
 										box,
 										{
@@ -6334,17 +6324,17 @@ var author$project$Box$duplicateBoxStep = F3(
 											label: firstOldBox.label,
 											labelElements: author$project$LabelProcessor$processLabel(
 												A2(elm$core$Maybe$withDefault, '', firstOldBox.label))
-										}))) : ((_Utils_eq(box.id, newFirstNewBoxId) && _Utils_eq(box.type_, author$project$Box$SolidBox)) ? A2(
+										}))) : ((_Utils_eq(box.id, newFirstNewBoxId) && _Utils_eq(box.type_, author$project$Types$SolidBox)) ? A2(
 								elm$core$Debug$log,
 								'updatedContentAndLabel',
-								author$project$Box$Box(
+								author$project$Types$Box(
 									_Utils_update(
 										box,
 										{
 											label: firstOldBox.label,
 											labelElements: author$project$LabelProcessor$processLabel(
 												A2(elm$core$Maybe$withDefault, '', firstOldBox.label))
-										}))) : author$project$Box$Box(box));
+										}))) : author$project$Types$Box(box));
 						},
 						addedFirstNewBox.document);
 					var $temp$oldBoxes = _Utils_ap(restOfOldBoxes, childrenOfFirstOldBox),
@@ -6379,11 +6369,11 @@ var author$project$Box$duplicateBox = F3(
 					author$project$Box$duplicateBoxStep,
 					_List_fromArray(
 						[
-							author$project$Box$Box(boxToDuplicate)
+							author$project$Types$Box(boxToDuplicate)
 						]),
 					_List_fromArray(
 						[
-							author$project$Box$Box(newBox)
+							author$project$Types$Box(newBox)
 						]),
 					model);
 			}
@@ -6443,7 +6433,7 @@ var author$project$Box$insertBoxAfter = F3(
 			type_,
 			_Utils_update(
 				model,
-				{selectedBoxId: 0, status: author$project$Box$Default}));
+				{selectedBoxId: 0, status: author$project$Types$Default}));
 	});
 var author$project$Box$duplicateBoxAfter = F2(
 	function (duplicateAfterId, model) {
@@ -6459,7 +6449,7 @@ var author$project$Box$duplicateBoxAfter = F2(
 					var box = boxToDuplicate.a.a;
 					return box.type_;
 				} else {
-					return author$project$Box$SolidBox;
+					return author$project$Types$SolidBox;
 				}
 			}(),
 			author$project$Box$documentValidityIncrement(model));
@@ -6499,7 +6489,7 @@ var author$project$Box$insertBoxBefore = F3(
 			type_,
 			_Utils_update(
 				model,
-				{selectedBoxId: 0, status: author$project$Box$Default}));
+				{selectedBoxId: 0, status: author$project$Types$Default}));
 	});
 var author$project$Box$duplicateBoxBefore = F2(
 	function (duplicateBeforeId, model) {
@@ -6515,7 +6505,7 @@ var author$project$Box$duplicateBoxBefore = F2(
 					var box = boxToDuplicate.a.a;
 					return box.type_;
 				} else {
-					return author$project$Box$SolidBox;
+					return author$project$Types$SolidBox;
 				}
 			}(),
 			author$project$Box$documentValidityIncrement(model));
@@ -6560,7 +6550,7 @@ var author$project$Box$insertBoxInsideFirst = F3(
 			type_,
 			_Utils_update(
 				model,
-				{selectedBoxId: 0, status: author$project$Box$Default}));
+				{selectedBoxId: 0, status: author$project$Types$Default}));
 	});
 var author$project$Box$duplicateBoxInsideFirst = F2(
 	function (duplicateInsideFirstId, model) {
@@ -6576,7 +6566,7 @@ var author$project$Box$duplicateBoxInsideFirst = F2(
 					var box = boxToDuplicate.a.a;
 					return box.type_;
 				} else {
-					return author$project$Box$SolidBox;
+					return author$project$Types$SolidBox;
 				}
 			}(),
 			author$project$Box$documentValidityIncrement(model));
@@ -6632,7 +6622,7 @@ var author$project$Box$insertBoxInsideLast = F3(
 			type_,
 			_Utils_update(
 				model,
-				{selectedBoxId: 0, status: author$project$Box$Default}));
+				{selectedBoxId: 0, status: author$project$Types$Default}));
 	});
 var author$project$Box$duplicateBoxInsideLast = F2(
 	function (duplicateInsideLastId, model) {
@@ -6648,7 +6638,7 @@ var author$project$Box$duplicateBoxInsideLast = F2(
 					var box = boxToDuplicate.a.a;
 					return box.type_;
 				} else {
-					return author$project$Box$SolidBox;
+					return author$project$Types$SolidBox;
 				}
 			}(),
 			author$project$Box$documentValidityIncrement(model));
@@ -6735,50 +6725,59 @@ var author$project$Box$removeBox = F2(
 var author$project$Box$removeLabel = F2(
 	function (boxId, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Box$Box(
+		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
 			_Utils_update(
 				box,
-				{label: elm$core$Maybe$Nothing, labelElements: _List_Nil})) : author$project$Box$Box(box);
+				{label: elm$core$Maybe$Nothing, labelElements: _List_Nil})) : author$project$Types$Box(box);
 	});
 var author$project$Box$updateBoxContent = F3(
 	function (boxId, content, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Box$Box(
+		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
 			_Utils_update(
 				box,
 				{
 					content: elm$core$Maybe$Just(content)
-				})) : author$project$Box$Box(box);
+				})) : author$project$Types$Box(box);
 	});
 var author$project$Box$updateBoxLabel = F3(
 	function (boxId, label, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Box$Box(
+		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
 			_Utils_update(
 				box,
 				{
 					label: elm$core$Maybe$Just(label),
 					labelElements: author$project$LabelProcessor$processLabel(label)
-				})) : author$project$Box$Box(box);
+				})) : author$project$Types$Box(box);
 	});
-var author$project$Main$documentWithOneBox = _List_fromArray(
-	[
-		A5(
-		author$project$Box$generateBox,
-		1,
-		elm$core$Maybe$Just('div'),
-		elm$core$Maybe$Nothing,
-		0,
-		author$project$Box$SolidBox)
-	]);
 var elm$json$Json$Encode$null = _Json_encodeNull;
-var author$project$Main$expandElements = _Platform_outgoingPort(
+var author$project$State$expandElements = _Platform_outgoingPort(
 	'expandElements',
 	function ($) {
 		return elm$json$Json$Encode$null;
 	});
-var elm$core$Debug$toString = _Debug_toString;
-var author$project$Main$update = F2(
+var author$project$Types$AddLabelChooseBox = {$: 'AddLabelChooseBox'};
+var author$project$Types$DuplicateBoxAfterChooseBox = {$: 'DuplicateBoxAfterChooseBox'};
+var author$project$Types$DuplicateBoxBeforeChooseBox = {$: 'DuplicateBoxBeforeChooseBox'};
+var author$project$Types$DuplicateBoxChooseBox = {$: 'DuplicateBoxChooseBox'};
+var author$project$Types$DuplicateBoxInsideFirstChooseBox = {$: 'DuplicateBoxInsideFirstChooseBox'};
+var author$project$Types$DuplicateBoxInsideLastChooseBox = {$: 'DuplicateBoxInsideLastChooseBox'};
+var author$project$Types$DuplicateBoxShowOptions = {$: 'DuplicateBoxShowOptions'};
+var author$project$Types$LiquidBoxAdditionAfterChooseBox = {$: 'LiquidBoxAdditionAfterChooseBox'};
+var author$project$Types$LiquidBoxAdditionBeforeChooseBox = {$: 'LiquidBoxAdditionBeforeChooseBox'};
+var author$project$Types$LiquidBoxAdditionInsideFirstChooseBox = {$: 'LiquidBoxAdditionInsideFirstChooseBox'};
+var author$project$Types$LiquidBoxAdditionInsideLastChooseBox = {$: 'LiquidBoxAdditionInsideLastChooseBox'};
+var author$project$Types$LiquidBoxAdditionShowOptions = {$: 'LiquidBoxAdditionShowOptions'};
+var author$project$Types$MoveBoxChooseBox = {$: 'MoveBoxChooseBox'};
+var author$project$Types$RemoveBoxChooseBox = {$: 'RemoveBoxChooseBox'};
+var author$project$Types$RemoveLabelChooseBox = {$: 'RemoveLabelChooseBox'};
+var author$project$Types$SolidBoxAdditionAfterChooseBox = {$: 'SolidBoxAdditionAfterChooseBox'};
+var author$project$Types$SolidBoxAdditionBeforeChooseBox = {$: 'SolidBoxAdditionBeforeChooseBox'};
+var author$project$Types$SolidBoxAdditionInsideFirstChooseBox = {$: 'SolidBoxAdditionInsideFirstChooseBox'};
+var author$project$Types$SolidBoxAdditionInsideLastChooseBox = {$: 'SolidBoxAdditionInsideLastChooseBox'};
+var author$project$Types$SolidBoxAdditionShowOptions = {$: 'SolidBoxAdditionShowOptions'};
+var author$project$State$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'DuplicateBoxSelectBox':
@@ -6788,7 +6787,7 @@ var author$project$Main$update = F2(
 					{
 						duplicateSubjectId: elm$core$Maybe$Just(duplicateSubjectId),
 						selectedBoxId: 0,
-						status: author$project$Box$DuplicateBoxShowOptions
+						status: author$project$Types$DuplicateBoxShowOptions
 					});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'DuplicateBoxBefore':
@@ -6798,7 +6797,7 @@ var author$project$Main$update = F2(
 					duplicateBeforeId,
 					_Utils_update(
 						model,
-						{selectedBoxId: 0, status: author$project$Box$Default}));
+						{selectedBoxId: 0, status: author$project$Types$Default}));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'DuplicateBoxInsideFirst':
 				var duplicateInsideFirstId = msg.a;
@@ -6807,7 +6806,7 @@ var author$project$Main$update = F2(
 					duplicateInsideFirstId,
 					_Utils_update(
 						model,
-						{selectedBoxId: 0, status: author$project$Box$Default}));
+						{selectedBoxId: 0, status: author$project$Types$Default}));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'DuplicateBoxInsideLast':
 				var duplicateInsideLastId = msg.a;
@@ -6816,7 +6815,7 @@ var author$project$Main$update = F2(
 					duplicateInsideLastId,
 					_Utils_update(
 						model,
-						{selectedBoxId: 0, status: author$project$Box$Default}));
+						{selectedBoxId: 0, status: author$project$Types$Default}));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'DuplicateBoxAfter':
 				var duplicateAfterId = msg.a;
@@ -6825,25 +6824,25 @@ var author$project$Main$update = F2(
 					duplicateAfterId,
 					_Utils_update(
 						model,
-						{selectedBoxId: 0, status: author$project$Box$Default}));
+						{selectedBoxId: 0, status: author$project$Types$Default}));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'MoveBoxSelectBox':
 				var moveBoxId = msg.a;
 				var newModel = _Utils_update(
 					model,
-					{selectedBoxId: 0, status: author$project$Box$Default});
+					{selectedBoxId: 0, status: author$project$Types$Default});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'Expand':
 				var newModel = author$project$Box$documentValidityIncrement(model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'AdjustHeight':
 				var height = msg.a;
 				var newModel = _Utils_update(
 					model,
 					{
-						importString: elm$core$Debug$toString(height)
+						importString: elm$core$String$fromInt(height)
 					});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'AddBoxInside':
@@ -6863,62 +6862,62 @@ var author$project$Main$update = F2(
 				var keyInteractionType = msg.a;
 				var key = msg.b;
 				var shiftPressed = msg.c;
-				var newModel = ((key === 'S') && (shiftPressed && _Utils_eq(model.status, author$project$Box$Default))) ? _Utils_update(
+				var newModel = ((key === 'S') && (shiftPressed && _Utils_eq(model.status, author$project$Types$Default))) ? _Utils_update(
 					model,
-					{status: author$project$Box$SolidBoxAdditionShowOptions}) : (((key === 'a') && _Utils_eq(model.status, author$project$Box$SolidBoxAdditionShowOptions)) ? _Utils_update(
+					{status: author$project$Types$SolidBoxAdditionShowOptions}) : (((key === 'a') && _Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions)) ? _Utils_update(
 					model,
-					{status: author$project$Box$SolidBoxAdditionBeforeChooseBox}) : ((key === 'Escape') ? _Utils_update(
+					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'Escape') ? _Utils_update(
 					model,
-					{selectedBoxId: 0, status: author$project$Box$Default}) : model));
+					{selectedBoxId: 0, status: author$project$Types$Default}) : model));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'SolidBoxAdditionBefore':
 				var addBeforeBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxBefore, addBeforeBoxId, author$project$Box$SolidBox, model);
+				var newModel = A3(author$project$Box$insertBoxBefore, addBeforeBoxId, author$project$Types$SolidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'LiquidBoxAdditionBefore':
 				var addBeforeLiquidBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxBefore, addBeforeLiquidBoxId, author$project$Box$LiquidBox, model);
+				var newModel = A3(author$project$Box$insertBoxBefore, addBeforeLiquidBoxId, author$project$Types$LiquidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'SolidBoxAdditionAfter':
 				var addAfterBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxAfter, addAfterBoxId, author$project$Box$SolidBox, model);
+				var newModel = A3(author$project$Box$insertBoxAfter, addAfterBoxId, author$project$Types$SolidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'LiquidBoxAdditionAfter':
 				var addAfterLiquidBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxAfter, addAfterLiquidBoxId, author$project$Box$LiquidBox, model);
+				var newModel = A3(author$project$Box$insertBoxAfter, addAfterLiquidBoxId, author$project$Types$LiquidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'SolidBoxAdditionInsideFirst':
 				var addInsideFirstBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxInsideFirst, addInsideFirstBoxId, author$project$Box$SolidBox, model);
+				var newModel = A3(author$project$Box$insertBoxInsideFirst, addInsideFirstBoxId, author$project$Types$SolidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'LiquidBoxAdditionInsideFirst':
 				var addInsideFirstLiquidBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxInsideFirst, addInsideFirstLiquidBoxId, author$project$Box$LiquidBox, model);
+				var newModel = A3(author$project$Box$insertBoxInsideFirst, addInsideFirstLiquidBoxId, author$project$Types$LiquidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'SolidBoxAdditionInsideLast':
 				var addInsideLastBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxInsideLast, addInsideLastBoxId, author$project$Box$SolidBox, model);
+				var newModel = A3(author$project$Box$insertBoxInsideLast, addInsideLastBoxId, author$project$Types$SolidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'LiquidBoxAdditionInsideLast':
 				var addInsideLastLiquidBoxId = msg.a;
-				var newModel = A3(author$project$Box$insertBoxInsideLast, addInsideLastLiquidBoxId, author$project$Box$LiquidBox, model);
+				var newModel = A3(author$project$Box$insertBoxInsideLast, addInsideLastLiquidBoxId, author$project$Types$LiquidBox, model);
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'SelectBox':
 				var boxToBeSelectedId = msg.a;
 				var newModel = _Utils_update(
@@ -6959,11 +6958,11 @@ var author$project$Main$update = F2(
 							author$project$Box$removeLabel(boxId),
 							model.document),
 						selectedBoxId: 0,
-						status: author$project$Box$Default
+						status: author$project$Types$Default
 					});
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'AddLabel':
 				var boxId = msg.a;
 				var newModel = _Utils_update(
@@ -6974,11 +6973,11 @@ var author$project$Main$update = F2(
 							author$project$Box$addLabel(boxId),
 							model.document),
 						selectedBoxId: 0,
-						status: author$project$Box$Default
+						status: author$project$Types$Default
 					});
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'RemoveBox':
 				var boxId = msg.a;
 				var newModel = _Utils_update(
@@ -6986,11 +6985,11 @@ var author$project$Main$update = F2(
 					{
 						document: A2(author$project$Box$removeBox, boxId, model),
 						selectedBoxId: 0,
-						status: author$project$Box$Default
+						status: author$project$Types$Default
 					});
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 			case 'ResetExport':
 				var newModel = _Utils_update(
 					model,
@@ -7035,59 +7034,59 @@ var author$project$Main$update = F2(
 						case 'add_solid_box':
 							return author$project$Box$isDocumentEmpty(model) ? _Utils_update(
 								model,
-								{document: author$project$Main$documentWithOneBox}) : _Utils_update(
+								{document: author$project$Box$documentWithOneBox}) : _Utils_update(
 								model,
-								{status: author$project$Box$SolidBoxAdditionShowOptions});
+								{status: author$project$Types$SolidBoxAdditionShowOptions});
 						case 'add_solid_box_before':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$SolidBoxAdditionBeforeChooseBox});
+								{status: author$project$Types$SolidBoxAdditionBeforeChooseBox});
 						case 'add_solid_box_after':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$SolidBoxAdditionAfterChooseBox});
+								{status: author$project$Types$SolidBoxAdditionAfterChooseBox});
 						case 'add_solid_box_inside_first':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$SolidBoxAdditionInsideFirstChooseBox});
+								{status: author$project$Types$SolidBoxAdditionInsideFirstChooseBox});
 						case 'add_solid_box_inside_last':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$SolidBoxAdditionInsideLastChooseBox});
+								{status: author$project$Types$SolidBoxAdditionInsideLastChooseBox});
 						case 'add_liquid_box':
 							return author$project$Box$isDocumentEmpty(model) ? _Utils_update(
 								model,
-								{document: author$project$Main$documentWithOneBox}) : _Utils_update(
+								{document: author$project$Box$documentWithOneBox}) : _Utils_update(
 								model,
-								{status: author$project$Box$LiquidBoxAdditionShowOptions});
+								{status: author$project$Types$LiquidBoxAdditionShowOptions});
 						case 'add_liquid_box_before':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$LiquidBoxAdditionBeforeChooseBox});
+								{status: author$project$Types$LiquidBoxAdditionBeforeChooseBox});
 						case 'add_liquid_box_after':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$LiquidBoxAdditionAfterChooseBox});
+								{status: author$project$Types$LiquidBoxAdditionAfterChooseBox});
 						case 'add_liquid_box_inside_first':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$LiquidBoxAdditionInsideFirstChooseBox});
+								{status: author$project$Types$LiquidBoxAdditionInsideFirstChooseBox});
 						case 'add_liquid_box_inside_last':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$LiquidBoxAdditionInsideLastChooseBox});
+								{status: author$project$Types$LiquidBoxAdditionInsideLastChooseBox});
 						case 'remove_label':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$RemoveLabelChooseBox});
+								{status: author$project$Types$RemoveLabelChooseBox});
 						case 'add_label':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$AddLabelChooseBox});
+								{status: author$project$Types$AddLabelChooseBox});
 						case 'remove_box':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$RemoveBoxChooseBox});
+								{status: author$project$Types$RemoveBoxChooseBox});
 						case 'export':
 							return _Utils_update(
 								model,
@@ -7101,97 +7100,37 @@ var author$project$Main$update = F2(
 						case 'duplicate_box':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$DuplicateBoxChooseBox});
+								{status: author$project$Types$DuplicateBoxChooseBox});
 						case 'duplicate_box_before':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$DuplicateBoxBeforeChooseBox});
+								{status: author$project$Types$DuplicateBoxBeforeChooseBox});
 						case 'duplicate_box_after':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$DuplicateBoxAfterChooseBox});
+								{status: author$project$Types$DuplicateBoxAfterChooseBox});
 						case 'duplicate_box_inside_first':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$DuplicateBoxInsideFirstChooseBox});
+								{status: author$project$Types$DuplicateBoxInsideFirstChooseBox});
 						case 'duplicate_box_inside_last':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$DuplicateBoxInsideLastChooseBox});
+								{status: author$project$Types$DuplicateBoxInsideLastChooseBox});
 						case 'move_box':
 							return _Utils_update(
 								model,
-								{status: author$project$Box$MoveBoxChooseBox});
+								{status: author$project$Types$MoveBoxChooseBox});
 						default:
 							return model;
 					}
 				}();
 				return _Utils_Tuple2(
 					newModel,
-					author$project$Main$expandElements(_Utils_Tuple0));
+					author$project$State$expandElements(_Utils_Tuple0));
 		}
 	});
-var author$project$Box$Import = {$: 'Import'};
-var author$project$Box$ResetExport = {$: 'ResetExport'};
-var author$project$Box$ResetImport = {$: 'ResetImport'};
-var author$project$Box$SetImport = function (a) {
-	return {$: 'SetImport', a: a};
-};
-var author$project$Box$AddLabel = function (a) {
-	return {$: 'AddLabel', a: a};
-};
-var author$project$Box$DuplicateBoxAfter = function (a) {
-	return {$: 'DuplicateBoxAfter', a: a};
-};
-var author$project$Box$DuplicateBoxBefore = function (a) {
-	return {$: 'DuplicateBoxBefore', a: a};
-};
-var author$project$Box$DuplicateBoxInsideFirst = function (a) {
-	return {$: 'DuplicateBoxInsideFirst', a: a};
-};
-var author$project$Box$DuplicateBoxInsideLast = function (a) {
-	return {$: 'DuplicateBoxInsideLast', a: a};
-};
-var author$project$Box$DuplicateBoxSelectBox = function (a) {
-	return {$: 'DuplicateBoxSelectBox', a: a};
-};
-var author$project$Box$LiquidBoxAdditionAfter = function (a) {
-	return {$: 'LiquidBoxAdditionAfter', a: a};
-};
-var author$project$Box$LiquidBoxAdditionBefore = function (a) {
-	return {$: 'LiquidBoxAdditionBefore', a: a};
-};
-var author$project$Box$LiquidBoxAdditionInsideFirst = function (a) {
-	return {$: 'LiquidBoxAdditionInsideFirst', a: a};
-};
-var author$project$Box$LiquidBoxAdditionInsideLast = function (a) {
-	return {$: 'LiquidBoxAdditionInsideLast', a: a};
-};
-var author$project$Box$MoveBoxSelectBox = function (a) {
-	return {$: 'MoveBoxSelectBox', a: a};
-};
-var author$project$Box$RemoveBox = function (a) {
-	return {$: 'RemoveBox', a: a};
-};
-var author$project$Box$RemoveLabel = function (a) {
-	return {$: 'RemoveLabel', a: a};
-};
-var author$project$Box$SelectBox = function (a) {
-	return {$: 'SelectBox', a: a};
-};
-var author$project$Box$SolidBoxAdditionAfter = function (a) {
-	return {$: 'SolidBoxAdditionAfter', a: a};
-};
-var author$project$Box$SolidBoxAdditionBefore = function (a) {
-	return {$: 'SolidBoxAdditionBefore', a: a};
-};
-var author$project$Box$SolidBoxAdditionInsideFirst = function (a) {
-	return {$: 'SolidBoxAdditionInsideFirst', a: a};
-};
-var author$project$Box$SolidBoxAdditionInsideLast = function (a) {
-	return {$: 'SolidBoxAdditionInsideLast', a: a};
-};
-var author$project$Box$LabelUpdate = F2(
+var author$project$Types$LabelUpdate = F2(
 	function (a, b) {
 		return {$: 'LabelUpdate', a: a, b: b};
 	});
@@ -7246,13 +7185,13 @@ var author$project$Box$labelToHtml = F2(
 					'blur',
 					A2(
 						elm$json$Json$Decode$map,
-						author$project$Box$LabelUpdate(labelOwner.id),
+						author$project$Types$LabelUpdate(labelOwner.id),
 						elm$html$Html$Events$targetValue)),
 					A2(elm$html$Html$Attributes$attribute, 'value', content)
 				]),
 			_List_Nil);
 	});
-var author$project$Box$LiquidBoxUpdate = F2(
+var author$project$Types$LiquidBoxUpdate = F2(
 	function (a, b) {
 		return {$: 'LiquidBoxUpdate', a: a, b: b};
 	});
@@ -7271,7 +7210,7 @@ var author$project$Box$liquidBoxToHtml = F2(
 					'blur',
 					A2(
 						elm$json$Json$Decode$map,
-						author$project$Box$LiquidBoxUpdate(liquidBox.id),
+						author$project$Types$LiquidBoxUpdate(liquidBox.id),
 						elm$html$Html$Events$targetValue)),
 					elm$html$Html$Attributes$class('content'),
 					A2(elm$html$Html$Attributes$attribute, 'rows', '1'),
@@ -7288,6 +7227,60 @@ var author$project$Box$processBoxType = function (boxTypeValue) {
 	} else {
 		return 'liquid_box';
 	}
+};
+var author$project$Types$AddLabel = function (a) {
+	return {$: 'AddLabel', a: a};
+};
+var author$project$Types$DuplicateBoxAfter = function (a) {
+	return {$: 'DuplicateBoxAfter', a: a};
+};
+var author$project$Types$DuplicateBoxBefore = function (a) {
+	return {$: 'DuplicateBoxBefore', a: a};
+};
+var author$project$Types$DuplicateBoxInsideFirst = function (a) {
+	return {$: 'DuplicateBoxInsideFirst', a: a};
+};
+var author$project$Types$DuplicateBoxInsideLast = function (a) {
+	return {$: 'DuplicateBoxInsideLast', a: a};
+};
+var author$project$Types$DuplicateBoxSelectBox = function (a) {
+	return {$: 'DuplicateBoxSelectBox', a: a};
+};
+var author$project$Types$LiquidBoxAdditionAfter = function (a) {
+	return {$: 'LiquidBoxAdditionAfter', a: a};
+};
+var author$project$Types$LiquidBoxAdditionBefore = function (a) {
+	return {$: 'LiquidBoxAdditionBefore', a: a};
+};
+var author$project$Types$LiquidBoxAdditionInsideFirst = function (a) {
+	return {$: 'LiquidBoxAdditionInsideFirst', a: a};
+};
+var author$project$Types$LiquidBoxAdditionInsideLast = function (a) {
+	return {$: 'LiquidBoxAdditionInsideLast', a: a};
+};
+var author$project$Types$MoveBoxSelectBox = function (a) {
+	return {$: 'MoveBoxSelectBox', a: a};
+};
+var author$project$Types$RemoveBox = function (a) {
+	return {$: 'RemoveBox', a: a};
+};
+var author$project$Types$RemoveLabel = function (a) {
+	return {$: 'RemoveLabel', a: a};
+};
+var author$project$Types$SelectBox = function (a) {
+	return {$: 'SelectBox', a: a};
+};
+var author$project$Types$SolidBoxAdditionAfter = function (a) {
+	return {$: 'SolidBoxAdditionAfter', a: a};
+};
+var author$project$Types$SolidBoxAdditionBefore = function (a) {
+	return {$: 'SolidBoxAdditionBefore', a: a};
+};
+var author$project$Types$SolidBoxAdditionInsideFirst = function (a) {
+	return {$: 'SolidBoxAdditionInsideFirst', a: a};
+};
+var author$project$Types$SolidBoxAdditionInsideLast = function (a) {
+	return {$: 'SolidBoxAdditionInsideLast', a: a};
 };
 var elm$core$Basics$neq = _Utils_notEqual;
 var elm$html$Html$div = _VirtualDom_node('div');
@@ -7306,13 +7299,13 @@ var author$project$Box$boxToHtml = F2(
 	function (model, _n0) {
 		var boxToBeConvertedToHtml = _n0.a;
 		var restOfContent = function () {
-			if (_Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$LiquidBox)) {
+			if (_Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$LiquidBox)) {
 				return _List_fromArray(
 					[
 						A2(
 						author$project$Box$liquidBoxToHtml,
 						A2(elm$core$Maybe$withDefault, '', boxToBeConvertedToHtml.content),
-						author$project$Box$Box(boxToBeConvertedToHtml))
+						author$project$Types$Box(boxToBeConvertedToHtml))
 					]);
 			} else {
 				var children = A2(author$project$Box$boxesByParentId, boxToBeConvertedToHtml.id, model);
@@ -7328,7 +7321,7 @@ var author$project$Box$boxToHtml = F2(
 						A2(
 						author$project$Box$labelToHtml,
 						justLabel,
-						author$project$Box$Box(boxToBeConvertedToHtml))
+						author$project$Types$Box(boxToBeConvertedToHtml))
 					]);
 			} else {
 				return _List_Nil;
@@ -7337,277 +7330,277 @@ var author$project$Box$boxToHtml = F2(
 		var classes = _Utils_ap(
 			author$project$Box$processBoxType(boxToBeConvertedToHtml.type_),
 			_Utils_eq(model.selectedBoxId, boxToBeConvertedToHtml.id) ? ' selected' : '');
-		var attributes = _Utils_eq(model.status, author$project$Box$SolidBoxAdditionBeforeChooseBox) ? _List_fromArray(
+		var attributes = _Utils_eq(model.status, author$project$Types$SolidBoxAdditionBeforeChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SolidBoxAdditionBefore(boxToBeConvertedToHtml.id),
+						author$project$Types$SolidBoxAdditionBefore(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionBeforeChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$LiquidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionBeforeChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$LiquidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$LiquidBoxAdditionBefore(boxToBeConvertedToHtml.id),
+						author$project$Types$LiquidBoxAdditionBefore(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionAfterChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionAfterChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SolidBoxAdditionAfter(boxToBeConvertedToHtml.id),
+						author$project$Types$SolidBoxAdditionAfter(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionAfterChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$LiquidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionAfterChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$LiquidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$LiquidBoxAdditionAfter(boxToBeConvertedToHtml.id),
+						author$project$Types$LiquidBoxAdditionAfter(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$SolidBoxAdditionInsideFirstChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$SolidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$SolidBoxAdditionInsideFirstChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$SolidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SolidBoxAdditionInsideFirst(boxToBeConvertedToHtml.id),
+						author$project$Types$SolidBoxAdditionInsideFirst(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionInsideFirstChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$SolidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionInsideFirstChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$SolidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$LiquidBoxAdditionInsideFirst(boxToBeConvertedToHtml.id),
+						author$project$Types$LiquidBoxAdditionInsideFirst(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$SolidBoxAdditionInsideLastChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$SolidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$SolidBoxAdditionInsideLastChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$SolidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SolidBoxAdditionInsideLast(boxToBeConvertedToHtml.id),
+						author$project$Types$SolidBoxAdditionInsideLast(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionInsideLastChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Box$SolidBox)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionInsideLastChooseBox) && _Utils_eq(boxToBeConvertedToHtml.type_, author$project$Types$SolidBox)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$LiquidBoxAdditionInsideLast(boxToBeConvertedToHtml.id),
+						author$project$Types$LiquidBoxAdditionInsideLast(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$RemoveLabelChooseBox) && (!_Utils_eq(boxToBeConvertedToHtml.label, elm$core$Maybe$Nothing))) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$RemoveLabelChooseBox) && (!_Utils_eq(boxToBeConvertedToHtml.label, elm$core$Maybe$Nothing))) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$RemoveLabel(boxToBeConvertedToHtml.id),
+						author$project$Types$RemoveLabel(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : ((_Utils_eq(model.status, author$project$Box$AddLabelChooseBox) && _Utils_eq(boxToBeConvertedToHtml.label, elm$core$Maybe$Nothing)) ? _List_fromArray(
+			]) : ((_Utils_eq(model.status, author$project$Types$AddLabelChooseBox) && _Utils_eq(boxToBeConvertedToHtml.label, elm$core$Maybe$Nothing)) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$AddLabel(boxToBeConvertedToHtml.id),
+						author$project$Types$AddLabel(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$RemoveBoxChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$RemoveBox(boxToBeConvertedToHtml.id),
+						author$project$Types$RemoveBox(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$DuplicateBoxChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$DuplicateBoxSelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$DuplicateBoxSelectBox(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$DuplicateBoxBeforeChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$DuplicateBoxBefore(boxToBeConvertedToHtml.id),
+						author$project$Types$DuplicateBoxBefore(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$DuplicateBoxInsideFirstChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$DuplicateBoxInsideFirst(boxToBeConvertedToHtml.id),
+						author$project$Types$DuplicateBoxInsideFirst(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$DuplicateBoxInsideLastChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$DuplicateBoxInsideLast(boxToBeConvertedToHtml.id),
+						author$project$Types$DuplicateBoxInsideLast(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$DuplicateBoxAfterChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$DuplicateBoxAfter(boxToBeConvertedToHtml.id),
+						author$project$Types$DuplicateBoxAfter(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : (_Utils_eq(model.status, author$project$Box$MoveBoxChooseBox) ? _List_fromArray(
+			]) : (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox) ? _List_fromArray(
 			[
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'click',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$MoveBoxSelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$MoveBoxSelectBox(boxToBeConvertedToHtml.id),
 						true))),
 				A2(
 				elm$html$Html$Events$stopPropagationOn,
 				'mouseover',
 				elm$json$Json$Decode$succeed(
 					_Utils_Tuple2(
-						author$project$Box$SelectBox(boxToBeConvertedToHtml.id),
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
 			]) : _List_Nil))))))))))))))));
 		return A2(
@@ -7618,7 +7611,7 @@ var author$project$Box$boxToHtml = F2(
 					[
 						elm$html$Html$Attributes$class(classes),
 						elm$html$Html$Attributes$id(
-						'box' + elm$core$Debug$toString(boxToBeConvertedToHtml.id))
+						'box' + elm$core$String$fromInt(boxToBeConvertedToHtml.id))
 					])),
 			_Utils_ap(label, restOfContent));
 	});
@@ -7699,7 +7692,7 @@ var author$project$Box$boxToHtmlString = F2(
 			elm$core$Basics$append,
 			'',
 			A2(elm$core$List$map, author$project$LabelProcessor$labelElementStartingTagToString, box.labelElements));
-		var boxContentInner = _Utils_eq(box.type_, author$project$Box$SolidBox) ? A3(
+		var boxContentInner = _Utils_eq(box.type_, author$project$Types$SolidBox) ? A3(
 			elm$core$List$foldr,
 			elm$core$Basics$append,
 			'',
@@ -7728,18 +7721,12 @@ var author$project$Box$escapeString = function (string) {
 	var encodedStringLength = elm$core$String$length(encodedString);
 	return A3(elm$core$String$slice, 1, encodedStringLength - 1, encodedString);
 };
-var author$project$Box$PageNameChanged = function (a) {
-	return {$: 'PageNameChanged', a: a};
-};
-var author$project$Box$PageTitleChanged = function (a) {
-	return {$: 'PageTitleChanged', a: a};
-};
 var author$project$Box$innerHtmlDecoder = A2(
 	elm$json$Json$Decode$at,
 	_List_fromArray(
 		['target', 'innerHTML']),
 	elm$json$Json$Decode$string);
-var author$project$Box$MenuItemClicked = function (a) {
+var author$project$Types$MenuItemClicked = function (a) {
 	return {$: 'MenuItemClicked', a: a};
 };
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
@@ -7752,24 +7739,38 @@ var elm$html$Html$Events$onClick = function (msg) {
 };
 var author$project$Menu$menuItemToHtml = function (menuItemToBeConverted) {
 	return A2(
-		elm$html$Html$input,
+		elm$html$Html$div,
 		_List_fromArray(
 			[
-				elm$html$Html$Attributes$type_('button'),
-				elm$html$Html$Attributes$value(menuItemToBeConverted.name),
-				elm$html$Html$Attributes$class('button'),
-				elm$html$Html$Events$onClick(
-				author$project$Box$MenuItemClicked(menuItemToBeConverted.machineName))
+				elm$html$Html$Attributes$class('column is-narrow')
 			]),
-		_List_Nil);
+		_List_fromArray(
+			[
+				A2(
+				elm$html$Html$input,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$type_('button'),
+						elm$html$Html$Attributes$value(menuItemToBeConverted.name),
+						elm$html$Html$Attributes$class('button'),
+						elm$html$Html$Events$onClick(
+						author$project$Types$MenuItemClicked(menuItemToBeConverted.machineName))
+					]),
+				_List_Nil)
+			]));
 };
 var author$project$Menu$menuItemsToHtml = function (menuItemsToBeConverted) {
 	return A2(elm$core$List$map, author$project$Menu$menuItemToHtml, menuItemsToBeConverted);
 };
+var author$project$Types$PageNameChanged = function (a) {
+	return {$: 'PageNameChanged', a: a};
+};
+var author$project$Types$PageTitleChanged = function (a) {
+	return {$: 'PageTitleChanged', a: a};
+};
 var elm$html$Html$a = _VirtualDom_node('a');
 var elm$html$Html$b = _VirtualDom_node('b');
 var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$hr = _VirtualDom_node('hr');
 var elm$html$Html$i = _VirtualDom_node('i');
 var elm$html$Html$nav = _VirtualDom_node('nav');
 var elm$html$Html$span = _VirtualDom_node('span');
@@ -7796,180 +7797,243 @@ var author$project$Menu$generateMenu = function (model) {
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$id('menu_header'),
-					elm$html$Html$Attributes$class('level-left')
+					elm$html$Html$Attributes$class('columns is-variable is-1 is-vcentered')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$a,
+					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$href('../'),
-							elm$html$Html$Attributes$class('level-item button')
+							elm$html$Html$Attributes$class('column is-narrow')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$span,
+							elm$html$Html$a,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('icon is-small')
+									elm$html$Html$Attributes$href('../'),
+									elm$html$Html$Attributes$class('level-item button')
 								]),
 							_List_fromArray(
 								[
 									A2(
-									elm$html$Html$i,
+									elm$html$Html$span,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$class('fas fa-arrow-left')
+											elm$html$Html$Attributes$class('icon is-small')
 										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$span,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('back')
-								]))
-						])),
-					A2(
-					elm$html$Html$a,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('level-item button'),
-							A2(elm$html$Html$Attributes$attribute, 'href', '../../' + model.pageName),
-							A2(elm$html$Html$Attributes$attribute, 'target', '__parent')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$span,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('icon is-small')
-								]),
-							_List_fromArray(
-								[
-									A2(
-									elm$html$Html$i,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$class('fas fa-eye')
-										]),
-									_List_Nil)
-								])),
-							A2(
-							elm$html$Html$span,
-							_List_Nil,
-							_List_fromArray(
-								[
-									elm$html$Html$text('view')
-								]))
-						])),
-					A2(
-					elm$html$Html$button,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('level-item button is-success is-outlined'),
-							A2(elm$html$Html$Attributes$attribute, 'type', 'submit')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							elm$html$Html$span,
-							_List_fromArray(
-								[
-									elm$html$Html$Attributes$class('icon is-small')
-								]),
-							_List_fromArray(
-								[
+											A2(
+											elm$html$Html$i,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fas fa-arrow-left')
+												]),
+											_List_Nil)
+										])),
 									A2(
-									elm$html$Html$i,
+									elm$html$Html$span,
+									_List_Nil,
 									_List_fromArray(
 										[
-											elm$html$Html$Attributes$class('fas fa-save')
+											elm$html$Html$text('back')
+										]))
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('column is-narrow')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$a,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('level-item button'),
+									A2(elm$html$Html$Attributes$attribute, 'href', '../../' + model.pageName),
+									A2(elm$html$Html$Attributes$attribute, 'target', '__parent')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$span,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('icon is-small')
 										]),
-									_List_Nil)
-								])),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$i,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fas fa-eye')
+												]),
+											_List_Nil)
+										])),
+									A2(
+									elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('view')
+										]))
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('column is-narrow')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$button,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('button is-success is-outlined'),
+									A2(elm$html$Html$Attributes$attribute, 'type', 'submit')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$span,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('icon is-small')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$i,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('fas fa-save')
+												]),
+											_List_Nil)
+										])),
+									A2(
+									elm$html$Html$span,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('save')
+										]))
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('column is-narrow')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$b,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('level-item')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text('Name:')
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('column is-narrow')
+						]),
+					_List_fromArray(
+						[
 							A2(
 							elm$html$Html$span,
-							_List_Nil,
 							_List_fromArray(
 								[
-									elm$html$Html$text('save')
+									elm$html$Html$Attributes$class('level-item')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$contenteditable(true),
+											A2(
+											elm$html$Html$Events$on,
+											'blur',
+											A2(elm$json$Json$Decode$map, author$project$Types$PageNameChanged, author$project$Box$innerHtmlDecoder))
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(model.pageName)
+										]))
 								]))
 						])),
 					A2(
-					elm$html$Html$b,
+					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('level-item')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Name:')
-						])),
-					A2(
-					elm$html$Html$span,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('level-item')
+							elm$html$Html$Attributes$class('column is-narrow')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$b,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$contenteditable(true),
-									A2(
-									elm$html$Html$Events$on,
-									'blur',
-									A2(elm$json$Json$Decode$map, author$project$Box$PageNameChanged, author$project$Box$innerHtmlDecoder))
+									elm$html$Html$Attributes$class('level-item')
 								]),
 							_List_fromArray(
 								[
-									elm$html$Html$text(model.pageName)
+									elm$html$Html$text('Title:')
 								]))
 						])),
 					A2(
-					elm$html$Html$b,
+					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('level-item')
-						]),
-					_List_fromArray(
-						[
-							elm$html$Html$text('Title:')
-						])),
-					A2(
-					elm$html$Html$span,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('level-item')
+							elm$html$Html$Attributes$class('column is-narrow')
 						]),
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$span,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$contenteditable(true),
-									A2(
-									elm$html$Html$Events$on,
-									'blur',
-									A2(elm$json$Json$Decode$map, author$project$Box$PageTitleChanged, author$project$Box$innerHtmlDecoder))
+									elm$html$Html$Attributes$class('level-item')
 								]),
 							_List_fromArray(
 								[
-									elm$html$Html$text(model.pageTitle)
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$contenteditable(true),
+											A2(
+											elm$html$Html$Events$on,
+											'blur',
+											A2(elm$json$Json$Decode$map, author$project$Types$PageTitleChanged, author$project$Box$innerHtmlDecoder))
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text(model.pageTitle)
+										]))
 								]))
 						]))
 				]))
 		]);
 	var menuContent = function () {
-		if (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionShowOptions)) {
+		if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions)) {
 			return author$project$Menu$menuItemsToHtml(
 				_List_fromArray(
 					[
@@ -7979,7 +8043,7 @@ var author$project$Menu$generateMenu = function (model) {
 						A2(author$project$Menu$menuItem, '+after', 'add_solid_box_after')
 					]));
 		} else {
-			if (_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionShowOptions)) {
+			if (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionShowOptions)) {
 				return author$project$Menu$menuItemsToHtml(
 					_List_fromArray(
 						[
@@ -7989,7 +8053,7 @@ var author$project$Menu$generateMenu = function (model) {
 							A2(author$project$Menu$menuItem, '+after', 'add_liquid_box_after')
 						]));
 			} else {
-				if (_Utils_eq(model.status, author$project$Box$DuplicateBoxShowOptions)) {
+				if (_Utils_eq(model.status, author$project$Types$DuplicateBoxShowOptions)) {
 					return author$project$Menu$menuItemsToHtml(
 						_List_fromArray(
 							[
@@ -7999,94 +8063,229 @@ var author$project$Menu$generateMenu = function (model) {
 								A2(author$project$Menu$menuItem, '+after', 'duplicate_box_after')
 							]));
 				} else {
-					if (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionBeforeChooseBox)) {
+					if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionBeforeChooseBox)) {
 						return _List_fromArray(
 							[
-								elm$html$Html$text('Choose box before which you want to insert the new solid box.')
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('column')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Choose box before which you want to insert the new solid box.')
+									]))
 							]);
 					} else {
-						if (_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionBeforeChooseBox)) {
+						if (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionBeforeChooseBox)) {
 							return _List_fromArray(
 								[
-									elm$html$Html$text('Choose box before which you want to insert the new liquid box.')
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('column')
+										]),
+									_List_fromArray(
+										[
+											elm$html$Html$text('Choose box before which you want to insert the new liquid box.')
+										]))
 								]);
 						} else {
-							if (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionAfterChooseBox)) {
+							if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionAfterChooseBox)) {
 								return _List_fromArray(
 									[
-										elm$html$Html$text('Choose box after which you want to insert the new solid box.')
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('column')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text('Choose box after which you want to insert the new solid box.')
+											]))
 									]);
 							} else {
-								if (_Utils_eq(model.status, author$project$Box$LiquidBoxAdditionAfterChooseBox)) {
+								if (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionAfterChooseBox)) {
 									return _List_fromArray(
 										[
-											elm$html$Html$text('Choose box after which you want to insert the new liquid box.')
+											A2(
+											elm$html$Html$div,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('column')
+												]),
+											_List_fromArray(
+												[
+													elm$html$Html$text('Choose box after which you want to insert the new liquid box.')
+												]))
 										]);
 								} else {
-									if (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionInsideFirstChooseBox)) {
+									if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionInsideFirstChooseBox)) {
 										return _List_fromArray(
 											[
-												elm$html$Html$text('Choose box inside which you want to insert the new solid box as the first item.')
+												A2(
+												elm$html$Html$div,
+												_List_fromArray(
+													[
+														elm$html$Html$Attributes$class('column')
+													]),
+												_List_fromArray(
+													[
+														elm$html$Html$text('Choose box inside which you want to insert the new solid box as the first item.')
+													]))
 											]);
 									} else {
-										if (_Utils_eq(model.status, author$project$Box$SolidBoxAdditionInsideLastChooseBox)) {
+										if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionInsideLastChooseBox)) {
 											return _List_fromArray(
 												[
-													elm$html$Html$text('Choose box inside which you want to insert the new solid box as the last item.')
+													A2(
+													elm$html$Html$div,
+													_List_fromArray(
+														[
+															elm$html$Html$Attributes$class('column')
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('Choose box inside which you want to insert the new solid box as the last item.')
+														]))
 												]);
 										} else {
-											if (_Utils_eq(model.status, author$project$Box$RemoveLabelChooseBox)) {
+											if (_Utils_eq(model.status, author$project$Types$RemoveLabelChooseBox)) {
 												return _List_fromArray(
 													[
-														elm$html$Html$text('Choose box whose label you want to be removed.')
+														A2(
+														elm$html$Html$div,
+														_List_fromArray(
+															[
+																elm$html$Html$Attributes$class('column')
+															]),
+														_List_fromArray(
+															[
+																elm$html$Html$text('Choose box whose label you want to be removed.')
+															]))
 													]);
 											} else {
-												if (_Utils_eq(model.status, author$project$Box$AddLabelChooseBox)) {
+												if (_Utils_eq(model.status, author$project$Types$AddLabelChooseBox)) {
 													return _List_fromArray(
 														[
-															elm$html$Html$text('Choose box you want to add the new label in.')
+															A2(
+															elm$html$Html$div,
+															_List_fromArray(
+																[
+																	elm$html$Html$Attributes$class('column')
+																]),
+															_List_fromArray(
+																[
+																	elm$html$Html$text('Choose box you want to add the new label in.')
+																]))
 														]);
 												} else {
-													if (_Utils_eq(model.status, author$project$Box$RemoveBoxChooseBox)) {
+													if (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox)) {
 														return _List_fromArray(
 															[
-																elm$html$Html$text('Choose box which you want to be removed.')
+																A2(
+																elm$html$Html$div,
+																_List_fromArray(
+																	[
+																		elm$html$Html$Attributes$class('column')
+																	]),
+																_List_fromArray(
+																	[
+																		elm$html$Html$text('Choose box which you want to be removed.')
+																	]))
 															]);
 													} else {
-														if (_Utils_eq(model.status, author$project$Box$DuplicateBoxChooseBox)) {
+														if (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox)) {
 															return _List_fromArray(
 																[
-																	elm$html$Html$text('Choose box which you want to duplicate.')
+																	A2(
+																	elm$html$Html$div,
+																	_List_fromArray(
+																		[
+																			elm$html$Html$Attributes$class('column')
+																		]),
+																	_List_fromArray(
+																		[
+																			elm$html$Html$text('Choose box which you want to duplicate.')
+																		]))
 																]);
 														} else {
-															if (_Utils_eq(model.status, author$project$Box$DuplicateBoxBeforeChooseBox)) {
+															if (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox)) {
 																return _List_fromArray(
 																	[
-																		elm$html$Html$text('Choose box before which you want to place the duplicated box.')
+																		A2(
+																		elm$html$Html$div,
+																		_List_fromArray(
+																			[
+																				elm$html$Html$Attributes$class('column')
+																			]),
+																		_List_fromArray(
+																			[
+																				elm$html$Html$text('Choose box before which you want to place the duplicated box.')
+																			]))
 																	]);
 															} else {
-																if (_Utils_eq(model.status, author$project$Box$DuplicateBoxInsideFirstChooseBox)) {
+																if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox)) {
 																	return _List_fromArray(
 																		[
-																			elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
+																			A2(
+																			elm$html$Html$div,
+																			_List_fromArray(
+																				[
+																					elm$html$Html$Attributes$class('column')
+																				]),
+																			_List_fromArray(
+																				[
+																					elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
+																				]))
 																		]);
 																} else {
-																	if (_Utils_eq(model.status, author$project$Box$DuplicateBoxInsideLastChooseBox)) {
+																	if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox)) {
 																		return _List_fromArray(
 																			[
-																				elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
+																				A2(
+																				elm$html$Html$div,
+																				_List_fromArray(
+																					[
+																						elm$html$Html$Attributes$class('column')
+																					]),
+																				_List_fromArray(
+																					[
+																						elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
+																					]))
 																			]);
 																	} else {
-																		if (_Utils_eq(model.status, author$project$Box$DuplicateBoxAfterChooseBox)) {
+																		if (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox)) {
 																			return _List_fromArray(
 																				[
-																					elm$html$Html$text('Choose box after which you want to place the duplicated box.')
+																					A2(
+																					elm$html$Html$div,
+																					_List_fromArray(
+																						[
+																							elm$html$Html$Attributes$class('column')
+																						]),
+																					_List_fromArray(
+																						[
+																							elm$html$Html$text('Choose box after which you want to place the duplicated box.')
+																						]))
 																				]);
 																		} else {
-																			if (_Utils_eq(model.status, author$project$Box$MoveBoxChooseBox)) {
+																			if (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox)) {
 																				return _List_fromArray(
 																					[
-																						elm$html$Html$text('Choose box which you want to move.')
+																						A2(
+																						elm$html$Html$div,
+																						_List_fromArray(
+																							[
+																								elm$html$Html$Attributes$class('column')
+																							]),
+																						_List_fromArray(
+																							[
+																								elm$html$Html$text('Choose box which you want to move.')
+																							]))
 																					]);
 																			} else {
 																				var _n0 = model.menuMessage;
@@ -8094,7 +8293,16 @@ var author$project$Menu$generateMenu = function (model) {
 																					var justMessage = _n0.a;
 																					return _List_fromArray(
 																						[
-																							elm$html$Html$text(justMessage)
+																							A2(
+																							elm$html$Html$div,
+																							_List_fromArray(
+																								[
+																									elm$html$Html$Attributes$class('column')
+																								]),
+																							_List_fromArray(
+																								[
+																									elm$html$Html$text(justMessage)
+																								]))
 																						]);
 																				} else {
 																					return author$project$Menu$menuItemsToHtml(model.menu);
@@ -8134,18 +8342,32 @@ var author$project$Menu$generateMenu = function (model) {
 						elm$html$Html$Attributes$class('container')
 					]),
 				menuHeader),
-				A2(elm$html$Html$hr, _List_Nil, _List_Nil),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$class('container')
 					]),
-				menuContent)
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('columns is-variable is-1')
+							]),
+						menuContent)
+					]))
 			]));
 };
+var author$project$Types$Import = {$: 'Import'};
+var author$project$Types$ResetExport = {$: 'ResetExport'};
+var author$project$Types$ResetImport = {$: 'ResetImport'};
+var author$project$Types$SetImport = function (a) {
+	return {$: 'SetImport', a: a};
+};
 var elm$html$Html$form = _VirtualDom_node('form');
-var author$project$Main$view = function (model) {
+var author$project$View$view = function (model) {
 	var import_modal = model.import_ ? _List_fromArray(
 		[
 			A2(
@@ -8162,7 +8384,7 @@ var author$project$Main$view = function (model) {
 					_List_fromArray(
 						[
 							elm$html$Html$Attributes$class('modal-background'),
-							elm$html$Html$Events$onClick(author$project$Box$ResetImport)
+							elm$html$Html$Events$onClick(author$project$Types$ResetImport)
 						]),
 					_List_Nil),
 					A2(
@@ -8205,7 +8427,7 @@ var author$project$Main$view = function (model) {
 															A2(
 															elm$html$Html$Events$on,
 															'blur',
-															A2(elm$json$Json$Decode$map, author$project$Box$SetImport, elm$html$Html$Events$targetValue))
+															A2(elm$json$Json$Decode$map, author$project$Types$SetImport, elm$html$Html$Events$targetValue))
 														]),
 													_List_Nil)
 												]))
@@ -8231,7 +8453,7 @@ var author$project$Main$view = function (model) {
 													_List_fromArray(
 														[
 															elm$html$Html$Attributes$value('Import'),
-															elm$html$Html$Events$onClick(author$project$Box$Import),
+															elm$html$Html$Events$onClick(author$project$Types$Import),
 															elm$html$Html$Attributes$class('button is-success')
 														]),
 													_List_Nil)
@@ -8245,7 +8467,7 @@ var author$project$Main$view = function (model) {
 						[
 							elm$html$Html$Attributes$class('modal-close is-large'),
 							A2(elm$html$Html$Attributes$attribute, 'aria-label', 'close'),
-							elm$html$Html$Events$onClick(author$project$Box$ResetImport)
+							elm$html$Html$Events$onClick(author$project$Types$ResetImport)
 						]),
 					_List_Nil)
 				]))
@@ -8322,7 +8544,7 @@ var author$project$Main$view = function (model) {
 					_List_fromArray(
 						[
 							elm$html$Html$Attributes$class('modal-background'),
-							elm$html$Html$Events$onClick(author$project$Box$ResetExport)
+							elm$html$Html$Events$onClick(author$project$Types$ResetExport)
 						]),
 					_List_Nil),
 					A2(
@@ -8350,7 +8572,7 @@ var author$project$Main$view = function (model) {
 						[
 							elm$html$Html$Attributes$class('modal-close is-large'),
 							A2(elm$html$Html$Attributes$attribute, 'aria-label', 'close'),
-							elm$html$Html$Events$onClick(author$project$Box$ResetExport)
+							elm$html$Html$Events$onClick(author$project$Types$ResetExport)
 						]),
 					_List_Nil)
 				]))
@@ -8398,14 +8620,14 @@ var author$project$Main$view = function (model) {
 						A2(
 						elm$html$Html$Attributes$attribute,
 						'value',
-						elm$core$Debug$toString(model.documentValidity))
+						elm$core$String$fromInt(model.documentValidity))
 					]),
 				_List_Nil)
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;
 var author$project$Main$main = elm$browser$Browser$element(
-	{init: author$project$Main$initialModel, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
+	{init: author$project$State$initialModel, subscriptions: author$project$State$subscriptions, update: author$project$State$update, view: author$project$View$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
 	A2(
 		elm$json$Json$Decode$andThen,

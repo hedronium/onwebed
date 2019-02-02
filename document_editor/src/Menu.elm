@@ -4,7 +4,8 @@ import Box exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Decode as Decode exposing (map)
+import Json.Decode as Decode exposing (..)
+import Types exposing (..)
 
 
 menuItem : String -> String -> MenuItem
@@ -20,13 +21,16 @@ menuItem name machineName =
 
 menuItemToHtml : MenuItem -> Html Msg
 menuItemToHtml menuItemToBeConverted =
-    input
-        [ type_ "button"
-        , value menuItemToBeConverted.name
-        , class "button"
-        , onClick (MenuItemClicked menuItemToBeConverted.machineName)
+    div
+        [ class "column is-narrow" ]
+        [ input
+            [ type_ "button"
+            , Html.Attributes.value menuItemToBeConverted.name
+            , class "button"
+            , onClick (MenuItemClicked menuItemToBeConverted.machineName)
+            ]
+            []
         ]
-        []
 
 
 
@@ -67,54 +71,102 @@ generateMenu model =
                     ]
 
             else if model.status == SolidBoxAdditionBeforeChooseBox then
-                [ text "Choose box before which you want to insert the new solid box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box before which you want to insert the new solid box." ]
+                ]
 
             else if model.status == LiquidBoxAdditionBeforeChooseBox then
-                [ text "Choose box before which you want to insert the new liquid box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box before which you want to insert the new liquid box." ]
+                ]
 
             else if model.status == SolidBoxAdditionAfterChooseBox then
-                [ text "Choose box after which you want to insert the new solid box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box after which you want to insert the new solid box." ]
+                ]
 
             else if model.status == LiquidBoxAdditionAfterChooseBox then
-                [ text "Choose box after which you want to insert the new liquid box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box after which you want to insert the new liquid box." ]
+                ]
 
             else if model.status == SolidBoxAdditionInsideFirstChooseBox then
-                [ text "Choose box inside which you want to insert the new solid box as the first item." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box inside which you want to insert the new solid box as the first item." ]
+                ]
 
             else if model.status == SolidBoxAdditionInsideLastChooseBox then
-                [ text "Choose box inside which you want to insert the new solid box as the last item." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box inside which you want to insert the new solid box as the last item." ]
+                ]
 
             else if model.status == RemoveLabelChooseBox then
-                [ text "Choose box whose label you want to be removed." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box whose label you want to be removed." ]
+                ]
 
             else if model.status == AddLabelChooseBox then
-                [ text "Choose box you want to add the new label in." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box you want to add the new label in." ]
+                ]
 
             else if model.status == RemoveBoxChooseBox then
-                [ text "Choose box which you want to be removed." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box which you want to be removed." ]
+                ]
 
             else if model.status == DuplicateBoxChooseBox then
-                [ text "Choose box which you want to duplicate." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box which you want to duplicate." ]
+                ]
 
             else if model.status == DuplicateBoxBeforeChooseBox then
-                [ text "Choose box before which you want to place the duplicated box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box before which you want to place the duplicated box." ]
+                ]
 
             else if model.status == DuplicateBoxInsideFirstChooseBox then
-                [ text "Choose box inside which you want to place the duplicated box as the first item." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box inside which you want to place the duplicated box as the first item." ]
+                ]
 
             else if model.status == DuplicateBoxInsideLastChooseBox then
-                [ text "Choose box inside which you want to place the duplicated box as the last item." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box inside which you want to place the duplicated box as the last item." ]
+                ]
 
             else if model.status == DuplicateBoxAfterChooseBox then
-                [ text "Choose box after which you want to place the duplicated box." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box after which you want to place the duplicated box." ]
+                ]
 
             else if model.status == MoveBoxChooseBox then
-                [ text "Choose box which you want to move." ]
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box which you want to move." ]
+                ]
 
             else
                 case model.menuMessage of
                     Just justMessage ->
-                        [ text justMessage ]
+                        [ div
+                            [ class "column" ]
+                            [ text justMessage ]
+                        ]
 
                     Nothing ->
                         menuItemsToHtml model.menu
@@ -122,72 +174,93 @@ generateMenu model =
         menuHeader =
             [ div
                 [ id "menu_header"
-                , class "level-left"
+                , class "columns is-variable is-1 is-vcentered"
                 ]
-                [ a
-                    [ href "../"
-                    , class "level-item button"
-                    ]
-                    [ span
-                        [ class "icon is-small" ]
-                        [ i
-                            [ class "fas fa-arrow-left" ]
+                [ div
+                    [ class "column is-narrow" ]
+                    [ a
+                        [ href "../"
+                        , class "level-item button"
+                        ]
+                        [ span
+                            [ class "icon is-small" ]
+                            [ i
+                                [ class "fas fa-arrow-left" ]
+                                []
+                            ]
+                        , span
                             []
+                            [ text "back" ]
                         ]
-                    , span
-                        []
-                        [ text "back" ]
                     ]
-                , a
-                    [ class "level-item button"
-                    , attribute "href" ("../../" ++ model.pageName)
-                    , attribute "target" "__parent"
-                    ]
-                    [ span
-                        [ class "icon is-small" ]
-                        [ i
-                            [ class "fas fa-eye" ]
+                , div
+                    [ class "column is-narrow" ]
+                    [ a
+                        [ class "level-item button"
+                        , attribute "href" ("../../" ++ model.pageName)
+                        , attribute "target" "__parent"
+                        ]
+                        [ span
+                            [ class "icon is-small" ]
+                            [ i
+                                [ class "fas fa-eye" ]
+                                []
+                            ]
+                        , span
                             []
+                            [ text "view" ]
                         ]
-                    , span
-                        []
-                        [ text "view" ]
                     ]
-                , button
-                    [ class "level-item button is-success is-outlined"
-                    , attribute "type" "submit"
-                    ]
-                    [ span
-                        [ class "icon is-small" ]
-                        [ i
-                            [ class "fas fa-save" ]
+                , div
+                    [ class "column is-narrow" ]
+                    [ button
+                        [ class "button is-success is-outlined"
+                        , attribute "type" "submit"
+                        ]
+                        [ span
+                            [ class "icon is-small" ]
+                            [ i
+                                [ class "fas fa-save" ]
+                                []
+                            ]
+                        , span
                             []
+                            [ text "save" ]
                         ]
-                    , span
-                        []
-                        [ text "save" ]
                     ]
-                , b
-                    [ class "level-item" ]
-                    [ text "Name:" ]
-                , span
-                    [ class "level-item" ]
-                    [ div
-                        [ contenteditable True
-                        , on "blur" (Decode.map PageNameChanged innerHtmlDecoder)
-                        ]
-                        [ text model.pageName ]
+                , div
+                    [ class "column is-narrow" ]
+                    [ b
+                        [ class "level-item" ]
+                        [ text "Name:" ]
                     ]
-                , b
-                    [ class "level-item" ]
-                    [ text "Title:" ]
-                , span
-                    [ class "level-item" ]
-                    [ div
-                        [ contenteditable True
-                        , on "blur" (Decode.map PageTitleChanged innerHtmlDecoder)
+                , div
+                    [ class "column is-narrow" ]
+                    [ span
+                        [ class "level-item" ]
+                        [ div
+                            [ contenteditable True
+                            , on "blur" (Decode.map PageNameChanged innerHtmlDecoder)
+                            ]
+                            [ text model.pageName ]
                         ]
-                        [ text model.pageTitle ]
+                    ]
+                , div
+                    [ class "column is-narrow" ]
+                    [ b
+                        [ class "level-item" ]
+                        [ text "Title:" ]
+                    ]
+                , div
+                    [ class "column is-narrow" ]
+                    [ span
+                        [ class "level-item" ]
+                        [ div
+                            [ contenteditable True
+                            , on "blur" (Decode.map PageTitleChanged innerHtmlDecoder)
+                            ]
+                            [ text model.pageTitle ]
+                        ]
                     ]
                 ]
             ]
@@ -199,10 +272,14 @@ generateMenu model =
         [ div
             [ class "container" ]
             menuHeader
-        , hr
-            []
-            []
+
+        --, hr
+        --    []
+        --    []
         , div
             [ class "container" ]
-            menuContent
+            [ div
+                [ class "columns is-variable is-1" ]
+                menuContent
+            ]
         ]
