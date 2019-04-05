@@ -298,11 +298,12 @@ update msg model =
         RemoveLabel boxId ->
             let
                 newModel =
-                    { model
-                        | document = List.map (removeLabel boxId) model.document
-                        , status = Default
-                        , selectedBoxId = 0
-                    }
+                    documentValidityIncrement
+                        { model
+                            | document = List.map (removeLabel boxId) model.document
+                            , status = Default
+                            , selectedBoxId = 0
+                        }
             in
             ( newModel
             , expandElements ()
@@ -311,11 +312,12 @@ update msg model =
         AddLabel boxId ->
             let
                 newModel =
-                    { model
-                        | document = List.map (addLabel boxId) model.document
-                        , status = Default
-                        , selectedBoxId = 0
-                    }
+                    documentValidityIncrement
+                        { model
+                            | document = List.map (addLabel boxId) model.document
+                            , status = Default
+                            , selectedBoxId = 0
+                        }
             in
             ( newModel
             , expandElements ()
@@ -408,9 +410,10 @@ update msg model =
                     case machine_name of
                         "add_solid_box" ->
                             if isDocumentEmpty model then
-                                { model
-                                    | document = documentWithOneBox
-                                }
+                                documentValidityIncrement
+                                    { model
+                                        | document = documentWithOneBox
+                                    }
 
                             else
                                 { model
@@ -439,9 +442,10 @@ update msg model =
 
                         "add_liquid_box" ->
                             if isDocumentEmpty model then
-                                { model
-                                    | document = documentWithOneBox
-                                }
+                                documentValidityIncrement
+                                    { model
+                                        | document = documentWithOneBox
+                                    }
 
                             else
                                 { model

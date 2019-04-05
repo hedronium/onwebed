@@ -6950,31 +6950,33 @@ var author$project$State$update = F2(
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'RemoveLabel':
 				var boxId = msg.a;
-				var newModel = _Utils_update(
-					model,
-					{
-						document: A2(
-							elm$core$List$map,
-							author$project$Box$removeLabel(boxId),
-							model.document),
-						selectedBoxId: 0,
-						status: author$project$Types$Default
-					});
+				var newModel = author$project$Box$documentValidityIncrement(
+					_Utils_update(
+						model,
+						{
+							document: A2(
+								elm$core$List$map,
+								author$project$Box$removeLabel(boxId),
+								model.document),
+							selectedBoxId: 0,
+							status: author$project$Types$Default
+						}));
 				return _Utils_Tuple2(
 					newModel,
 					author$project$State$expandElements(_Utils_Tuple0));
 			case 'AddLabel':
 				var boxId = msg.a;
-				var newModel = _Utils_update(
-					model,
-					{
-						document: A2(
-							elm$core$List$map,
-							author$project$Box$addLabel(boxId),
-							model.document),
-						selectedBoxId: 0,
-						status: author$project$Types$Default
-					});
+				var newModel = author$project$Box$documentValidityIncrement(
+					_Utils_update(
+						model,
+						{
+							document: A2(
+								elm$core$List$map,
+								author$project$Box$addLabel(boxId),
+								model.document),
+							selectedBoxId: 0,
+							status: author$project$Types$Default
+						}));
 				return _Utils_Tuple2(
 					newModel,
 					author$project$State$expandElements(_Utils_Tuple0));
@@ -7032,9 +7034,10 @@ var author$project$State$update = F2(
 				var newModel = function () {
 					switch (machine_name) {
 						case 'add_solid_box':
-							return author$project$Box$isDocumentEmpty(model) ? _Utils_update(
-								model,
-								{document: author$project$Box$documentWithOneBox}) : _Utils_update(
+							return author$project$Box$isDocumentEmpty(model) ? author$project$Box$documentValidityIncrement(
+								_Utils_update(
+									model,
+									{document: author$project$Box$documentWithOneBox})) : _Utils_update(
 								model,
 								{status: author$project$Types$SolidBoxAdditionShowOptions});
 						case 'add_solid_box_before':
@@ -7054,9 +7057,10 @@ var author$project$State$update = F2(
 								model,
 								{status: author$project$Types$SolidBoxAdditionInsideLastChooseBox});
 						case 'add_liquid_box':
-							return author$project$Box$isDocumentEmpty(model) ? _Utils_update(
-								model,
-								{document: author$project$Box$documentWithOneBox}) : _Utils_update(
+							return author$project$Box$isDocumentEmpty(model) ? author$project$Box$documentValidityIncrement(
+								_Utils_update(
+									model,
+									{document: author$project$Box$documentWithOneBox})) : _Utils_update(
 								model,
 								{status: author$project$Types$LiquidBoxAdditionShowOptions});
 						case 'add_liquid_box_before':
