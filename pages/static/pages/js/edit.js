@@ -7635,7 +7635,7 @@ var author$project$LabelProcessor$handleElementEnd = function (element) {
 	}
 };
 var author$project$ModuleHandler$modules = _List_fromArray(
-	['biu']);
+	['biu', 'bulma']);
 var elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -7670,10 +7670,13 @@ var author$project$LabelProcessor$labelElementEndingTagToString = function (labe
 };
 var author$project$LabelProcessor$handleElementStart = function (element) {
 	var _n0 = element.name;
-	if (_n0 === 'biu') {
-		return '<b><i><u>';
-	} else {
-		return '';
+	switch (_n0) {
+		case 'biu':
+			return '<b><i><u>';
+		case 'bulma':
+			return '<link rel=\'stylesheet\' href=\'https://cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css\'/>';
+		default:
+			return '';
 	}
 };
 var author$project$LabelProcessor$labelElementStartingTagToString = function (labelElement) {
