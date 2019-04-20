@@ -3,3 +3,4 @@ __pycache__
 venv
 run.sh
 elm-stuff
+pages/template/pages/cached/*.html
