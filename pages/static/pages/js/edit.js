@@ -6739,16 +6739,24 @@ var author$project$Box$updateBoxContent = F3(
 					content: elm$core$Maybe$Just(content)
 				})) : author$project$Types$Box(box);
 	});
+var elm$core$Basics$neq = _Utils_notEqual;
 var author$project$Box$updateBoxLabel = F3(
 	function (boxId, label, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
+		var trimmedLabel = elm$core$String$trim(label);
+		return _Utils_eq(box.id, boxId) ? (elm$core$String$length(trimmedLabel) ? author$project$Types$Box(
 			_Utils_update(
 				box,
 				{
 					label: elm$core$Maybe$Just(label),
 					labelElements: author$project$LabelProcessor$processLabel(label)
-				})) : author$project$Types$Box(box);
+				})) : author$project$Types$Box(
+			_Utils_update(
+				box,
+				{
+					label: elm$core$Maybe$Nothing,
+					labelElements: author$project$LabelProcessor$processLabel(label)
+				}))) : author$project$Types$Box(box);
 	});
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$State$expandElements = _Platform_outgoingPort(
@@ -7239,7 +7247,6 @@ var author$project$Types$SolidBoxAdditionInsideFirst = function (a) {
 var author$project$Types$SolidBoxAdditionInsideLast = function (a) {
 	return {$: 'SolidBoxAdditionInsideLast', a: a};
 };
-var elm$core$Basics$neq = _Utils_notEqual;
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
@@ -8376,6 +8383,14 @@ var author$project$Menu$generateMenu = function (model) {
 			]));
 };
 var author$project$Types$Import = {$: 'Import'};
+var author$project$Types$LabelUpdate = F2(
+	function (a, b) {
+		return {$: 'LabelUpdate', a: a, b: b};
+	});
+var author$project$Types$LiquidBoxUpdate = F2(
+	function (a, b) {
+		return {$: 'LiquidBoxUpdate', a: a, b: b};
+	});
 var author$project$Types$ResetExport = {$: 'ResetExport'};
 var author$project$Types$ResetImport = {$: 'ResetImport'};
 var author$project$Types$SetImport = function (a) {
@@ -8635,6 +8650,13 @@ var author$project$View$view = function (model) {
 					[
 						A2(
 						elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm$html$Html$text('Press Escape to get back. Any change is applied immediately.')
+							])),
+						A2(
+						elm$html$Html$div,
 						_List_fromArray(
 							[
 								elm$html$Html$Attributes$class('field')
@@ -8681,7 +8703,14 @@ var author$project$View$view = function (model) {
 													} else {
 														return 'Not found';
 													}
-												}())
+												}()),
+												A2(
+												elm$html$Html$Events$on,
+												'keyup',
+												A2(
+													elm$json$Json$Decode$map,
+													author$project$Types$LabelUpdate(model.selectedBoxId),
+													elm$html$Html$Events$targetValue))
 											]),
 										_List_Nil)
 									]))
@@ -8716,7 +8745,15 @@ var author$project$View$view = function (model) {
 										elm$html$Html$textarea,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$class('input')
+												elm$html$Html$Attributes$class('textarea'),
+												A2(elm$html$Html$Attributes$attribute, 'rows', '10'),
+												A2(
+												elm$html$Html$Events$on,
+												'keyup',
+												A2(
+													elm$json$Json$Decode$map,
+													author$project$Types$LiquidBoxUpdate(model.selectedBoxId),
+													elm$html$Html$Events$targetValue))
 											]),
 										_List_fromArray(
 											[

@@ -790,12 +790,24 @@ insertBoxInsideLast boxId type_ model =
 
 updateBoxLabel : Int -> String -> Box -> Box
 updateBoxLabel boxId label (Box box) =
+    let
+        trimmedLabel =
+            String.trim label
+
+    in
     if box.id == boxId then
-        Box
-            { box
-                | label = Just label
-                , labelElements = processLabel label
-            }
+        if (String.length trimmedLabel) /= 0 then
+            Box
+                { box
+                    | label = Just label
+                    , labelElements = processLabel label
+                }
+        else
+            Box
+                { box
+                    | label = Nothing
+                    , labelElements = processLabel label
+                }
 
     else
         Box box

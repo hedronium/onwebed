@@ -94,21 +94,22 @@ body {
 	border-radius: 3px;
 }
 
-.solid_box > .box-label:focus {
+/*.solid_box > .box-label:focus {
 	background: #4700C4;
-}
+}*/
 
 .liquid_box > .box-label {
-	background: pink;
+	background: #8589e5;
 	margin: 0em 0.3em 0em 0em;
 	padding: 0em 0.4em 0em 0.4em;
 	border-radius: 3px;
 	vertical-align: top;
+	color: white;
 }
 
-.liquid_box > .box-label:focus {
+/*.liquid_box > .box-label:focus {
 	background: #FF97D9;
-}
+}*/
 
 .box-label {
 	display: inline-block;

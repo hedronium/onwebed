@@ -146,6 +146,9 @@ view model =
 
              else
                 [ div
+                    []
+                    [ text "Press Escape to get back. Any change is applied immediately." ]
+                , div
                     [ class "field" ]
                     [ div
                         [ class "label" ]
@@ -168,6 +171,12 @@ view model =
                                     Nothing ->
                                         "Not found"
                                 )
+                            , on
+                                "keyup"
+                                (Decode.map
+                                    (LabelUpdate model.selectedBoxId)
+                                    targetValue
+                                )
                             ]
                             []
                         ]
@@ -180,7 +189,14 @@ view model =
                     , div
                         [ class "control" ]
                         [ textarea
-                            [ class "input"
+                            [ class "textarea"
+                            , attribute "rows" "10"
+                            , on
+                                "keyup"
+                                (Decode.map
+                                    (LiquidBoxUpdate model.selectedBoxId)
+                                    targetValue
+                                )
                             ]
                             [ text
                                 (case boxById model.selectedBoxId model of

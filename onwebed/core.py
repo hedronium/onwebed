@@ -54,7 +54,7 @@ class CoreSingleton:
 
         page_names = []
         for page_tag in page_tags:
-            page_names.append(page_name(page_tag))
+            page_names.append(self.page_name(page_tag))
 
         pages = Page.objects.filter(name__in = page_names)
 

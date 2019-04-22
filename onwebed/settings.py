@@ -79,12 +79,8 @@ WSGI_APPLICATION = 'onwebed.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': 'onwebed',
-        'USER': 'root',
-        'PASSWORD': 'towni0502',
-        'HOST': 'database.test',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'onwebed_db',
     }
 }
 
