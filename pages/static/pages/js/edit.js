@@ -7145,19 +7145,9 @@ var author$project$State$update = F2(
 					author$project$State$expandElements(_Utils_Tuple0));
 		}
 	});
-var author$project$Types$LabelUpdate = F2(
-	function (a, b) {
-		return {$: 'LabelUpdate', a: a, b: b};
-	});
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -7166,75 +7156,24 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
 var author$project$Box$labelToHtml = F2(
 	function (content, _n0) {
 		var labelOwner = _n0.a;
 		return A2(
-			elm$html$Html$input,
+			elm$html$Html$span,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('box-label'),
-					A2(elm$html$Html$Attributes$attribute, 'type', 'text'),
-					A2(
-					elm$html$Html$Events$on,
-					'blur',
-					A2(
-						elm$json$Json$Decode$map,
-						author$project$Types$LabelUpdate(labelOwner.id),
-						elm$html$Html$Events$targetValue)),
-					A2(elm$html$Html$Attributes$attribute, 'value', content)
-				]),
-			_List_Nil);
-	});
-var author$project$Types$LiquidBoxUpdate = F2(
-	function (a, b) {
-		return {$: 'LiquidBoxUpdate', a: a, b: b};
-	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$textarea = _VirtualDom_node('textarea');
-var author$project$Box$liquidBoxToHtml = F2(
-	function (content, _n0) {
-		var liquidBox = _n0.a;
-		return A2(
-			elm$html$Html$textarea,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$Events$on,
-					'blur',
-					A2(
-						elm$json$Json$Decode$map,
-						author$project$Types$LiquidBoxUpdate(liquidBox.id),
-						elm$html$Html$Events$targetValue)),
-					elm$html$Html$Attributes$class('content'),
-					A2(elm$html$Html$Attributes$attribute, 'rows', '1'),
-					A2(elm$html$Html$Attributes$attribute, 'cols', '1')
+					elm$html$Html$Attributes$class('box-label')
 				]),
 			_List_fromArray(
 				[
 					elm$html$Html$text(content)
 				]));
+	});
+var author$project$Box$liquidBoxToHtml = F2(
+	function (content, _n0) {
+		var liquidBox = _n0.a;
+		return elm$html$Html$text(content);
 	});
 var author$project$Box$processBoxType = function (boxTypeValue) {
 	if (boxTypeValue.$ === 'SolidBox') {
@@ -7306,6 +7245,7 @@ var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -7758,6 +7698,10 @@ var author$project$Box$escapeString = function (string) {
 	var encodedStringLength = elm$core$String$length(encodedString);
 	return A3(elm$core$String$slice, 1, encodedStringLength - 1, encodedString);
 };
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
 var author$project$Box$innerHtmlDecoder = A2(
 	elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -7766,8 +7710,19 @@ var author$project$Box$innerHtmlDecoder = A2(
 var author$project$Types$MenuItemClicked = function (a) {
 	return {$: 'MenuItemClicked', a: a};
 };
+var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
 var elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -7810,7 +7765,14 @@ var elm$html$Html$b = _VirtualDom_node('b');
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$i = _VirtualDom_node('i');
 var elm$html$Html$nav = _VirtualDom_node('nav');
-var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -8420,6 +8382,12 @@ var author$project$Types$SetImport = function (a) {
 	return {$: 'SetImport', a: a};
 };
 var elm$html$Html$form = _VirtualDom_node('form');
+var elm$html$Html$textarea = _VirtualDom_node('textarea');
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
 var author$project$View$view = function (model) {
 	var import_modal = model.import_ ? _List_fromArray(
 		[

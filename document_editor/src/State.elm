@@ -37,9 +37,6 @@ initialModel flags =
             , menuItem "edit box" "edit_box"
             , menuItem "duplicate box" "duplicate_box"
             , menuItem "move box" "move_box"
-
-            --, menuItem "+ label" "add_label"
-            --, menuItem "- label" "remove_label"
             , menuItem "- box" "remove_box"
             , menuItem "import" "import"
             , menuItem "export" "export"

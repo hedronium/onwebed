@@ -283,20 +283,7 @@ boxSetLabel boxId maybeLabel model =
 
 liquidBoxToHtml : String -> Box -> Html Msg
 liquidBoxToHtml content (Box liquidBox) =
-    textarea
-        [ on
-            "blur"
-            (Decode.map
-                (LiquidBoxUpdate liquidBox.id)
-                targetValue
-            )
-
-        --, on "input" (Decode.map ExpandTextArea (Decode.succeed liquidBox.id))
-        , class "content"
-        , attribute "rows" "1"
-        , attribute "cols" "1"
-        ]
-        [ text content ]
+    text content
 
 
 
@@ -318,20 +305,10 @@ labelToHtml content (Box labelOwner) =
     --        ]
     --        [ text content ]
     --    ]
-    input
+    span
         [ class "box-label"
-        , attribute "type" "text"
-        , on
-            "blur"
-            (Decode.map
-                (LabelUpdate labelOwner.id)
-                targetValue
-            )
-
-        --, on "input" (Decode.map ExpandInput (Decode.succeed labelOwner.id))
-        , attribute "value" content
         ]
-        []
+        [ text content ]
 
 
 indexOfBoxByIdStep : Int -> List Box -> Int -> Maybe Int
