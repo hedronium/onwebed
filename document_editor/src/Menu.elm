@@ -112,6 +112,12 @@ generateMenu model =
                     [ text "Choose box whose label you want to be removed." ]
                 ]
 
+            else if model.status == EditBoxChooseBox then
+                [ div
+                    [ class "column" ]
+                    [ text "Choose box which you want to edit." ]
+                ]
+
             else if model.status == AddLabelChooseBox then
                 [ div
                     [ class "column" ]

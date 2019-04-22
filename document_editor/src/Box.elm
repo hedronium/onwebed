@@ -163,6 +163,11 @@ boxToHtml model (Box boxToBeConvertedToHtml) =
                 , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
+            else if model.status == EditBoxChooseBox then
+                [ stopPropagationOn "click" (Decode.succeed ( EditBoxSelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                ]
+
             else if model.status == DuplicateBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxSelectBox boxToBeConvertedToHtml.id, True ))
                 , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))

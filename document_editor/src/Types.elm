@@ -91,6 +91,7 @@ type Msg
     | DuplicateBoxInsideLast Int
     | DuplicateBoxAfter Int
     | MoveBoxSelectBox Int
+    | EditBoxSelectBox Int
 
 
 type KeyInteractionType
@@ -142,6 +143,8 @@ type DocumentStatus
     | DuplicateBoxInsideLastChooseBox
     | DuplicateBoxAfterChooseBox
     | MoveBoxChooseBox
+    | EditBoxChooseBox
+    | EditBox
 
 
 type alias MenuItem =

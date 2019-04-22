@@ -141,7 +141,65 @@ view model =
             [ id "playground"
             , class "container"
             ]
-            (boxesToHtml (boxesByParentId 0 model) model)
+            (if model.status /= EditBox then
+                boxesToHtml (boxesByParentId 0 model) model
+
+             else
+                [ div
+                    [ class "field" ]
+                    [ div
+                        [ class "label" ]
+                        [ text "Label: " ]
+                    , div
+                        [ class "control" ]
+                        [ input
+                            [ class "input"
+                            , attribute
+                                "value"
+                                (case boxById model.selectedBoxId model of
+                                    Just (Box boxBeingEdited) ->
+                                        case boxBeingEdited.label of
+                                            Just label ->
+                                                label
+
+                                            Nothing ->
+                                                ""
+
+                                    Nothing ->
+                                        "Not found"
+                                )
+                            ]
+                            []
+                        ]
+                    ]
+                , div
+                    [ class "field" ]
+                    [ div
+                        [ class "label" ]
+                        [ text "Content: " ]
+                    , div
+                        [ class "control" ]
+                        [ textarea
+                            [ class "input"
+                            ]
+                            [ text
+                                (case boxById model.selectedBoxId model of
+                                    Just (Box boxBeingEdited) ->
+                                        case boxBeingEdited.content of
+                                            Just content ->
+                                                content
+
+                                            Nothing ->
+                                                ""
+
+                                    Nothing ->
+                                        "Not found"
+                                )
+                            ]
+                        ]
+                    ]
+                ]
+            )
         , input
             [ id "document_validity"
             , attribute "type" "hidden"

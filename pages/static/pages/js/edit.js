@@ -5189,10 +5189,9 @@ var author$project$State$initialModel = function (flags) {
 				[
 					A2(author$project$Menu$menuItem, '+ solid box', 'add_solid_box'),
 					A2(author$project$Menu$menuItem, '+ liquid box', 'add_liquid_box'),
+					A2(author$project$Menu$menuItem, 'edit box', 'edit_box'),
 					A2(author$project$Menu$menuItem, 'duplicate box', 'duplicate_box'),
 					A2(author$project$Menu$menuItem, 'move box', 'move_box'),
-					A2(author$project$Menu$menuItem, '+ label', 'add_label'),
-					A2(author$project$Menu$menuItem, '- label', 'remove_label'),
 					A2(author$project$Menu$menuItem, '- box', 'remove_box'),
 					A2(author$project$Menu$menuItem, 'import', 'import'),
 					A2(author$project$Menu$menuItem, 'export', 'export')
@@ -6764,6 +6763,8 @@ var author$project$Types$DuplicateBoxChooseBox = {$: 'DuplicateBoxChooseBox'};
 var author$project$Types$DuplicateBoxInsideFirstChooseBox = {$: 'DuplicateBoxInsideFirstChooseBox'};
 var author$project$Types$DuplicateBoxInsideLastChooseBox = {$: 'DuplicateBoxInsideLastChooseBox'};
 var author$project$Types$DuplicateBoxShowOptions = {$: 'DuplicateBoxShowOptions'};
+var author$project$Types$EditBox = {$: 'EditBox'};
+var author$project$Types$EditBoxChooseBox = {$: 'EditBoxChooseBox'};
 var author$project$Types$LiquidBoxAdditionAfterChooseBox = {$: 'LiquidBoxAdditionAfterChooseBox'};
 var author$project$Types$LiquidBoxAdditionBeforeChooseBox = {$: 'LiquidBoxAdditionBeforeChooseBox'};
 var author$project$Types$LiquidBoxAdditionInsideFirstChooseBox = {$: 'LiquidBoxAdditionInsideFirstChooseBox'};
@@ -6831,6 +6832,12 @@ var author$project$State$update = F2(
 				var newModel = _Utils_update(
 					model,
 					{selectedBoxId: 0, status: author$project$Types$Default});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'EditBoxSelectBox':
+				var moveBoxId = msg.a;
+				var newModel = _Utils_update(
+					model,
+					{status: author$project$Types$EditBox});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'Expand':
 				var newModel = author$project$Box$documentValidityIncrement(model);
@@ -7125,6 +7132,10 @@ var author$project$State$update = F2(
 							return _Utils_update(
 								model,
 								{status: author$project$Types$MoveBoxChooseBox});
+						case 'edit_box':
+							return _Utils_update(
+								model,
+								{status: author$project$Types$EditBoxChooseBox});
 						default:
 							return model;
 					}
@@ -7249,6 +7260,9 @@ var author$project$Types$DuplicateBoxInsideLast = function (a) {
 };
 var author$project$Types$DuplicateBoxSelectBox = function (a) {
 	return {$: 'DuplicateBoxSelectBox', a: a};
+};
+var author$project$Types$EditBoxSelectBox = function (a) {
+	return {$: 'EditBoxSelectBox', a: a};
 };
 var author$project$Types$LiquidBoxAdditionAfter = function (a) {
 	return {$: 'LiquidBoxAdditionAfter', a: a};
@@ -7510,6 +7524,22 @@ var author$project$Box$boxToHtml = F2(
 					_Utils_Tuple2(
 						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
+			]) : (_Utils_eq(model.status, author$project$Types$EditBoxChooseBox) ? _List_fromArray(
+			[
+				A2(
+				elm$html$Html$Events$stopPropagationOn,
+				'click',
+				elm$json$Json$Decode$succeed(
+					_Utils_Tuple2(
+						author$project$Types$EditBoxSelectBox(boxToBeConvertedToHtml.id),
+						true))),
+				A2(
+				elm$html$Html$Events$stopPropagationOn,
+				'mouseover',
+				elm$json$Json$Decode$succeed(
+					_Utils_Tuple2(
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
+						true)))
 			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox) ? _List_fromArray(
 			[
 				A2(
@@ -7606,7 +7636,7 @@ var author$project$Box$boxToHtml = F2(
 					_Utils_Tuple2(
 						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : _List_Nil))))))))))))))));
+			]) : _List_Nil)))))))))))))))));
 		return A2(
 			elm$html$Html$div,
 			_Utils_ap(
@@ -8175,7 +8205,7 @@ var author$project$Menu$generateMenu = function (model) {
 															]))
 													]);
 											} else {
-												if (_Utils_eq(model.status, author$project$Types$AddLabelChooseBox)) {
+												if (_Utils_eq(model.status, author$project$Types$EditBoxChooseBox)) {
 													return _List_fromArray(
 														[
 															A2(
@@ -8186,11 +8216,11 @@ var author$project$Menu$generateMenu = function (model) {
 																]),
 															_List_fromArray(
 																[
-																	elm$html$Html$text('Choose box you want to add the new label in.')
+																	elm$html$Html$text('Choose box which you want to edit.')
 																]))
 														]);
 												} else {
-													if (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox)) {
+													if (_Utils_eq(model.status, author$project$Types$AddLabelChooseBox)) {
 														return _List_fromArray(
 															[
 																A2(
@@ -8201,11 +8231,11 @@ var author$project$Menu$generateMenu = function (model) {
 																	]),
 																_List_fromArray(
 																	[
-																		elm$html$Html$text('Choose box which you want to be removed.')
+																		elm$html$Html$text('Choose box you want to add the new label in.')
 																	]))
 															]);
 													} else {
-														if (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox)) {
+														if (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox)) {
 															return _List_fromArray(
 																[
 																	A2(
@@ -8216,11 +8246,11 @@ var author$project$Menu$generateMenu = function (model) {
 																		]),
 																	_List_fromArray(
 																		[
-																			elm$html$Html$text('Choose box which you want to duplicate.')
+																			elm$html$Html$text('Choose box which you want to be removed.')
 																		]))
 																]);
 														} else {
-															if (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox)) {
+															if (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox)) {
 																return _List_fromArray(
 																	[
 																		A2(
@@ -8231,11 +8261,11 @@ var author$project$Menu$generateMenu = function (model) {
 																			]),
 																		_List_fromArray(
 																			[
-																				elm$html$Html$text('Choose box before which you want to place the duplicated box.')
+																				elm$html$Html$text('Choose box which you want to duplicate.')
 																			]))
 																	]);
 															} else {
-																if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox)) {
+																if (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox)) {
 																	return _List_fromArray(
 																		[
 																			A2(
@@ -8246,11 +8276,11 @@ var author$project$Menu$generateMenu = function (model) {
 																				]),
 																			_List_fromArray(
 																				[
-																					elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
+																					elm$html$Html$text('Choose box before which you want to place the duplicated box.')
 																				]))
 																		]);
 																} else {
-																	if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox)) {
+																	if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox)) {
 																		return _List_fromArray(
 																			[
 																				A2(
@@ -8261,11 +8291,11 @@ var author$project$Menu$generateMenu = function (model) {
 																					]),
 																				_List_fromArray(
 																					[
-																						elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
+																						elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
 																					]))
 																			]);
 																	} else {
-																		if (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox)) {
+																		if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox)) {
 																			return _List_fromArray(
 																				[
 																					A2(
@@ -8276,11 +8306,11 @@ var author$project$Menu$generateMenu = function (model) {
 																						]),
 																					_List_fromArray(
 																						[
-																							elm$html$Html$text('Choose box after which you want to place the duplicated box.')
+																							elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
 																						]))
 																				]);
 																		} else {
-																			if (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox)) {
+																			if (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox)) {
 																				return _List_fromArray(
 																					[
 																						A2(
@@ -8291,13 +8321,11 @@ var author$project$Menu$generateMenu = function (model) {
 																							]),
 																						_List_fromArray(
 																							[
-																								elm$html$Html$text('Choose box which you want to move.')
+																								elm$html$Html$text('Choose box after which you want to place the duplicated box.')
 																							]))
 																					]);
 																			} else {
-																				var _n0 = model.menuMessage;
-																				if (_n0.$ === 'Just') {
-																					var justMessage = _n0.a;
+																				if (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox)) {
 																					return _List_fromArray(
 																						[
 																							A2(
@@ -8308,11 +8336,29 @@ var author$project$Menu$generateMenu = function (model) {
 																								]),
 																							_List_fromArray(
 																								[
-																									elm$html$Html$text(justMessage)
+																									elm$html$Html$text('Choose box which you want to move.')
 																								]))
 																						]);
 																				} else {
-																					return author$project$Menu$menuItemsToHtml(model.menu);
+																					var _n0 = model.menuMessage;
+																					if (_n0.$ === 'Just') {
+																						var justMessage = _n0.a;
+																						return _List_fromArray(
+																							[
+																								A2(
+																								elm$html$Html$div,
+																								_List_fromArray(
+																									[
+																										elm$html$Html$Attributes$class('column')
+																									]),
+																								_List_fromArray(
+																									[
+																										elm$html$Html$text(justMessage)
+																									]))
+																							]);
+																					} else {
+																						return author$project$Menu$menuItemsToHtml(model.menu);
+																					}
 																				}
 																			}
 																		}
@@ -8614,10 +8660,118 @@ var author$project$View$view = function (model) {
 						elm$html$Html$Attributes$id('playground'),
 						elm$html$Html$Attributes$class('container')
 					]),
-				A2(
+				(!_Utils_eq(model.status, author$project$Types$EditBox)) ? A2(
 					author$project$Box$boxesToHtml,
 					A2(author$project$Box$boxesByParentId, 0, model),
-					model)),
+					model) : _List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('field')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('label')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Label: ')
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('control')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$input,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('input'),
+												A2(
+												elm$html$Html$Attributes$attribute,
+												'value',
+												function () {
+													var _n0 = A2(author$project$Box$boxById, model.selectedBoxId, model);
+													if (_n0.$ === 'Just') {
+														var boxBeingEdited = _n0.a.a;
+														var _n1 = boxBeingEdited.label;
+														if (_n1.$ === 'Just') {
+															var label = _n1.a;
+															return label;
+														} else {
+															return '';
+														}
+													} else {
+														return 'Not found';
+													}
+												}())
+											]),
+										_List_Nil)
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('field')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('label')
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text('Content: ')
+									])),
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('control')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$textarea,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$class('input')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text(
+												function () {
+													var _n2 = A2(author$project$Box$boxById, model.selectedBoxId, model);
+													if (_n2.$ === 'Just') {
+														var boxBeingEdited = _n2.a.a;
+														var _n3 = boxBeingEdited.content;
+														if (_n3.$ === 'Just') {
+															var content = _n3.a;
+															return content;
+														} else {
+															return '';
+														}
+													} else {
+														return 'Not found';
+													}
+												}())
+											]))
+									]))
+							]))
+					])),
 				A2(
 				elm$html$Html$input,
 				_List_fromArray(

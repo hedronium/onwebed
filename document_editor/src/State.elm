@@ -34,10 +34,12 @@ initialModel flags =
       , menu =
             [ menuItem "+ solid box" "add_solid_box"
             , menuItem "+ liquid box" "add_liquid_box"
+            , menuItem "edit box" "edit_box"
             , menuItem "duplicate box" "duplicate_box"
             , menuItem "move box" "move_box"
-            , menuItem "+ label" "add_label"
-            , menuItem "- label" "remove_label"
+
+            --, menuItem "+ label" "add_label"
+            --, menuItem "- label" "remove_label"
             , menuItem "- box" "remove_box"
             , menuItem "import" "import"
             , menuItem "export" "export"
@@ -129,6 +131,15 @@ update msg model =
                     { model
                         | status = Default
                         , selectedBoxId = 0
+                    }
+            in
+            ( newModel, Cmd.none )
+
+        EditBoxSelectBox moveBoxId ->
+            let
+                newModel =
+                    { model
+                        | status = EditBox
                     }
             in
             ( newModel, Cmd.none )
@@ -525,6 +536,11 @@ update msg model =
                         "move_box" ->
                             { model
                                 | status = MoveBoxChooseBox
+                            }
+
+                        "edit_box" ->
+                            { model
+                                | status = EditBoxChooseBox
                             }
 
                         _ ->
