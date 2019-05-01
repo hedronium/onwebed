@@ -1,11 +1,13 @@
 module View exposing (view)
 
 import Box exposing (..)
+import BoxEditor exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Decode exposing (..)
 import Menu exposing (..)
+import Odl exposing (..)
 import Types exposing (..)
 
 
@@ -93,6 +95,70 @@ view model =
             else
                 []
 
+        odl_modal =
+            if model.status == ViewOdl then
+                --let
+                --    children =
+                --        boxesByParentId 0 model
+                --    boxesToOdlStrings =
+                --        List.map (boxToOdl model 0) children
+                --    textareaValue =
+                --        List.foldr
+                --            (++)
+                --            ""
+                --            (List.intersperse "\n\n" boxesToOdlStrings)
+                --in
+                [ div
+                    [ class "modal is-active"
+                    , id "odl"
+                    ]
+                    [ div
+                        [ class "modal-background"
+                        , Html.Events.onClick ResetOdlModal
+                        ]
+                        []
+                    , div
+                        [ class "modal-content" ]
+                        [ div
+                            [ class "box" ]
+                            [ div
+                                [ class "field" ]
+                                [ div
+                                    [ class "control" ]
+                                    [ textarea
+                                        [ class "textarea"
+                                        , attribute "rows" "20"
+                                        , on "blur" (Decode.map SetOdlString targetValue)
+                                        ]
+                                        [ text model.odlString ]
+                                    ]
+                                ]
+                            , div
+                                [ class "field" ]
+                                [ div
+                                    [ class "control" ]
+                                    [ input
+                                        [ Html.Attributes.value "Apply ODL"
+                                        , Html.Events.onClick ApplyOdl
+                                        , class "button is-success"
+                                        ]
+                                        []
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , button
+                        [ class "modal-close is-large"
+                        , attribute "aria-label" "close"
+                        , Html.Events.onClick ResetOdlModal
+                        ]
+                        []
+                    ]
+                ]
+
+            else
+                []
+
         form_content =
             [ input
                 [ attribute "type" "hidden"
@@ -135,6 +201,7 @@ view model =
             ([ generateMenu model ]
                 ++ export_modal
                 ++ import_modal
+                ++ odl_modal
                 ++ form_content
             )
         , div
@@ -145,76 +212,16 @@ view model =
                 boxesToHtml (boxesByParentId 0 model) model
 
              else
-                [ div
-                    []
-                    [ text "Press Escape to get back. Any change is applied immediately." ]
-                , div
-                    [ class "field" ]
-                    [ div
-                        [ class "label" ]
-                        [ text "Label: " ]
-                    , div
-                        [ class "control" ]
-                        [ input
-                            [ class "input"
-                            , attribute
-                                "value"
-                                (case boxById model.selectedBoxId model of
-                                    Just (Box boxBeingEdited) ->
-                                        case boxBeingEdited.label of
-                                            Just label ->
-                                                label
+                let
+                    maybeBox =
+                        boxById model.selectedBoxId model
+                in
+                case maybeBox of
+                    Just (Box box) ->
+                        boxToBoxEditorHtml (Box box) model
 
-                                            Nothing ->
-                                                ""
-
-                                    Nothing ->
-                                        "Not found"
-                                )
-                            , on
-                                "keyup"
-                                (Decode.map
-                                    (LabelUpdate model.selectedBoxId)
-                                    targetValue
-                                )
-                            ]
-                            []
-                        ]
-                    ]
-                , div
-                    [ class "field" ]
-                    [ div
-                        [ class "label" ]
-                        [ text "Content: " ]
-                    , div
-                        [ class "control" ]
-                        [ textarea
-                            [ class "textarea"
-                            , attribute "rows" "10"
-                            , on
-                                "keyup"
-                                (Decode.map
-                                    (LiquidBoxUpdate model.selectedBoxId)
-                                    targetValue
-                                )
-                            ]
-                            [ text
-                                (case boxById model.selectedBoxId model of
-                                    Just (Box boxBeingEdited) ->
-                                        case boxBeingEdited.content of
-                                            Just content ->
-                                                content
-
-                                            Nothing ->
-                                                ""
-
-                                    Nothing ->
-                                        "Not found"
-                                )
-                            ]
-                        ]
-                    ]
-                ]
+                    Nothing ->
+                        [ text "The box doesn't exist!" ]
             )
         , input
             [ id "document_validity"

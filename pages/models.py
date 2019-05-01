@@ -10,3 +10,6 @@ class Page(models.Model):
 	is_cached = models.BooleanField(default = False)
 	updated_at = models.DateTimeField(auto_now = True)
 	created_at = models.DateTimeField(auto_now_add = True)
+
+	def __str__(self):
+		return self.name + " (" + self.title + ")"

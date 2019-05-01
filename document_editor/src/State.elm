@@ -4,6 +4,7 @@ import Box exposing (..)
 import Browser.Events exposing (..)
 import Json.Decode as Decode exposing (..)
 import Menu exposing (..)
+import Odl exposing (..)
 import Rest exposing (..)
 import Types exposing (..)
 
@@ -40,6 +41,7 @@ initialModel flags =
             , menuItem "- box" "remove_box"
             , menuItem "import" "import"
             , menuItem "export" "export"
+            , menuItem "view ODL" "view_odl"
             ]
       , menuMessage = Nothing
       , selectedBoxId = 0
@@ -47,6 +49,7 @@ initialModel flags =
       , pageName = flags.pageName
       , pageTitle = flags.pageTitle
       , import_ = False
+      , odlString = ""
       , importString = ""
       , csrfToken = flags.csrfToken
       , documentValidity = 0
@@ -165,7 +168,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | document = boxSetLabel boxId newLabel model
+                        | document = boxSetLabel boxId newLabel model.document
                     }
             in
             ( newModel
@@ -412,6 +415,73 @@ update msg model =
             , Cmd.none
             )
 
+        ResetOdlModal ->
+            let
+                newModel =
+                    { model
+                        | odlString = ""
+                        , status = Default
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        SetOdlString odlString ->
+            let
+                newModel =
+                    { model
+                        | odlString = odlString
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ApplyOdl ->
+            let
+                odlParserModel =
+                    { boxes = []
+                    , status = Unresolved
+                    , basket = ""
+                    , parent = 0
+                    , currentBoxes = []
+                    , level = 0
+                    }
+
+                newModel =
+                    { model
+                        | document = odlToBoxes model.odlString odlParserModel
+                        , status = Default
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ViewOdlModal ->
+            let
+                children =
+                    boxesByParentId 0 model
+
+                boxesToOdlStrings =
+                    List.map (boxToOdl model 0) children
+
+                odlString =
+                    List.foldr
+                        (++)
+                        ""
+                        (List.intersperse "\n\n" boxesToOdlStrings)
+
+                newModel =
+                    { model
+                        | odlString = odlString
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
         MenuItemClicked machine_name ->
             let
                 newModel =
@@ -538,6 +608,25 @@ update msg model =
                         "edit_box" ->
                             { model
                                 | status = EditBoxChooseBox
+                            }
+
+                        "view_odl" ->
+                            let
+                                children =
+                                    boxesByParentId 0 model
+
+                                boxesToOdlStrings =
+                                    List.map (boxToOdl model 0) children
+
+                                odlString =
+                                    List.foldr
+                                        (++)
+                                        ""
+                                        (List.intersperse "\n\n" boxesToOdlStrings)
+                            in
+                            { model
+                                | status = ViewOdl
+                                , odlString = odlString
                             }
 
                         _ ->

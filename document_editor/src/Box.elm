@@ -252,8 +252,8 @@ boxesByParentId parentId model =
 -- set label of box
 
 
-boxSetLabel : Int -> Maybe String -> Model -> List Box
-boxSetLabel boxId maybeLabel model =
+boxSetLabel : Int -> Maybe String -> List Box -> List Box
+boxSetLabel boxId maybeLabel document =
     let
         label =
             case maybeLabel of
@@ -274,7 +274,7 @@ boxSetLabel boxId maybeLabel model =
             else
                 Box box
         )
-        model.document
+        document
 
 
 
@@ -793,15 +793,15 @@ updateBoxLabel boxId label (Box box) =
     let
         trimmedLabel =
             String.trim label
-
     in
     if box.id == boxId then
-        if (String.length trimmedLabel) /= 0 then
+        if String.length trimmedLabel /= 0 then
             Box
                 { box
                     | label = Just label
                     , labelElements = processLabel label
                 }
+
         else
             Box
                 { box
