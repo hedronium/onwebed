@@ -185,14 +185,15 @@ view model =
             [ attribute "method" "POST"
             , attribute "action" ""
             ]
-            [ generateMenu model ]
+            ([ generateMenu model ]
+                ++ form_content
+            )
         , div
             []
             ([]
                 ++ export_modal
                 ++ import_modal
                 ++ odl_modal
-                ++ form_content
             )
         , div
             [ id "playground"

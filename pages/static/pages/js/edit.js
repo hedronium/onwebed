@@ -5191,7 +5191,6 @@ var author$project$State$initialModel = function (flags) {
 					A2(author$project$Menu$menuItem, '+ liquid box', 'add_liquid_box'),
 					A2(author$project$Menu$menuItem, 'edit box', 'edit_box'),
 					A2(author$project$Menu$menuItem, 'duplicate box', 'duplicate_box'),
-					A2(author$project$Menu$menuItem, 'move box', 'move_box'),
 					A2(author$project$Menu$menuItem, '- box', 'remove_box'),
 					A2(author$project$Menu$menuItem, 'import', 'import'),
 					A2(author$project$Menu$menuItem, 'export', 'export'),
@@ -7282,13 +7281,35 @@ var author$project$State$update = F2(
 				var keyInteractionType = msg.a;
 				var key = msg.b;
 				var shiftPressed = msg.c;
-				var newModel = ((key === 'S') && (shiftPressed && _Utils_eq(model.status, author$project$Types$Default))) ? _Utils_update(
+				var newModel = _Utils_eq(model.status, author$project$Types$Default) ? ((key === 's') ? _Utils_update(
 					model,
-					{status: author$project$Types$SolidBoxAdditionShowOptions}) : (((key === 'a') && _Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions)) ? _Utils_update(
+					{status: author$project$Types$SolidBoxAdditionShowOptions}) : ((key === 'l') ? _Utils_update(
 					model,
-					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'Escape') ? _Utils_update(
+					{status: author$project$Types$LiquidBoxAdditionShowOptions}) : ((key === 'e') ? _Utils_update(
 					model,
-					{_export: '', import_: false, selectedBoxId: 0, status: author$project$Types$Default}) : model));
+					{status: author$project$Types$EditBoxChooseBox}) : ((key === 'r') ? _Utils_update(
+					model,
+					{status: author$project$Types$RemoveBoxChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$DuplicateBoxChooseBox}) : model))))) : (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions) ? ((key === 'a') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionAfterChooseBox}) : ((key === 'w') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionInsideFirstChooseBox}) : ((key === 's') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionInsideLastChooseBox}) : model)))) : (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionShowOptions) ? ((key === 'a') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionBeforeChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionAfterChooseBox}) : ((key === 'w') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionInsideFirstChooseBox}) : ((key === 's') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionInsideLastChooseBox}) : model)))) : ((key === 'Escape') ? _Utils_update(
+					model,
+					{_export: '', import_: false, selectedBoxId: 0, status: author$project$Types$Default}) : model)));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'SolidBoxAdditionBefore':
 				var addBeforeBoxId = msg.a;
@@ -9341,10 +9362,12 @@ var author$project$View$view = function (model) {
 						A2(elm$html$Html$Attributes$attribute, 'method', 'POST'),
 						A2(elm$html$Html$Attributes$attribute, 'action', '')
 					]),
-				_List_fromArray(
-					[
-						author$project$Menu$generateMenu(model)
-					])),
+				_Utils_ap(
+					_List_fromArray(
+						[
+							author$project$Menu$generateMenu(model)
+						]),
+					form_content)),
 				A2(
 				elm$html$Html$div,
 				_List_Nil,
@@ -9352,9 +9375,7 @@ var author$project$View$view = function (model) {
 					_List_Nil,
 					_Utils_ap(
 						export_modal,
-						_Utils_ap(
-							import_modal,
-							_Utils_ap(odl_modal, form_content))))),
+						_Utils_ap(import_modal, odl_modal)))),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(

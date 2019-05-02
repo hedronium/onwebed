@@ -37,7 +37,8 @@ initialModel flags =
             , menuItem "+ liquid box" "add_liquid_box"
             , menuItem "edit box" "edit_box"
             , menuItem "duplicate box" "duplicate_box"
-            , menuItem "move box" "move_box"
+
+            --, menuItem "move box" "move_box"
             , menuItem "- box" "remove_box"
             , menuItem "import" "import"
             , menuItem "export" "export"
@@ -178,15 +179,82 @@ update msg model =
         KeyInteraction keyInteractionType key shiftPressed ->
             let
                 newModel =
-                    if key == "S" && shiftPressed && model.status == Default then
-                        { model
-                            | status = SolidBoxAdditionShowOptions
-                        }
+                    if model.status == Default then
+                        if key == "s" then
+                            { model
+                                | status = SolidBoxAdditionShowOptions
+                            }
 
-                    else if key == "a" && model.status == SolidBoxAdditionShowOptions then
-                        { model
-                            | status = SolidBoxAdditionBeforeChooseBox
-                        }
+                        else if key == "l" then
+                            { model
+                                | status = LiquidBoxAdditionShowOptions
+                            }
+
+                        else if key == "e" then
+                            { model
+                                | status = EditBoxChooseBox
+                            }
+
+                        else if key == "r" then
+                            { model
+                                | status = RemoveBoxChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = DuplicateBoxChooseBox
+                            }
+
+                        else
+                            model
+
+                    else if model.status == SolidBoxAdditionShowOptions then
+                        if key == "a" then
+                            { model
+                                | status = SolidBoxAdditionBeforeChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = SolidBoxAdditionAfterChooseBox
+                            }
+
+                        else if key == "w" then
+                            { model
+                                | status = SolidBoxAdditionInsideFirstChooseBox
+                            }
+
+                        else if key == "s" then
+                            { model
+                                | status = SolidBoxAdditionInsideLastChooseBox
+                            }
+
+                        else
+                            model
+
+                    else if model.status == LiquidBoxAdditionShowOptions then
+                        if key == "a" then
+                            { model
+                                | status = LiquidBoxAdditionBeforeChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = LiquidBoxAdditionAfterChooseBox
+                            }
+
+                        else if key == "w" then
+                            { model
+                                | status = LiquidBoxAdditionInsideFirstChooseBox
+                            }
+
+                        else if key == "s" then
+                            { model
+                                | status = LiquidBoxAdditionInsideLastChooseBox
+                            }
+
+                        else
+                            model
 
                     else if key == "Escape" then
                         { model
@@ -198,6 +266,11 @@ update msg model =
 
                     else
                         model
+
+                --else if key == "a" && model.status == SolidBoxAdditionShowOptions then
+                --    { model
+                --        | status = SolidBoxAdditionBeforeChooseBox
+                --    }
             in
             ( newModel
             , Cmd.none
