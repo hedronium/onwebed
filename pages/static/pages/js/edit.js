@@ -7033,7 +7033,7 @@ var author$project$Odl$odlToBoxes = F2(
 												status: author$project$Types$Unresolved
 											});
 									} else {
-										if ((A2(elm$core$String$right, 1, newBasket) !== '<') && ((A2(elm$core$String$right, 1, newBasket) !== '[') && ((A2(elm$core$String$right, 1, newBasket) !== ' ') && ((A2(elm$core$String$right, 1, newBasket) !== '!') && (A2(elm$core$String$right, 1, newBasket) !== '>'))))) {
+										if ((A2(elm$core$String$right, 1, newBasket) !== '<') && ((A2(elm$core$String$right, 1, newBasket) !== '[') && ((A2(elm$core$String$right, 1, newBasket) !== '!') && (A2(elm$core$String$right, 1, newBasket) !== '>')))) {
 											return _Utils_update(
 												newModel,
 												{basket: ''});
@@ -7088,12 +7088,13 @@ var author$project$Odl$odlToBoxes = F2(
 						odlParserModel = $temp$odlParserModel;
 						continue odlToBoxes;
 					case 'ProcessingSolidBox':
-						var newModel2 = (elm$core$String$length(newBasket) <= 3) ? ((newBasket === ' [ ') ? _Utils_update(
+						var newOdl2 = (A2(elm$core$String$left, 3, odl) === ' [ ') ? A2(elm$core$String$dropLeft, 3, odl) : newOdl;
+						var newModel2 = (A2(elm$core$String$left, 3, odl) === ' [ ') ? _Utils_update(
 							newModel,
-							{basket: '', status: author$project$Types$ProcessingLabelOfSolidBox}) : newModel) : _Utils_update(
+							{basket: '', status: author$project$Types$ProcessingLabelOfSolidBox}) : _Utils_update(
 							newModel,
 							{status: author$project$Types$Unresolved});
-						var $temp$odl = newOdl,
+						var $temp$odl = newOdl2,
 							$temp$odlParserModel = newModel2;
 						odl = $temp$odl;
 						odlParserModel = $temp$odlParserModel;
@@ -7287,7 +7288,7 @@ var author$project$State$update = F2(
 					model,
 					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'Escape') ? _Utils_update(
 					model,
-					{selectedBoxId: 0, status: author$project$Types$Default}) : model));
+					{_export: '', import_: false, selectedBoxId: 0, status: author$project$Types$Default}) : model));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'SolidBoxAdditionBefore':
 				var addBeforeBoxId = msg.a;
@@ -7440,13 +7441,12 @@ var author$project$State$update = F2(
 					{importString: importString});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'Import':
-				var newModel = author$project$Box$documentValidityIncrement(
-					_Utils_update(
-						model,
-						{
-							document: author$project$Box$jsonStringToDocument(model.importString),
-							import_: false
-						}));
+				var newModel = _Utils_update(
+					model,
+					{
+						document: author$project$Box$jsonStringToDocument(model.importString),
+						import_: false
+					});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'ResetOdlModal':
 				var newModel = _Utils_update(
@@ -9090,14 +9090,16 @@ var author$project$View$view = function (model) {
 											_List_fromArray(
 												[
 													A2(
-													elm$html$Html$input,
+													elm$html$Html$button,
 													_List_fromArray(
 														[
-															elm$html$Html$Attributes$value('Apply ODL'),
 															elm$html$Html$Events$onClick(author$project$Types$ApplyOdl),
 															elm$html$Html$Attributes$class('button is-success')
 														]),
-													_List_Nil)
+													_List_fromArray(
+														[
+															elm$html$Html$text('Apply ODL')
+														]))
 												]))
 										]))
 								]))
@@ -9194,14 +9196,16 @@ var author$project$View$view = function (model) {
 											_List_fromArray(
 												[
 													A2(
-													elm$html$Html$input,
+													elm$html$Html$button,
 													_List_fromArray(
 														[
-															elm$html$Html$Attributes$value('Import'),
 															elm$html$Html$Events$onClick(author$project$Types$Import),
 															elm$html$Html$Attributes$class('button is-success')
 														]),
-													_List_Nil)
+													_List_fromArray(
+														[
+															elm$html$Html$text('Import')
+														]))
 												]))
 										]))
 								]))
@@ -9337,11 +9341,15 @@ var author$project$View$view = function (model) {
 						A2(elm$html$Html$Attributes$attribute, 'method', 'POST'),
 						A2(elm$html$Html$Attributes$attribute, 'action', '')
 					]),
+				_List_fromArray(
+					[
+						author$project$Menu$generateMenu(model)
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
 				_Utils_ap(
-					_List_fromArray(
-						[
-							author$project$Menu$generateMenu(model)
-						]),
+					_List_Nil,
 					_Utils_ap(
 						export_modal,
 						_Utils_ap(
@@ -9375,19 +9383,7 @@ var author$project$View$view = function (model) {
 								]);
 						}
 					}
-				}()),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id('document_validity'),
-						A2(elm$html$Html$Attributes$attribute, 'type', 'hidden'),
-						A2(
-						elm$html$Html$Attributes$attribute,
-						'value',
-						elm$core$String$fromInt(model.documentValidity))
-					]),
-				_List_Nil)
+				}())
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;

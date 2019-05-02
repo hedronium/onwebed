@@ -191,6 +191,8 @@ update msg model =
                     else if key == "Escape" then
                         { model
                             | status = Default
+                            , import_ = False
+                            , export = ""
                             , selectedBoxId = 0
                         }
 
@@ -405,11 +407,10 @@ update msg model =
         Import ->
             let
                 newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = jsonStringToDocument model.importString
-                            , import_ = False
-                        }
+                    { model
+                        | document = jsonStringToDocument model.importString
+                        , import_ = False
+                    }
             in
             ( newModel
             , Cmd.none

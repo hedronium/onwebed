@@ -251,7 +251,7 @@ odlToBoxes odl odlParserModel =
                                 , currentBoxes = removeLastCurrentBox newModel
                             }
 
-                        else if String.right 1 newBasket /= "<" && String.right 1 newBasket /= "[" && String.right 1 newBasket /= " " && String.right 1 newBasket /= "!" && String.right 1 newBasket /= ">" then
+                        else if String.right 1 newBasket /= "<" && String.right 1 newBasket /= "[" && String.right 1 newBasket /= "!" && String.right 1 newBasket /= ">" then
                             { newModel
                                 | basket = ""
                             }
@@ -302,33 +302,42 @@ odlToBoxes odl odlParserModel =
 
             ProcessingSolidBox ->
                 let
-                    newModel2 =
-                        if String.length newBasket <= 3 then
-                            if newBasket == " [ " then
-                                { newModel
-                                    | status = ProcessingLabelOfSolidBox
-                                    , basket = ""
-                                }
+                    newOdl2 =
+                        if String.left 3 odl == " [ " then
+                            String.dropLeft 3 odl
 
-                            else
-                                newModel
+                        else
+                            newOdl
+
+                    newModel2 =
+                        if String.left 3 odl == " [ " then
+                            { newModel
+                                | status = ProcessingLabelOfSolidBox
+                                , basket = ""
+                            }
 
                         else
                             { newModel
                                 | status = Unresolved
                             }
+
+                    --if String.length newBasket <= 3 then
+                    --    if newBasket == " [ " then
+                    --        { newModel
+                    --            | status = ProcessingLabelOfSolidBox
+                    --            , basket = ""
+                    --        }
+                    --    else
+                    --        newModel
+                    --else
+                    --    { newModel
+                    --        | status = Unresolved
+                    --    }
                 in
-                odlToBoxes newOdl newModel2
+                odlToBoxes newOdl2 newModel2
 
             ProcessingLabelOfLiquidBox ->
                 if String.right 2 newBasket == " ]" then
-                    --let
-                    --newOdl2 =
-                    --    if String.length (String.trim (String.left 1 newOdl)) == 0 then
-                    --        String.dropLeft 1 newOdl
-                    --    else
-                    --        newOdl
-                    --in
                     odlToBoxes
                         newOdl
                         { newModel

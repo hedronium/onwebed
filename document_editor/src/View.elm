@@ -73,12 +73,11 @@ view model =
                                 [ class "field" ]
                                 [ div
                                     [ class "control" ]
-                                    [ input
-                                        [ Html.Attributes.value "Import"
-                                        , Html.Events.onClick Import
+                                    [ button
+                                        [ Html.Events.onClick Import
                                         , class "button is-success"
                                         ]
-                                        []
+                                        [ text "Import" ]
                                     ]
                                 ]
                             ]
@@ -97,17 +96,6 @@ view model =
 
         odl_modal =
             if model.status == ViewOdl then
-                --let
-                --    children =
-                --        boxesByParentId 0 model
-                --    boxesToOdlStrings =
-                --        List.map (boxToOdl model 0) children
-                --    textareaValue =
-                --        List.foldr
-                --            (++)
-                --            ""
-                --            (List.intersperse "\n\n" boxesToOdlStrings)
-                --in
                 [ div
                     [ class "modal is-active"
                     , id "odl"
@@ -137,12 +125,11 @@ view model =
                                 [ class "field" ]
                                 [ div
                                     [ class "control" ]
-                                    [ input
-                                        [ Html.Attributes.value "Apply ODL"
-                                        , Html.Events.onClick ApplyOdl
+                                    [ button
+                                        [ Html.Events.onClick ApplyOdl
                                         , class "button is-success"
                                         ]
-                                        []
+                                        [ text "Apply ODL" ]
                                     ]
                                 ]
                             ]
@@ -198,7 +185,10 @@ view model =
             [ attribute "method" "POST"
             , attribute "action" ""
             ]
-            ([ generateMenu model ]
+            [ generateMenu model ]
+        , div
+            []
+            ([]
                 ++ export_modal
                 ++ import_modal
                 ++ odl_modal
@@ -223,10 +213,4 @@ view model =
                     Nothing ->
                         [ text "The box doesn't exist!" ]
             )
-        , input
-            [ id "document_validity"
-            , attribute "type" "hidden"
-            , attribute "value" (String.fromInt model.documentValidity)
-            ]
-            []
         ]
