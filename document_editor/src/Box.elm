@@ -163,6 +163,11 @@ boxToHtml model (Box boxToBeConvertedToHtml) =
                 , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
+            else if model.status == EditBoxChooseBox then
+                [ stopPropagationOn "click" (Decode.succeed ( EditBoxSelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                ]
+
             else if model.status == DuplicateBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxSelectBox boxToBeConvertedToHtml.id, True ))
                 , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
@@ -247,8 +252,8 @@ boxesByParentId parentId model =
 -- set label of box
 
 
-boxSetLabel : Int -> Maybe String -> Model -> List Box
-boxSetLabel boxId maybeLabel model =
+boxSetLabel : Int -> Maybe String -> List Box -> List Box
+boxSetLabel boxId maybeLabel document =
     let
         label =
             case maybeLabel of
@@ -269,7 +274,7 @@ boxSetLabel boxId maybeLabel model =
             else
                 Box box
         )
-        model.document
+        document
 
 
 
@@ -278,20 +283,7 @@ boxSetLabel boxId maybeLabel model =
 
 liquidBoxToHtml : String -> Box -> Html Msg
 liquidBoxToHtml content (Box liquidBox) =
-    textarea
-        [ on
-            "blur"
-            (Decode.map
-                (LiquidBoxUpdate liquidBox.id)
-                targetValue
-            )
-
-        --, on "input" (Decode.map ExpandTextArea (Decode.succeed liquidBox.id))
-        , class "content"
-        , attribute "rows" "1"
-        , attribute "cols" "1"
-        ]
-        [ text content ]
+    text content
 
 
 
@@ -313,20 +305,10 @@ labelToHtml content (Box labelOwner) =
     --        ]
     --        [ text content ]
     --    ]
-    input
+    span
         [ class "box-label"
-        , attribute "type" "text"
-        , on
-            "blur"
-            (Decode.map
-                (LabelUpdate labelOwner.id)
-                targetValue
-            )
-
-        --, on "input" (Decode.map ExpandInput (Decode.succeed labelOwner.id))
-        , attribute "value" content
         ]
-        []
+        [ text content ]
 
 
 indexOfBoxByIdStep : Int -> List Box -> Int -> Maybe Int
@@ -808,12 +790,24 @@ insertBoxInsideLast boxId type_ model =
 
 updateBoxLabel : Int -> String -> Box -> Box
 updateBoxLabel boxId label (Box box) =
+    let
+        trimmedLabel =
+            String.trim label
+    in
     if box.id == boxId then
-        Box
-            { box
-                | label = Just label
-                , labelElements = processLabel label
-            }
+        if String.length trimmedLabel /= 0 then
+            Box
+                { box
+                    | label = Just label
+                    , labelElements = processLabel label
+                }
+
+        else
+            Box
+                { box
+                    | label = Nothing
+                    , labelElements = processLabel label
+                }
 
     else
         Box box

@@ -4,6 +4,7 @@ module ModuleHandler exposing (hasModule, modules)
 modules : List String
 modules =
     [ "biu"
+    , "bulma"
     ]
 
 

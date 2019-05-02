@@ -3,4 +3,6 @@ __pycache__
 venv
 run.sh
 elm-stuff
-mydatabase
+pages/templates/pages/cached/*.html
+onwebed_db
+example_pages

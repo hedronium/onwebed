@@ -1,11 +1,13 @@
 module View exposing (view)
 
 import Box exposing (..)
+import BoxEditor exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Decode exposing (..)
 import Menu exposing (..)
+import Odl exposing (..)
 import Types exposing (..)
 
 
@@ -71,12 +73,11 @@ view model =
                                 [ class "field" ]
                                 [ div
                                     [ class "control" ]
-                                    [ input
-                                        [ Html.Attributes.value "Import"
-                                        , Html.Events.onClick Import
+                                    [ button
+                                        [ Html.Events.onClick Import
                                         , class "button is-success"
                                         ]
-                                        []
+                                        [ text "Import" ]
                                     ]
                                 ]
                             ]
@@ -85,6 +86,58 @@ view model =
                         [ class "modal-close is-large"
                         , attribute "aria-label" "close"
                         , Html.Events.onClick ResetImport
+                        ]
+                        []
+                    ]
+                ]
+
+            else
+                []
+
+        odl_modal =
+            if model.status == ViewOdl then
+                [ div
+                    [ class "modal is-active"
+                    , id "odl"
+                    ]
+                    [ div
+                        [ class "modal-background"
+                        , Html.Events.onClick ResetOdlModal
+                        ]
+                        []
+                    , div
+                        [ class "modal-content" ]
+                        [ div
+                            [ class "box" ]
+                            [ div
+                                [ class "field" ]
+                                [ div
+                                    [ class "control" ]
+                                    [ textarea
+                                        [ class "textarea"
+                                        , attribute "rows" "20"
+                                        , on "blur" (Decode.map SetOdlString targetValue)
+                                        ]
+                                        [ text model.odlString ]
+                                    ]
+                                ]
+                            , div
+                                [ class "field" ]
+                                [ div
+                                    [ class "control" ]
+                                    [ button
+                                        [ Html.Events.onClick ApplyOdl
+                                        , class "button is-success"
+                                        ]
+                                        [ text "Apply ODL" ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , button
+                        [ class "modal-close is-large"
+                        , attribute "aria-label" "close"
+                        , Html.Events.onClick ResetOdlModal
                         ]
                         []
                     ]
@@ -133,19 +186,32 @@ view model =
             , attribute "action" ""
             ]
             ([ generateMenu model ]
+                ++ form_content
+            )
+        , div
+            []
+            ([]
                 ++ export_modal
                 ++ import_modal
-                ++ form_content
+                ++ odl_modal
             )
         , div
             [ id "playground"
             , class "container"
             ]
-            (boxesToHtml (boxesByParentId 0 model) model)
-        , input
-            [ id "document_validity"
-            , attribute "type" "hidden"
-            , attribute "value" (String.fromInt model.documentValidity)
-            ]
-            []
+            (if model.status /= EditBox then
+                boxesToHtml (boxesByParentId 0 model) model
+
+             else
+                let
+                    maybeBox =
+                        boxById model.selectedBoxId model
+                in
+                case maybeBox of
+                    Just (Box box) ->
+                        boxToBoxEditorHtml (Box box) model
+
+                    Nothing ->
+                        [ text "The box doesn't exist!" ]
+            )
         ]

@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'onwebed.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'NAME': 'onwebed_db',
     }
 }
 

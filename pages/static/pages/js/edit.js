@@ -5189,15 +5189,15 @@ var author$project$State$initialModel = function (flags) {
 				[
 					A2(author$project$Menu$menuItem, '+ solid box', 'add_solid_box'),
 					A2(author$project$Menu$menuItem, '+ liquid box', 'add_liquid_box'),
+					A2(author$project$Menu$menuItem, 'edit box', 'edit_box'),
 					A2(author$project$Menu$menuItem, 'duplicate box', 'duplicate_box'),
-					A2(author$project$Menu$menuItem, 'move box', 'move_box'),
-					A2(author$project$Menu$menuItem, '+ label', 'add_label'),
-					A2(author$project$Menu$menuItem, '- label', 'remove_label'),
 					A2(author$project$Menu$menuItem, '- box', 'remove_box'),
 					A2(author$project$Menu$menuItem, 'import', 'import'),
-					A2(author$project$Menu$menuItem, 'export', 'export')
+					A2(author$project$Menu$menuItem, 'export', 'export'),
+					A2(author$project$Menu$menuItem, 'view ODL', 'view_odl')
 				]),
 			menuMessage: elm$core$Maybe$Nothing,
+			odlString: '',
 			pageName: flags.pageName,
 			pageTitle: flags.pageTitle,
 			selectedBoxId: 0,
@@ -5878,7 +5878,7 @@ var author$project$Box$addLabel = F2(
 				})) : author$project$Types$Box(box);
 	});
 var author$project$Box$boxSetLabel = F3(
-	function (boxId, maybeLabel, model) {
+	function (boxId, maybeLabel, document) {
 		var label = function () {
 			if (maybeLabel.$ === 'Just') {
 				var justLabel = maybeLabel.a;
@@ -5897,6 +5897,27 @@ var author$project$Box$boxSetLabel = F3(
 						{
 							label: elm$core$Maybe$Just(label)
 						})) : author$project$Types$Box(box);
+			},
+			document);
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var author$project$Box$boxesByParentId = F2(
+	function (parentId, model) {
+		return A2(
+			elm$core$List$filter,
+			function (_n0) {
+				var box = _n0.a;
+				return _Utils_eq(box.parent, parentId) ? true : false;
 			},
 			model.document);
 	});
@@ -6000,27 +6021,6 @@ var author$project$Box$boxByIdStep = F2(
 var author$project$Box$boxById = F2(
 	function (boxBeingSearchedId, model) {
 		return A2(author$project$Box$boxByIdStep, boxBeingSearchedId, model.document);
-	});
-var elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var author$project$Box$boxesByParentId = F2(
-	function (parentId, model) {
-		return A2(
-			elm$core$List$filter,
-			function (_n0) {
-				var box = _n0.a;
-				return _Utils_eq(box.parent, parentId) ? true : false;
-			},
-			model.document);
 	});
 var elm$core$List$maximum = function (list) {
 	if (list.b) {
@@ -6740,16 +6740,426 @@ var author$project$Box$updateBoxContent = F3(
 					content: elm$core$Maybe$Just(content)
 				})) : author$project$Types$Box(box);
 	});
+var elm$core$Basics$neq = _Utils_notEqual;
 var author$project$Box$updateBoxLabel = F3(
 	function (boxId, label, _n0) {
 		var box = _n0.a;
-		return _Utils_eq(box.id, boxId) ? author$project$Types$Box(
+		var trimmedLabel = elm$core$String$trim(label);
+		return _Utils_eq(box.id, boxId) ? (elm$core$String$length(trimmedLabel) ? author$project$Types$Box(
 			_Utils_update(
 				box,
 				{
 					label: elm$core$Maybe$Just(label),
 					labelElements: author$project$LabelProcessor$processLabel(label)
-				})) : author$project$Types$Box(box);
+				})) : author$project$Types$Box(
+			_Utils_update(
+				box,
+				{
+					label: elm$core$Maybe$Nothing,
+					labelElements: author$project$LabelProcessor$processLabel(label)
+				}))) : author$project$Types$Box(box);
+	});
+var elm$core$List$intersperse = F2(
+	function (sep, xs) {
+		if (!xs.b) {
+			return _List_Nil;
+		} else {
+			var hd = xs.a;
+			var tl = xs.b;
+			var step = F2(
+				function (x, rest) {
+					return A2(
+						elm$core$List$cons,
+						sep,
+						A2(elm$core$List$cons, x, rest));
+				});
+			var spersed = A3(elm$core$List$foldr, step, _List_Nil, tl);
+			return A2(elm$core$List$cons, hd, spersed);
+		}
+	});
+var elm$core$List$repeatHelp = F3(
+	function (result, n, value) {
+		repeatHelp:
+		while (true) {
+			if (n <= 0) {
+				return result;
+			} else {
+				var $temp$result = A2(elm$core$List$cons, value, result),
+					$temp$n = n - 1,
+					$temp$value = value;
+				result = $temp$result;
+				n = $temp$n;
+				value = $temp$value;
+				continue repeatHelp;
+			}
+		}
+	});
+var elm$core$List$repeat = F2(
+	function (n, value) {
+		return A3(elm$core$List$repeatHelp, _List_Nil, n, value);
+	});
+var author$project$Odl$boxContentToOdl = F3(
+	function (_n2, model, level) {
+		var box = _n2.a;
+		var children = A2(author$project$Box$boxesByParentId, box.id, model);
+		var boxesToOdlStrings = A2(
+			elm$core$List$map,
+			A2(author$project$Odl$boxToOdl, model, level),
+			children);
+		return A3(
+			elm$core$List$foldr,
+			elm$core$Basics$append,
+			'',
+			A2(elm$core$List$intersperse, '\n\n', boxesToOdlStrings));
+	});
+var author$project$Odl$boxToOdl = F3(
+	function (model, level, _n0) {
+		var box = _n0.a;
+		var label = function () {
+			var _n1 = box.label;
+			if (_n1.$ === 'Just') {
+				var justLabel = _n1.a;
+				return '[ ' + (justLabel + ' ] ');
+			} else {
+				return '';
+			}
+		}();
+		var indentation = A3(
+			elm$core$List$foldr,
+			elm$core$Basics$append,
+			'',
+			A2(elm$core$List$repeat, level, '    '));
+		var opening_tag = _Utils_eq(box.type_, author$project$Types$SolidBox) ? (indentation + '<! ') : (indentation + '[! ');
+		var content = function () {
+			if (_Utils_eq(box.type_, author$project$Types$SolidBox)) {
+				var odlString = A3(
+					author$project$Odl$boxContentToOdl,
+					author$project$Types$Box(box),
+					model,
+					level + 1);
+				return (!elm$core$String$length(
+					elm$core$String$trim(odlString))) ? '' : ('\n' + (odlString + '\n'));
+			} else {
+				return A2(elm$core$Maybe$withDefault, '', box.content);
+			}
+		}();
+		var closing_tag = _Utils_eq(box.type_, author$project$Types$SolidBox) ? (indentation + ' !>') : ' !]';
+		return _Utils_ap(
+			opening_tag,
+			_Utils_ap(
+				label,
+				_Utils_ap(content, closing_tag)));
+	});
+var author$project$Odl$currentBoxId = function (odlParserModel) {
+	var maybeHead = elm$core$List$head(
+		elm$core$List$reverse(odlParserModel.currentBoxes));
+	if (maybeHead.$ === 'Just') {
+		var head = maybeHead.a;
+		return elm$core$Maybe$Just(head.boxId);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$Odl$currentBoxIdAtLowerLevel = function (odlParserModel) {
+	var filteredBoxes = A2(
+		elm$core$List$filter,
+		function (currentBox) {
+			return _Utils_eq(currentBox.level, odlParserModel.level - 1) ? true : false;
+		},
+		odlParserModel.currentBoxes);
+	var maybeHead = elm$core$List$head(filteredBoxes);
+	if (maybeHead.$ === 'Just') {
+		var head = maybeHead.a;
+		return elm$core$Maybe$Just(head.boxId);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var author$project$Odl$removeLastCurrentBox = function (odlParserModel) {
+	return elm$core$List$reverse(
+		A2(
+			elm$core$Maybe$withDefault,
+			_List_Nil,
+			elm$core$List$tail(
+				elm$core$List$reverse(odlParserModel.currentBoxes))));
+};
+var author$project$Types$ProcessingLabelOfLiquidBox = {$: 'ProcessingLabelOfLiquidBox'};
+var author$project$Types$ProcessingLabelOfSolidBox = {$: 'ProcessingLabelOfSolidBox'};
+var author$project$Types$ProcessingLiquidBox = {$: 'ProcessingLiquidBox'};
+var author$project$Types$ProcessingSolidBox = {$: 'ProcessingSolidBox'};
+var author$project$Types$Unresolved = {$: 'Unresolved'};
+var elm$core$String$dropRight = F2(
+	function (n, string) {
+		return (n < 1) ? string : A3(elm$core$String$slice, 0, -n, string);
+	});
+var elm$core$String$right = F2(
+	function (n, string) {
+		return (n < 1) ? '' : A3(
+			elm$core$String$slice,
+			-n,
+			elm$core$String$length(string),
+			string);
+	});
+var elm$core$String$trimLeft = _String_trimLeft;
+var author$project$Odl$odlToBoxes = F2(
+	function (odl, odlParserModel) {
+		odlToBoxes:
+		while (true) {
+			if (!elm$core$String$length(odl)) {
+				return A2(
+					elm$core$List$map,
+					function (_n0) {
+						var box = _n0.a;
+						var labelElements = function () {
+							var _n2 = box.label;
+							if (_n2.$ === 'Just') {
+								var label = _n2.a;
+								return author$project$LabelProcessor$processLabel(label);
+							} else {
+								return _List_Nil;
+							}
+						}();
+						var content = function () {
+							if (_Utils_eq(box.type_, author$project$Types$LiquidBox)) {
+								var _n1 = box.content;
+								if (_n1.$ === 'Just') {
+									var justContent = _n1.a;
+									return (elm$core$String$length(justContent) > 0) ? elm$core$Maybe$Just(
+										A2(elm$core$String$dropLeft, 1, justContent)) : box.content;
+								} else {
+									return box.content;
+								}
+							} else {
+								return box.content;
+							}
+						}();
+						return author$project$Types$Box(
+							_Utils_update(
+								box,
+								{content: content, labelElements: labelElements}));
+					},
+					odlParserModel.boxes);
+			} else {
+				var newOdl = A2(elm$core$String$dropLeft, 1, odl);
+				var newBasket = _Utils_ap(
+					odlParserModel.basket,
+					A2(elm$core$String$left, 1, odl));
+				var newModel = _Utils_update(
+					odlParserModel,
+					{basket: newBasket});
+				var _n3 = odlParserModel.status;
+				switch (_n3.$) {
+					case 'Unresolved':
+						var newModel2 = function () {
+							if (elm$core$String$trimLeft(newBasket) === '[!') {
+								var id = A2(
+									elm$core$Maybe$withDefault,
+									0,
+									author$project$Box$highestBoxId(odlParserModel.boxes)) + 1;
+								var newBox = A5(
+									author$project$Box$generateBox,
+									id,
+									elm$core$Maybe$Nothing,
+									elm$core$Maybe$Nothing,
+									A2(
+										elm$core$Maybe$withDefault,
+										0,
+										author$project$Odl$currentBoxIdAtLowerLevel(newModel)),
+									author$project$Types$LiquidBox);
+								var newBoxes = _Utils_ap(
+									odlParserModel.boxes,
+									_List_fromArray(
+										[newBox]));
+								return _Utils_update(
+									newModel,
+									{
+										basket: '',
+										boxes: newBoxes,
+										currentBoxes: _Utils_ap(
+											newModel.currentBoxes,
+											_List_fromArray(
+												[
+													{boxId: id, level: newModel.level}
+												])),
+										status: author$project$Types$ProcessingLiquidBox
+									});
+							} else {
+								if (elm$core$String$trimLeft(newBasket) === '<!') {
+									var id = A2(
+										elm$core$Maybe$withDefault,
+										0,
+										author$project$Box$highestBoxId(odlParserModel.boxes)) + 1;
+									var newBox = A5(
+										author$project$Box$generateBox,
+										id,
+										elm$core$Maybe$Nothing,
+										elm$core$Maybe$Nothing,
+										A2(
+											elm$core$Maybe$withDefault,
+											0,
+											author$project$Odl$currentBoxIdAtLowerLevel(newModel)),
+										author$project$Types$SolidBox);
+									var newBoxes = _Utils_ap(
+										odlParserModel.boxes,
+										_List_fromArray(
+											[newBox]));
+									return _Utils_update(
+										newModel,
+										{
+											basket: '',
+											boxes: newBoxes,
+											currentBoxes: _Utils_ap(
+												newModel.currentBoxes,
+												_List_fromArray(
+													[
+														{boxId: id, level: newModel.level}
+													])),
+											level: newModel.level + 1,
+											parent: A2(
+												elm$core$Maybe$withDefault,
+												0,
+												author$project$Odl$currentBoxIdAtLowerLevel(newModel)),
+											status: author$project$Types$ProcessingSolidBox
+										});
+								} else {
+									if (elm$core$String$trimLeft(newBasket) === '!>') {
+										return _Utils_update(
+											newModel,
+											{
+												basket: '',
+												currentBoxes: author$project$Odl$removeLastCurrentBox(newModel),
+												level: newModel.level - 1,
+												status: author$project$Types$Unresolved
+											});
+									} else {
+										if ((A2(elm$core$String$right, 1, newBasket) !== '<') && ((A2(elm$core$String$right, 1, newBasket) !== '[') && ((A2(elm$core$String$right, 1, newBasket) !== '!') && (A2(elm$core$String$right, 1, newBasket) !== '>')))) {
+											return _Utils_update(
+												newModel,
+												{basket: ''});
+										} else {
+											return newModel;
+										}
+									}
+								}
+							}
+						}();
+						var $temp$odl = newOdl,
+							$temp$odlParserModel = newModel2;
+						odl = $temp$odl;
+						odlParserModel = $temp$odlParserModel;
+						continue odlToBoxes;
+					case 'ProcessingLiquidBox':
+						var newModel2 = (newBasket === ' [ ') ? _Utils_update(
+							newModel,
+							{basket: '', status: author$project$Types$ProcessingLabelOfLiquidBox}) : ((A2(elm$core$String$right, 3, newBasket) === ' !]') ? _Utils_update(
+							newModel,
+							{
+								basket: '',
+								boxes: A2(
+									elm$core$List$map,
+									A2(
+										author$project$Box$updateBoxContent,
+										A2(
+											elm$core$Maybe$withDefault,
+											0,
+											author$project$Odl$currentBoxId(newModel)),
+										A2(elm$core$String$dropRight, 3, newModel.basket)),
+									newModel.boxes),
+								currentBoxes: author$project$Odl$removeLastCurrentBox(newModel),
+								status: author$project$Types$Unresolved
+							}) : _Utils_update(
+							newModel,
+							{
+								boxes: A2(
+									elm$core$List$map,
+									A2(
+										author$project$Box$updateBoxContent,
+										A2(
+											elm$core$Maybe$withDefault,
+											0,
+											author$project$Odl$currentBoxId(newModel)),
+										newModel.basket),
+									newModel.boxes)
+							}));
+						var $temp$odl = newOdl,
+							$temp$odlParserModel = newModel2;
+						odl = $temp$odl;
+						odlParserModel = $temp$odlParserModel;
+						continue odlToBoxes;
+					case 'ProcessingSolidBox':
+						var newOdl2 = (A2(elm$core$String$left, 3, odl) === ' [ ') ? A2(elm$core$String$dropLeft, 3, odl) : newOdl;
+						var newModel2 = (A2(elm$core$String$left, 3, odl) === ' [ ') ? _Utils_update(
+							newModel,
+							{basket: '', status: author$project$Types$ProcessingLabelOfSolidBox}) : _Utils_update(
+							newModel,
+							{status: author$project$Types$Unresolved});
+						var $temp$odl = newOdl2,
+							$temp$odlParserModel = newModel2;
+						odl = $temp$odl;
+						odlParserModel = $temp$odlParserModel;
+						continue odlToBoxes;
+					case 'ProcessingLabelOfLiquidBox':
+						if (A2(elm$core$String$right, 2, newBasket) === ' ]') {
+							var $temp$odl = newOdl,
+								$temp$odlParserModel = _Utils_update(
+								newModel,
+								{basket: '', status: author$project$Types$ProcessingLiquidBox});
+							odl = $temp$odl;
+							odlParserModel = $temp$odlParserModel;
+							continue odlToBoxes;
+						} else {
+							var newBoxes = A3(
+								author$project$Box$boxSetLabel,
+								A2(
+									elm$core$Maybe$withDefault,
+									0,
+									author$project$Odl$currentBoxId(newModel)),
+								elm$core$Maybe$Just(
+									elm$core$String$trim(newModel.basket)),
+								newModel.boxes);
+							var newModel2 = _Utils_update(
+								newModel,
+								{boxes: newBoxes});
+							var $temp$odl = newOdl,
+								$temp$odlParserModel = newModel2;
+							odl = $temp$odl;
+							odlParserModel = $temp$odlParserModel;
+							continue odlToBoxes;
+						}
+					default:
+						if (A2(elm$core$String$right, 2, newBasket) === ' ]') {
+							var newOdl2 = (!elm$core$String$length(
+								elm$core$String$trim(
+									A2(elm$core$String$left, 1, newOdl)))) ? A2(elm$core$String$dropLeft, 1, newOdl) : newOdl;
+							var $temp$odl = newOdl2,
+								$temp$odlParserModel = _Utils_update(
+								newModel,
+								{basket: '', status: author$project$Types$Unresolved});
+							odl = $temp$odl;
+							odlParserModel = $temp$odlParserModel;
+							continue odlToBoxes;
+						} else {
+							var newBoxes = A3(
+								author$project$Box$boxSetLabel,
+								A2(
+									elm$core$Maybe$withDefault,
+									0,
+									author$project$Odl$currentBoxId(newModel)),
+								elm$core$Maybe$Just(
+									elm$core$String$trim(newModel.basket)),
+								newModel.boxes);
+							var newModel2 = _Utils_update(
+								newModel,
+								{boxes: newBoxes});
+							var $temp$odl = newOdl,
+								$temp$odlParserModel = newModel2;
+							odl = $temp$odl;
+							odlParserModel = $temp$odlParserModel;
+							continue odlToBoxes;
+						}
+				}
+			}
+		}
 	});
 var elm$json$Json$Encode$null = _Json_encodeNull;
 var author$project$State$expandElements = _Platform_outgoingPort(
@@ -6764,6 +7174,8 @@ var author$project$Types$DuplicateBoxChooseBox = {$: 'DuplicateBoxChooseBox'};
 var author$project$Types$DuplicateBoxInsideFirstChooseBox = {$: 'DuplicateBoxInsideFirstChooseBox'};
 var author$project$Types$DuplicateBoxInsideLastChooseBox = {$: 'DuplicateBoxInsideLastChooseBox'};
 var author$project$Types$DuplicateBoxShowOptions = {$: 'DuplicateBoxShowOptions'};
+var author$project$Types$EditBox = {$: 'EditBox'};
+var author$project$Types$EditBoxChooseBox = {$: 'EditBoxChooseBox'};
 var author$project$Types$LiquidBoxAdditionAfterChooseBox = {$: 'LiquidBoxAdditionAfterChooseBox'};
 var author$project$Types$LiquidBoxAdditionBeforeChooseBox = {$: 'LiquidBoxAdditionBeforeChooseBox'};
 var author$project$Types$LiquidBoxAdditionInsideFirstChooseBox = {$: 'LiquidBoxAdditionInsideFirstChooseBox'};
@@ -6777,6 +7189,7 @@ var author$project$Types$SolidBoxAdditionBeforeChooseBox = {$: 'SolidBoxAddition
 var author$project$Types$SolidBoxAdditionInsideFirstChooseBox = {$: 'SolidBoxAdditionInsideFirstChooseBox'};
 var author$project$Types$SolidBoxAdditionInsideLastChooseBox = {$: 'SolidBoxAdditionInsideLastChooseBox'};
 var author$project$Types$SolidBoxAdditionShowOptions = {$: 'SolidBoxAdditionShowOptions'};
+var author$project$Types$ViewOdl = {$: 'ViewOdl'};
 var author$project$State$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
@@ -6832,6 +7245,12 @@ var author$project$State$update = F2(
 					model,
 					{selectedBoxId: 0, status: author$project$Types$Default});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'EditBoxSelectBox':
+				var moveBoxId = msg.a;
+				var newModel = _Utils_update(
+					model,
+					{status: author$project$Types$EditBox});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'Expand':
 				var newModel = author$project$Box$documentValidityIncrement(model);
 				return _Utils_Tuple2(
@@ -6855,20 +7274,42 @@ var author$project$State$update = F2(
 				var newModel = _Utils_update(
 					model,
 					{
-						document: A3(author$project$Box$boxSetLabel, boxId, newLabel, model)
+						document: A3(author$project$Box$boxSetLabel, boxId, newLabel, model.document)
 					});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'KeyInteraction':
 				var keyInteractionType = msg.a;
 				var key = msg.b;
 				var shiftPressed = msg.c;
-				var newModel = ((key === 'S') && (shiftPressed && _Utils_eq(model.status, author$project$Types$Default))) ? _Utils_update(
+				var newModel = _Utils_eq(model.status, author$project$Types$Default) ? ((key === 's') ? _Utils_update(
 					model,
-					{status: author$project$Types$SolidBoxAdditionShowOptions}) : (((key === 'a') && _Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions)) ? _Utils_update(
+					{status: author$project$Types$SolidBoxAdditionShowOptions}) : ((key === 'l') ? _Utils_update(
 					model,
-					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'Escape') ? _Utils_update(
+					{status: author$project$Types$LiquidBoxAdditionShowOptions}) : ((key === 'e') ? _Utils_update(
 					model,
-					{selectedBoxId: 0, status: author$project$Types$Default}) : model));
+					{status: author$project$Types$EditBoxChooseBox}) : ((key === 'r') ? _Utils_update(
+					model,
+					{status: author$project$Types$RemoveBoxChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$DuplicateBoxChooseBox}) : model))))) : (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionShowOptions) ? ((key === 'a') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionBeforeChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionAfterChooseBox}) : ((key === 'w') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionInsideFirstChooseBox}) : ((key === 's') ? _Utils_update(
+					model,
+					{status: author$project$Types$SolidBoxAdditionInsideLastChooseBox}) : model)))) : (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionShowOptions) ? ((key === 'a') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionBeforeChooseBox}) : ((key === 'd') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionAfterChooseBox}) : ((key === 'w') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionInsideFirstChooseBox}) : ((key === 's') ? _Utils_update(
+					model,
+					{status: author$project$Types$LiquidBoxAdditionInsideLastChooseBox}) : model)))) : ((key === 'Escape') ? _Utils_update(
+					model,
+					{_export: '', import_: false, selectedBoxId: 0, status: author$project$Types$Default}) : model)));
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'SolidBoxAdditionBefore':
 				var addBeforeBoxId = msg.a;
@@ -7021,13 +7462,47 @@ var author$project$State$update = F2(
 					{importString: importString});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			case 'Import':
-				var newModel = author$project$Box$documentValidityIncrement(
-					_Utils_update(
-						model,
-						{
-							document: author$project$Box$jsonStringToDocument(model.importString),
-							import_: false
-						}));
+				var newModel = _Utils_update(
+					model,
+					{
+						document: author$project$Box$jsonStringToDocument(model.importString),
+						import_: false
+					});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'ResetOdlModal':
+				var newModel = _Utils_update(
+					model,
+					{odlString: '', status: author$project$Types$Default});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'SetOdlString':
+				var odlString = msg.a;
+				var newModel = _Utils_update(
+					model,
+					{odlString: odlString});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'ApplyOdl':
+				var odlParserModel = {basket: '', boxes: _List_Nil, currentBoxes: _List_Nil, level: 0, parent: 0, status: author$project$Types$Unresolved};
+				var newModel = _Utils_update(
+					model,
+					{
+						document: A2(author$project$Odl$odlToBoxes, model.odlString, odlParserModel),
+						status: author$project$Types$Default
+					});
+				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
+			case 'ViewOdlModal':
+				var children = A2(author$project$Box$boxesByParentId, 0, model);
+				var boxesToOdlStrings = A2(
+					elm$core$List$map,
+					A2(author$project$Odl$boxToOdl, model, 0),
+					children);
+				var odlString = A3(
+					elm$core$List$foldr,
+					elm$core$Basics$append,
+					'',
+					A2(elm$core$List$intersperse, '\n\n', boxesToOdlStrings));
+				var newModel = _Utils_update(
+					model,
+					{odlString: odlString});
 				return _Utils_Tuple2(newModel, elm$core$Platform$Cmd$none);
 			default:
 				var machine_name = msg.a;
@@ -7125,6 +7600,24 @@ var author$project$State$update = F2(
 							return _Utils_update(
 								model,
 								{status: author$project$Types$MoveBoxChooseBox});
+						case 'edit_box':
+							return _Utils_update(
+								model,
+								{status: author$project$Types$EditBoxChooseBox});
+						case 'view_odl':
+							var children = A2(author$project$Box$boxesByParentId, 0, model);
+							var boxesToOdlStrings = A2(
+								elm$core$List$map,
+								A2(author$project$Odl$boxToOdl, model, 0),
+								children);
+							var odlString = A3(
+								elm$core$List$foldr,
+								elm$core$Basics$append,
+								'',
+								A2(elm$core$List$intersperse, '\n\n', boxesToOdlStrings));
+							return _Utils_update(
+								model,
+								{odlString: odlString, status: author$project$Types$ViewOdl});
 						default:
 							return model;
 					}
@@ -7134,19 +7627,9 @@ var author$project$State$update = F2(
 					author$project$State$expandElements(_Utils_Tuple0));
 		}
 	});
-var author$project$Types$LabelUpdate = F2(
-	function (a, b) {
-		return {$: 'LabelUpdate', a: a, b: b};
-	});
-var elm$html$Html$input = _VirtualDom_node('input');
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$html$Html$span = _VirtualDom_node('span');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -7155,75 +7638,24 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
 var author$project$Box$labelToHtml = F2(
 	function (content, _n0) {
 		var labelOwner = _n0.a;
 		return A2(
-			elm$html$Html$input,
+			elm$html$Html$span,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('box-label'),
-					A2(elm$html$Html$Attributes$attribute, 'type', 'text'),
-					A2(
-					elm$html$Html$Events$on,
-					'blur',
-					A2(
-						elm$json$Json$Decode$map,
-						author$project$Types$LabelUpdate(labelOwner.id),
-						elm$html$Html$Events$targetValue)),
-					A2(elm$html$Html$Attributes$attribute, 'value', content)
-				]),
-			_List_Nil);
-	});
-var author$project$Types$LiquidBoxUpdate = F2(
-	function (a, b) {
-		return {$: 'LiquidBoxUpdate', a: a, b: b};
-	});
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$html$Html$textarea = _VirtualDom_node('textarea');
-var author$project$Box$liquidBoxToHtml = F2(
-	function (content, _n0) {
-		var liquidBox = _n0.a;
-		return A2(
-			elm$html$Html$textarea,
-			_List_fromArray(
-				[
-					A2(
-					elm$html$Html$Events$on,
-					'blur',
-					A2(
-						elm$json$Json$Decode$map,
-						author$project$Types$LiquidBoxUpdate(liquidBox.id),
-						elm$html$Html$Events$targetValue)),
-					elm$html$Html$Attributes$class('content'),
-					A2(elm$html$Html$Attributes$attribute, 'rows', '1'),
-					A2(elm$html$Html$Attributes$attribute, 'cols', '1')
+					elm$html$Html$Attributes$class('box-label')
 				]),
 			_List_fromArray(
 				[
 					elm$html$Html$text(content)
 				]));
+	});
+var author$project$Box$liquidBoxToHtml = F2(
+	function (content, _n0) {
+		var liquidBox = _n0.a;
+		return elm$html$Html$text(content);
 	});
 var author$project$Box$processBoxType = function (boxTypeValue) {
 	if (boxTypeValue.$ === 'SolidBox') {
@@ -7249,6 +7681,9 @@ var author$project$Types$DuplicateBoxInsideLast = function (a) {
 };
 var author$project$Types$DuplicateBoxSelectBox = function (a) {
 	return {$: 'DuplicateBoxSelectBox', a: a};
+};
+var author$project$Types$EditBoxSelectBox = function (a) {
+	return {$: 'EditBoxSelectBox', a: a};
 };
 var author$project$Types$LiquidBoxAdditionAfter = function (a) {
 	return {$: 'LiquidBoxAdditionAfter', a: a};
@@ -7286,12 +7721,12 @@ var author$project$Types$SolidBoxAdditionInsideFirst = function (a) {
 var author$project$Types$SolidBoxAdditionInsideLast = function (a) {
 	return {$: 'SolidBoxAdditionInsideLast', a: a};
 };
-var elm$core$Basics$neq = _Utils_notEqual;
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -7510,6 +7945,22 @@ var author$project$Box$boxToHtml = F2(
 					_Utils_Tuple2(
 						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
+			]) : (_Utils_eq(model.status, author$project$Types$EditBoxChooseBox) ? _List_fromArray(
+			[
+				A2(
+				elm$html$Html$Events$stopPropagationOn,
+				'click',
+				elm$json$Json$Decode$succeed(
+					_Utils_Tuple2(
+						author$project$Types$EditBoxSelectBox(boxToBeConvertedToHtml.id),
+						true))),
+				A2(
+				elm$html$Html$Events$stopPropagationOn,
+				'mouseover',
+				elm$json$Json$Decode$succeed(
+					_Utils_Tuple2(
+						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
+						true)))
 			]) : (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox) ? _List_fromArray(
 			[
 				A2(
@@ -7606,7 +8057,7 @@ var author$project$Box$boxToHtml = F2(
 					_Utils_Tuple2(
 						author$project$Types$SelectBox(boxToBeConvertedToHtml.id),
 						true)))
-			]) : _List_Nil))))))))))))))));
+			]) : _List_Nil)))))))))))))))));
 		return A2(
 			elm$html$Html$div,
 			_Utils_ap(
@@ -7635,7 +8086,7 @@ var author$project$LabelProcessor$handleElementEnd = function (element) {
 	}
 };
 var author$project$ModuleHandler$modules = _List_fromArray(
-	['biu']);
+	['biu', 'bulma']);
 var elm$core$List$any = F2(
 	function (isOkay, list) {
 		any:
@@ -7670,10 +8121,13 @@ var author$project$LabelProcessor$labelElementEndingTagToString = function (labe
 };
 var author$project$LabelProcessor$handleElementStart = function (element) {
 	var _n0 = element.name;
-	if (_n0 === 'biu') {
-		return '<b><i><u>';
-	} else {
-		return '';
+	switch (_n0) {
+		case 'biu':
+			return '<b><i><u>';
+		case 'bulma':
+			return '<link rel=\'stylesheet\' href=\'https://cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css\'/>';
+		default:
+			return '';
 	}
 };
 var author$project$LabelProcessor$labelElementStartingTagToString = function (labelElement) {
@@ -7725,6 +8179,186 @@ var author$project$Box$escapeString = function (string) {
 	var encodedStringLength = elm$core$String$length(encodedString);
 	return A3(elm$core$String$slice, 1, encodedStringLength - 1, encodedString);
 };
+var author$project$Types$LabelUpdate = F2(
+	function (a, b) {
+		return {$: 'LabelUpdate', a: a, b: b};
+	});
+var author$project$Types$LiquidBoxUpdate = F2(
+	function (a, b) {
+		return {$: 'LiquidBoxUpdate', a: a, b: b};
+	});
+var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$textarea = _VirtualDom_node('textarea');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
+var author$project$BoxEditor$boxToBoxEditorHtml = F2(
+	function (_n0, model) {
+		var box = _n0.a;
+		return _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('message')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('message-body')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Press Escape to get back. Any change is applied immediately.')
+							]))
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('field')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('label')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Label: ')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('control')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$input,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('input'),
+										A2(
+										elm$html$Html$Attributes$attribute,
+										'value',
+										function () {
+											var _n1 = box.label;
+											if (_n1.$ === 'Just') {
+												var label = _n1.a;
+												return label;
+											} else {
+												return '';
+											}
+										}()),
+										A2(
+										elm$html$Html$Events$on,
+										'keyup',
+										A2(
+											elm$json$Json$Decode$map,
+											author$project$Types$LabelUpdate(box.id),
+											elm$html$Html$Events$targetValue))
+									]),
+								_List_Nil)
+							]))
+					])),
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('field')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('label')
+							]),
+						_List_fromArray(
+							[
+								elm$html$Html$text('Content: ')
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('control')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$textarea,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('textarea'),
+										A2(elm$html$Html$Attributes$attribute, 'rows', '10'),
+										A2(
+										elm$html$Html$Events$on,
+										'keyup',
+										A2(
+											elm$json$Json$Decode$map,
+											author$project$Types$LiquidBoxUpdate(box.id),
+											elm$html$Html$Events$targetValue))
+									]),
+								_List_fromArray(
+									[
+										elm$html$Html$text(
+										function () {
+											if (_Utils_eq(box.type_, author$project$Types$SolidBox)) {
+												return A3(
+													author$project$Odl$boxContentToOdl,
+													author$project$Types$Box(box),
+													model,
+													0);
+											} else {
+												var _n2 = box.content;
+												if (_n2.$ === 'Just') {
+													var content = _n2.a;
+													return content;
+												} else {
+													return '';
+												}
+											}
+										}())
+									]))
+							]))
+					]))
+			]);
+	});
 var author$project$Box$innerHtmlDecoder = A2(
 	elm$json$Json$Decode$at,
 	_List_fromArray(
@@ -7777,7 +8411,6 @@ var elm$html$Html$b = _VirtualDom_node('b');
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$i = _VirtualDom_node('i');
 var elm$html$Html$nav = _VirtualDom_node('nav');
-var elm$html$Html$span = _VirtualDom_node('span');
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -8172,7 +8805,7 @@ var author$project$Menu$generateMenu = function (model) {
 															]))
 													]);
 											} else {
-												if (_Utils_eq(model.status, author$project$Types$AddLabelChooseBox)) {
+												if (_Utils_eq(model.status, author$project$Types$EditBoxChooseBox)) {
 													return _List_fromArray(
 														[
 															A2(
@@ -8183,11 +8816,11 @@ var author$project$Menu$generateMenu = function (model) {
 																]),
 															_List_fromArray(
 																[
-																	elm$html$Html$text('Choose box you want to add the new label in.')
+																	elm$html$Html$text('Choose box which you want to edit.')
 																]))
 														]);
 												} else {
-													if (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox)) {
+													if (_Utils_eq(model.status, author$project$Types$AddLabelChooseBox)) {
 														return _List_fromArray(
 															[
 																A2(
@@ -8198,11 +8831,11 @@ var author$project$Menu$generateMenu = function (model) {
 																	]),
 																_List_fromArray(
 																	[
-																		elm$html$Html$text('Choose box which you want to be removed.')
+																		elm$html$Html$text('Choose box you want to add the new label in.')
 																	]))
 															]);
 													} else {
-														if (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox)) {
+														if (_Utils_eq(model.status, author$project$Types$RemoveBoxChooseBox)) {
 															return _List_fromArray(
 																[
 																	A2(
@@ -8213,11 +8846,11 @@ var author$project$Menu$generateMenu = function (model) {
 																		]),
 																	_List_fromArray(
 																		[
-																			elm$html$Html$text('Choose box which you want to duplicate.')
+																			elm$html$Html$text('Choose box which you want to be removed.')
 																		]))
 																]);
 														} else {
-															if (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox)) {
+															if (_Utils_eq(model.status, author$project$Types$DuplicateBoxChooseBox)) {
 																return _List_fromArray(
 																	[
 																		A2(
@@ -8228,11 +8861,11 @@ var author$project$Menu$generateMenu = function (model) {
 																			]),
 																		_List_fromArray(
 																			[
-																				elm$html$Html$text('Choose box before which you want to place the duplicated box.')
+																				elm$html$Html$text('Choose box which you want to duplicate.')
 																			]))
 																	]);
 															} else {
-																if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox)) {
+																if (_Utils_eq(model.status, author$project$Types$DuplicateBoxBeforeChooseBox)) {
 																	return _List_fromArray(
 																		[
 																			A2(
@@ -8243,11 +8876,11 @@ var author$project$Menu$generateMenu = function (model) {
 																				]),
 																			_List_fromArray(
 																				[
-																					elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
+																					elm$html$Html$text('Choose box before which you want to place the duplicated box.')
 																				]))
 																		]);
 																} else {
-																	if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox)) {
+																	if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideFirstChooseBox)) {
 																		return _List_fromArray(
 																			[
 																				A2(
@@ -8258,11 +8891,11 @@ var author$project$Menu$generateMenu = function (model) {
 																					]),
 																				_List_fromArray(
 																					[
-																						elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
+																						elm$html$Html$text('Choose box inside which you want to place the duplicated box as the first item.')
 																					]))
 																			]);
 																	} else {
-																		if (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox)) {
+																		if (_Utils_eq(model.status, author$project$Types$DuplicateBoxInsideLastChooseBox)) {
 																			return _List_fromArray(
 																				[
 																					A2(
@@ -8273,11 +8906,11 @@ var author$project$Menu$generateMenu = function (model) {
 																						]),
 																					_List_fromArray(
 																						[
-																							elm$html$Html$text('Choose box after which you want to place the duplicated box.')
+																							elm$html$Html$text('Choose box inside which you want to place the duplicated box as the last item.')
 																						]))
 																				]);
 																		} else {
-																			if (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox)) {
+																			if (_Utils_eq(model.status, author$project$Types$DuplicateBoxAfterChooseBox)) {
 																				return _List_fromArray(
 																					[
 																						A2(
@@ -8288,13 +8921,11 @@ var author$project$Menu$generateMenu = function (model) {
 																							]),
 																						_List_fromArray(
 																							[
-																								elm$html$Html$text('Choose box which you want to move.')
+																								elm$html$Html$text('Choose box after which you want to place the duplicated box.')
 																							]))
 																					]);
 																			} else {
-																				var _n0 = model.menuMessage;
-																				if (_n0.$ === 'Just') {
-																					var justMessage = _n0.a;
+																				if (_Utils_eq(model.status, author$project$Types$MoveBoxChooseBox)) {
 																					return _List_fromArray(
 																						[
 																							A2(
@@ -8305,11 +8936,29 @@ var author$project$Menu$generateMenu = function (model) {
 																								]),
 																							_List_fromArray(
 																								[
-																									elm$html$Html$text(justMessage)
+																									elm$html$Html$text('Choose box which you want to move.')
 																								]))
 																						]);
 																				} else {
-																					return author$project$Menu$menuItemsToHtml(model.menu);
+																					var _n0 = model.menuMessage;
+																					if (_n0.$ === 'Just') {
+																						var justMessage = _n0.a;
+																						return _List_fromArray(
+																							[
+																								A2(
+																								elm$html$Html$div,
+																								_List_fromArray(
+																									[
+																										elm$html$Html$Attributes$class('column')
+																									]),
+																								_List_fromArray(
+																									[
+																										elm$html$Html$text(justMessage)
+																									]))
+																							]);
+																					} else {
+																						return author$project$Menu$menuItemsToHtml(model.menu);
+																					}
 																				}
 																			}
 																		}
@@ -8364,14 +9013,129 @@ var author$project$Menu$generateMenu = function (model) {
 					]))
 			]));
 };
+var author$project$Types$ApplyOdl = {$: 'ApplyOdl'};
 var author$project$Types$Import = {$: 'Import'};
 var author$project$Types$ResetExport = {$: 'ResetExport'};
 var author$project$Types$ResetImport = {$: 'ResetImport'};
+var author$project$Types$ResetOdlModal = {$: 'ResetOdlModal'};
 var author$project$Types$SetImport = function (a) {
 	return {$: 'SetImport', a: a};
 };
+var author$project$Types$SetOdlString = function (a) {
+	return {$: 'SetOdlString', a: a};
+};
 var elm$html$Html$form = _VirtualDom_node('form');
 var author$project$View$view = function (model) {
+	var odl_modal = _Utils_eq(model.status, author$project$Types$ViewOdl) ? _List_fromArray(
+		[
+			A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('modal is-active'),
+					elm$html$Html$Attributes$id('odl')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('modal-background'),
+							elm$html$Html$Events$onClick(author$project$Types$ResetOdlModal)
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('modal-content')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('box')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('field')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$div,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('control')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													elm$html$Html$textarea,
+													_List_fromArray(
+														[
+															elm$html$Html$Attributes$class('textarea'),
+															A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
+															A2(
+															elm$html$Html$Events$on,
+															'blur',
+															A2(elm$json$Json$Decode$map, author$project$Types$SetOdlString, elm$html$Html$Events$targetValue))
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text(model.odlString)
+														]))
+												]))
+										])),
+									A2(
+									elm$html$Html$div,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('field')
+										]),
+									_List_fromArray(
+										[
+											A2(
+											elm$html$Html$div,
+											_List_fromArray(
+												[
+													elm$html$Html$Attributes$class('control')
+												]),
+											_List_fromArray(
+												[
+													A2(
+													elm$html$Html$button,
+													_List_fromArray(
+														[
+															elm$html$Html$Events$onClick(author$project$Types$ApplyOdl),
+															elm$html$Html$Attributes$class('button is-success')
+														]),
+													_List_fromArray(
+														[
+															elm$html$Html$text('Apply ODL')
+														]))
+												]))
+										]))
+								]))
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('modal-close is-large'),
+							A2(elm$html$Html$Attributes$attribute, 'aria-label', 'close'),
+							elm$html$Html$Events$onClick(author$project$Types$ResetOdlModal)
+						]),
+					_List_Nil)
+				]))
+		]) : _List_Nil;
 	var import_modal = model.import_ ? _List_fromArray(
 		[
 			A2(
@@ -8453,14 +9217,16 @@ var author$project$View$view = function (model) {
 											_List_fromArray(
 												[
 													A2(
-													elm$html$Html$input,
+													elm$html$Html$button,
 													_List_fromArray(
 														[
-															elm$html$Html$Attributes$value('Import'),
 															elm$html$Html$Events$onClick(author$project$Types$Import),
 															elm$html$Html$Attributes$class('button is-success')
 														]),
-													_List_Nil)
+													_List_fromArray(
+														[
+															elm$html$Html$text('Import')
+														]))
 												]))
 										]))
 								]))
@@ -8601,9 +9367,15 @@ var author$project$View$view = function (model) {
 						[
 							author$project$Menu$generateMenu(model)
 						]),
+					form_content)),
+				A2(
+				elm$html$Html$div,
+				_List_Nil,
+				_Utils_ap(
+					_List_Nil,
 					_Utils_ap(
 						export_modal,
-						_Utils_ap(import_modal, form_content)))),
+						_Utils_ap(import_modal, odl_modal)))),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
@@ -8611,22 +9383,28 @@ var author$project$View$view = function (model) {
 						elm$html$Html$Attributes$id('playground'),
 						elm$html$Html$Attributes$class('container')
 					]),
-				A2(
-					author$project$Box$boxesToHtml,
-					A2(author$project$Box$boxesByParentId, 0, model),
-					model)),
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$id('document_validity'),
-						A2(elm$html$Html$Attributes$attribute, 'type', 'hidden'),
-						A2(
-						elm$html$Html$Attributes$attribute,
-						'value',
-						elm$core$String$fromInt(model.documentValidity))
-					]),
-				_List_Nil)
+				function () {
+					if (!_Utils_eq(model.status, author$project$Types$EditBox)) {
+						return A2(
+							author$project$Box$boxesToHtml,
+							A2(author$project$Box$boxesByParentId, 0, model),
+							model);
+					} else {
+						var maybeBox = A2(author$project$Box$boxById, model.selectedBoxId, model);
+						if (maybeBox.$ === 'Just') {
+							var box = maybeBox.a.a;
+							return A2(
+								author$project$BoxEditor$boxToBoxEditorHtml,
+								author$project$Types$Box(box),
+								model);
+						} else {
+							return _List_fromArray(
+								[
+									elm$html$Html$text('The box doesn\'t exist!')
+								]);
+						}
+					}
+				}())
 			]));
 };
 var elm$browser$Browser$element = _Browser_element;

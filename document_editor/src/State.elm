@@ -4,6 +4,7 @@ import Box exposing (..)
 import Browser.Events exposing (..)
 import Json.Decode as Decode exposing (..)
 import Menu exposing (..)
+import Odl exposing (..)
 import Rest exposing (..)
 import Types exposing (..)
 
@@ -34,13 +35,14 @@ initialModel flags =
       , menu =
             [ menuItem "+ solid box" "add_solid_box"
             , menuItem "+ liquid box" "add_liquid_box"
+            , menuItem "edit box" "edit_box"
             , menuItem "duplicate box" "duplicate_box"
-            , menuItem "move box" "move_box"
-            , menuItem "+ label" "add_label"
-            , menuItem "- label" "remove_label"
+
+            --, menuItem "move box" "move_box"
             , menuItem "- box" "remove_box"
             , menuItem "import" "import"
             , menuItem "export" "export"
+            , menuItem "view ODL" "view_odl"
             ]
       , menuMessage = Nothing
       , selectedBoxId = 0
@@ -48,6 +50,7 @@ initialModel flags =
       , pageName = flags.pageName
       , pageTitle = flags.pageTitle
       , import_ = False
+      , odlString = ""
       , importString = ""
       , csrfToken = flags.csrfToken
       , documentValidity = 0
@@ -133,6 +136,15 @@ update msg model =
             in
             ( newModel, Cmd.none )
 
+        EditBoxSelectBox moveBoxId ->
+            let
+                newModel =
+                    { model
+                        | status = EditBox
+                    }
+            in
+            ( newModel, Cmd.none )
+
         Expand ->
             let
                 newModel =
@@ -157,7 +169,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | document = boxSetLabel boxId newLabel model
+                        | document = boxSetLabel boxId newLabel model.document
                     }
             in
             ( newModel
@@ -167,24 +179,98 @@ update msg model =
         KeyInteraction keyInteractionType key shiftPressed ->
             let
                 newModel =
-                    if key == "S" && shiftPressed && model.status == Default then
-                        { model
-                            | status = SolidBoxAdditionShowOptions
-                        }
+                    if model.status == Default then
+                        if key == "s" then
+                            { model
+                                | status = SolidBoxAdditionShowOptions
+                            }
 
-                    else if key == "a" && model.status == SolidBoxAdditionShowOptions then
-                        { model
-                            | status = SolidBoxAdditionBeforeChooseBox
-                        }
+                        else if key == "l" then
+                            { model
+                                | status = LiquidBoxAdditionShowOptions
+                            }
+
+                        else if key == "e" then
+                            { model
+                                | status = EditBoxChooseBox
+                            }
+
+                        else if key == "r" then
+                            { model
+                                | status = RemoveBoxChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = DuplicateBoxChooseBox
+                            }
+
+                        else
+                            model
+
+                    else if model.status == SolidBoxAdditionShowOptions then
+                        if key == "a" then
+                            { model
+                                | status = SolidBoxAdditionBeforeChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = SolidBoxAdditionAfterChooseBox
+                            }
+
+                        else if key == "w" then
+                            { model
+                                | status = SolidBoxAdditionInsideFirstChooseBox
+                            }
+
+                        else if key == "s" then
+                            { model
+                                | status = SolidBoxAdditionInsideLastChooseBox
+                            }
+
+                        else
+                            model
+
+                    else if model.status == LiquidBoxAdditionShowOptions then
+                        if key == "a" then
+                            { model
+                                | status = LiquidBoxAdditionBeforeChooseBox
+                            }
+
+                        else if key == "d" then
+                            { model
+                                | status = LiquidBoxAdditionAfterChooseBox
+                            }
+
+                        else if key == "w" then
+                            { model
+                                | status = LiquidBoxAdditionInsideFirstChooseBox
+                            }
+
+                        else if key == "s" then
+                            { model
+                                | status = LiquidBoxAdditionInsideLastChooseBox
+                            }
+
+                        else
+                            model
 
                     else if key == "Escape" then
                         { model
                             | status = Default
+                            , import_ = False
+                            , export = ""
                             , selectedBoxId = 0
                         }
 
                     else
                         model
+
+                --else if key == "a" && model.status == SolidBoxAdditionShowOptions then
+                --    { model
+                --        | status = SolidBoxAdditionBeforeChooseBox
+                --    }
             in
             ( newModel
             , Cmd.none
@@ -394,11 +480,77 @@ update msg model =
         Import ->
             let
                 newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = jsonStringToDocument model.importString
-                            , import_ = False
-                        }
+                    { model
+                        | document = jsonStringToDocument model.importString
+                        , import_ = False
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ResetOdlModal ->
+            let
+                newModel =
+                    { model
+                        | odlString = ""
+                        , status = Default
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        SetOdlString odlString ->
+            let
+                newModel =
+                    { model
+                        | odlString = odlString
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ApplyOdl ->
+            let
+                odlParserModel =
+                    { boxes = []
+                    , status = Unresolved
+                    , basket = ""
+                    , parent = 0
+                    , currentBoxes = []
+                    , level = 0
+                    }
+
+                newModel =
+                    { model
+                        | document = odlToBoxes model.odlString odlParserModel
+                        , status = Default
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ViewOdlModal ->
+            let
+                children =
+                    boxesByParentId 0 model
+
+                boxesToOdlStrings =
+                    List.map (boxToOdl model 0) children
+
+                odlString =
+                    List.foldr
+                        (++)
+                        ""
+                        (List.intersperse "\n\n" boxesToOdlStrings)
+
+                newModel =
+                    { model
+                        | odlString = odlString
+                    }
             in
             ( newModel
             , Cmd.none
@@ -525,6 +677,30 @@ update msg model =
                         "move_box" ->
                             { model
                                 | status = MoveBoxChooseBox
+                            }
+
+                        "edit_box" ->
+                            { model
+                                | status = EditBoxChooseBox
+                            }
+
+                        "view_odl" ->
+                            let
+                                children =
+                                    boxesByParentId 0 model
+
+                                boxesToOdlStrings =
+                                    List.map (boxToOdl model 0) children
+
+                                odlString =
+                                    List.foldr
+                                        (++)
+                                        ""
+                                        (List.intersperse "\n\n" boxesToOdlStrings)
+                            in
+                            { model
+                                | status = ViewOdl
+                                , odlString = odlString
                             }
 
                         _ ->

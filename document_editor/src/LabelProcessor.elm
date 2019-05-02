@@ -381,6 +381,9 @@ handleElementStart element =
         "biu" ->
             "<b><i><u>"
 
+        "bulma" ->
+            "<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css'/>"
+
         _ ->
             ""
 

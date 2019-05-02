@@ -1,4 +1,4 @@
-module Types exposing (Box(..), BoxAttribute, BoxType(..), DocumentStatus(..), FlagType, KeyInteractionType(..), LPModel, LabelElement, MenuItem, Model, Msg(..))
+module Types exposing (Box(..), BoxAttribute, BoxType(..), CurrentBox, DocumentStatus(..), FlagType, KeyInteractionType(..), LPModel, LabelElement, MenuItem, Model, Msg(..), OdlParserModel, OdlParserStatus(..))
 
 -- label processor model
 
@@ -82,6 +82,7 @@ type Msg
     | PageNameChanged String
     | PageTitleChanged String
     | Import
+    | ResetOdlModal
     | SetImport String
     | AdjustHeight Int
     | Expand
@@ -91,6 +92,10 @@ type Msg
     | DuplicateBoxInsideLast Int
     | DuplicateBoxAfter Int
     | MoveBoxSelectBox Int
+    | EditBoxSelectBox Int
+    | ViewOdlModal
+    | SetOdlString String
+    | ApplyOdl
 
 
 type KeyInteractionType
@@ -113,6 +118,7 @@ type alias Model =
     , pageName : String
     , pageTitle : String
     , import_ : Bool
+    , odlString : String
     , importString : String
     , csrfToken : String
     , documentValidity : Int
@@ -142,6 +148,9 @@ type DocumentStatus
     | DuplicateBoxInsideLastChooseBox
     | DuplicateBoxAfterChooseBox
     | MoveBoxChooseBox
+    | EditBoxChooseBox
+    | EditBox
+    | ViewOdl
 
 
 type alias MenuItem =
@@ -155,4 +164,28 @@ type alias FlagType =
     , pageTitle : String
     , content : String
     , csrfToken : String
+    }
+
+
+type OdlParserStatus
+    = Unresolved
+    | ProcessingLiquidBox
+    | ProcessingSolidBox
+    | ProcessingLabelOfLiquidBox
+    | ProcessingLabelOfSolidBox
+
+
+type alias CurrentBox =
+    { boxId : Int
+    , level : Int
+    }
+
+
+type alias OdlParserModel =
+    { boxes : List Box
+    , status : OdlParserStatus
+    , basket : String
+    , parent : Int
+    , currentBoxes : List CurrentBox
+    , level : Int
     }
