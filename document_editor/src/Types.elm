@@ -96,6 +96,8 @@ type Msg
     | ViewOdlModal
     | SetOdlString String
     | ApplyOdl
+    | SetOdlStringInsideBox String
+    | ApplyOdlInsideBox Int
 
 
 type KeyInteractionType
@@ -114,15 +116,14 @@ type alias Model =
     , status : DocumentStatus
     , menuMessage : Maybe String
     , selectedBoxId : Int
-    , export : String
     , pageName : String
     , pageTitle : String
-    , import_ : Bool
     , odlString : String
     , importString : String
     , csrfToken : String
     , documentValidity : Int
     , duplicateSubjectId : Maybe Int
+    , odlStringInsideBox : String
     }
 
 
@@ -151,6 +152,8 @@ type DocumentStatus
     | EditBoxChooseBox
     | EditBox
     | ViewOdl
+    | ViewImportModal
+    | ViewExportModal
 
 
 type alias MenuItem =
@@ -185,7 +188,6 @@ type alias OdlParserModel =
     { boxes : List Box
     , status : OdlParserStatus
     , basket : String
-    , parent : Int
     , currentBoxes : List CurrentBox
     , level : Int
     }

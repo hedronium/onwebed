@@ -1,4 +1,4 @@
-module Box exposing (addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentValidityIncrement, documentWithOneBox, duplicateBox, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, duplicateBoxStep, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeLabel, updateBoxContent, updateBoxLabel)
+module Box exposing (addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentValidityIncrement, documentWithOneBox, duplicateBox, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, duplicateBoxStep, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeBoxes, removeLabel, updateBoxContent, updateBoxLabel)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -914,6 +914,42 @@ removeBoxStep boxIds model =
 removeBox : Int -> Model -> List Box
 removeBox boxId model =
     removeBoxStep [ boxId ] model
+
+
+removeBoxes : List Int -> Model -> List Box
+removeBoxes boxesIds model =
+    if List.isEmpty boxesIds then
+        model.document
+
+    else
+        let
+            head =
+                List.head boxesIds
+
+            newDocument =
+                case head of
+                    Just justHead ->
+                        removeBox
+                            justHead
+                            model
+
+                    Nothing ->
+                        model.document
+
+            newModel =
+                { model
+                    | document = newDocument
+                }
+
+            newBoxesIds =
+                case List.tail boxesIds of
+                    Just justBoxesIds ->
+                        justBoxesIds
+
+                    Nothing ->
+                        []
+        in
+        removeBoxes newBoxesIds newModel
 
 
 boxToHtmlString : Model -> Box -> String

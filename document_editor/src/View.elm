@@ -15,7 +15,7 @@ view : Model -> Html Msg
 view model =
     let
         export_modal =
-            if String.length model.export /= 0 then
+            if model.status == ViewExportModal then
                 [ div
                     [ class "modal is-active"
                     , id "export"
@@ -29,7 +29,7 @@ view model =
                         [ class "modal-content" ]
                         [ div
                             [ class "box" ]
-                            [ text model.export ]
+                            [ text (documentToJsonString model) ]
                         ]
                     , button
                         [ class "modal-close is-large"
@@ -44,7 +44,7 @@ view model =
                 []
 
         import_modal =
-            if model.import_ then
+            if model.status == ViewImportModal then
                 [ div
                     [ class "modal is-active"
                     , id "import"

@@ -46,15 +46,14 @@ initialModel flags =
             ]
       , menuMessage = Nothing
       , selectedBoxId = 0
-      , export = ""
       , pageName = flags.pageName
       , pageTitle = flags.pageTitle
-      , import_ = False
       , odlString = ""
       , importString = ""
       , csrfToken = flags.csrfToken
       , documentValidity = 0
       , duplicateSubjectId = Nothing
+      , odlStringInsideBox = ""
       }
     , Cmd.none
     )
@@ -136,12 +135,21 @@ update msg model =
             in
             ( newModel, Cmd.none )
 
-        EditBoxSelectBox moveBoxId ->
+        EditBoxSelectBox editBoxId ->
             let
+                box =
+                    boxById editBoxId model
+
                 newModel =
-                    { model
-                        | status = EditBox
-                    }
+                    case box of
+                        Just (Box justBox) ->
+                            { model
+                                | status = EditBox
+                                , odlStringInsideBox = boxContentToOdl (Box justBox) model 0
+                            }
+
+                        Nothing ->
+                            model
             in
             ( newModel, Cmd.none )
 
@@ -208,6 +216,19 @@ update msg model =
                         else
                             model
 
+                    else if key == "Escape" then
+                        if model.status == EditBox then
+                            { model
+                                | status = Default
+                                , selectedBoxId = 0
+                            }
+
+                        else
+                            { model
+                                | status = Default
+                                , selectedBoxId = 0
+                            }
+
                     else if model.status == SolidBoxAdditionShowOptions then
                         if key == "a" then
                             { model
@@ -256,21 +277,8 @@ update msg model =
                         else
                             model
 
-                    else if key == "Escape" then
-                        { model
-                            | status = Default
-                            , import_ = False
-                            , export = ""
-                            , selectedBoxId = 0
-                        }
-
                     else
                         model
-
-                --else if key == "a" && model.status == SolidBoxAdditionShowOptions then
-                --    { model
-                --        | status = SolidBoxAdditionBeforeChooseBox
-                --    }
             in
             ( newModel
             , Cmd.none
@@ -426,7 +434,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | export = ""
+                        | status = Default
                     }
             in
             ( newModel
@@ -459,7 +467,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | import_ = False
+                        | status = Default
                     }
             in
             ( newModel
@@ -482,7 +490,7 @@ update msg model =
                 newModel =
                     { model
                         | document = jsonStringToDocument model.importString
-                        , import_ = False
+                        , status = Default
                     }
             in
             ( newModel
@@ -514,18 +522,9 @@ update msg model =
 
         ApplyOdl ->
             let
-                odlParserModel =
-                    { boxes = []
-                    , status = Unresolved
-                    , basket = ""
-                    , parent = 0
-                    , currentBoxes = []
-                    , level = 0
-                    }
-
                 newModel =
                     { model
-                        | document = odlToBoxes model.odlString odlParserModel
+                        | document = odlToBoxes model.odlString initialOdlParserModel
                         , status = Default
                     }
             in
@@ -550,6 +549,74 @@ update msg model =
                 newModel =
                     { model
                         | odlString = odlString
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        SetOdlStringInsideBox odlStringInsideBox ->
+            let
+                newModel =
+                    { model
+                        | odlStringInsideBox = odlStringInsideBox
+                    }
+            in
+            ( newModel
+            , Cmd.none
+            )
+
+        ApplyOdlInsideBox boxId ->
+            let
+                boxesFromOdlString =
+                    odlToBoxes
+                        model.odlStringInsideBox
+                        initialOdlParserModel
+
+                idOffset =
+                    Maybe.withDefault -1 (highestBoxId model.document) + 1
+
+                boxesFromOdlStringWithOffsetIds =
+                    List.map
+                        (\(Box box) ->
+                            Box
+                                { box
+                                    | id = box.id + idOffset
+                                    , parent = box.parent + idOffset
+                                }
+                        )
+                        boxesFromOdlString
+
+                boxesWithUpdatedParents =
+                    List.map
+                        (\(Box box) ->
+                            if box.parent == idOffset then
+                                Box
+                                    { box
+                                        | parent = boxId
+                                    }
+
+                            else
+                                Box box
+                        )
+                        boxesFromOdlStringWithOffsetIds
+
+                childrenIds =
+                    List.map
+                        (\(Box box) ->
+                            box.id
+                        )
+                        (boxesByParentId boxId model)
+
+                newDocument =
+                    removeBoxes childrenIds model
+                        ++ boxesWithUpdatedParents
+
+                newModel =
+                    { model
+                        | document = newDocument
+                        , status = Default
+                        , selectedBoxId = 0
                     }
             in
             ( newModel
@@ -641,12 +708,12 @@ update msg model =
 
                         "export" ->
                             { model
-                                | export = documentToJsonString model
+                                | status = ViewExportModal
                             }
 
                         "import" ->
                             { model
-                                | import_ = True
+                                | status = ViewImportModal
                             }
 
                         "duplicate_box" ->

@@ -53,18 +53,31 @@ boxToBoxEditorHtml (Box box) model =
         , div
             [ class "control" ]
             [ textarea
-                [ class "textarea"
-                , attribute "rows" "10"
-                , on
-                    "keyup"
-                    (Decode.map
-                        (LiquidBoxUpdate box.id)
-                        targetValue
-                    )
-                ]
+                ([ class "textarea"
+                 , attribute "rows" "10"
+                 ]
+                    ++ (if box.type_ == LiquidBox then
+                            [ on
+                                "keyup"
+                                (Decode.map
+                                    (LiquidBoxUpdate box.id)
+                                    targetValue
+                                )
+                            ]
+
+                        else
+                            [ on
+                                "keyup"
+                                (Decode.map
+                                    SetOdlStringInsideBox
+                                    targetValue
+                                )
+                            ]
+                       )
+                )
                 [ text
                     (if box.type_ == SolidBox then
-                        boxContentToOdl (Box box) model 0
+                        model.odlStringInsideBox
 
                      else
                         case box.content of
@@ -77,4 +90,10 @@ boxToBoxEditorHtml (Box box) model =
                 ]
             ]
         ]
+    , button
+        [ class "button is-primary is-outlined"
+        , onClick
+            (ApplyOdlInsideBox box.id)
+        ]
+        [ text "Apply Changes" ]
     ]

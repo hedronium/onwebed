@@ -1,4 +1,4 @@
-module Odl exposing (boxContentToOdl, boxToOdl, odlToBoxes)
+module Odl exposing (boxContentToOdl, boxToOdl, currentBoxId, currentBoxIdAtLowerLevel, initialOdlParserModel, odlToBoxes, removeLastCurrentBox)
 
 import Box exposing (..)
 import Debug exposing (..)
@@ -130,6 +130,16 @@ removeLastCurrentBox odlParserModel =
         )
 
 
+initialOdlParserModel : OdlParserModel
+initialOdlParserModel =
+    { boxes = []
+    , status = Unresolved
+    , basket = ""
+    , currentBoxes = []
+    , level = 0
+    }
+
+
 odlToBoxes : String -> OdlParserModel -> List Box
 odlToBoxes odl odlParserModel =
     if String.length odl == 0 then
@@ -233,7 +243,6 @@ odlToBoxes odl odlParserModel =
                                 | basket = ""
                                 , status = ProcessingSolidBox
                                 , boxes = newBoxes
-                                , parent = Maybe.withDefault 0 (currentBoxIdAtLowerLevel newModel)
                                 , currentBoxes =
                                     newModel.currentBoxes
                                         ++ [ { boxId = id
@@ -320,19 +329,6 @@ odlToBoxes odl odlParserModel =
                             { newModel
                                 | status = Unresolved
                             }
-
-                    --if String.length newBasket <= 3 then
-                    --    if newBasket == " [ " then
-                    --        { newModel
-                    --            | status = ProcessingLabelOfSolidBox
-                    --            , basket = ""
-                    --        }
-                    --    else
-                    --        newModel
-                    --else
-                    --    { newModel
-                    --        | status = Unresolved
-                    --    }
                 in
                 odlToBoxes newOdl2 newModel2
 
