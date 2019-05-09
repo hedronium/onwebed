@@ -54,7 +54,7 @@ boxToBoxEditorHtml (Box box) model =
             [ class "control" ]
             [ textarea
                 ([ class "textarea"
-                 , attribute "rows" "10"
+                 , attribute "rows" "20"
                  ]
                     ++ (if box.type_ == LiquidBox then
                             [ on
@@ -91,7 +91,7 @@ boxToBoxEditorHtml (Box box) model =
             ]
         ]
     , button
-        [ class "button is-primary is-outlined"
+        [ class "button is-success is-outlined"
         , onClick
             (ApplyOdlInsideBox box.id)
         ]

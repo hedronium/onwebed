@@ -93,7 +93,6 @@ type Msg
     | DuplicateBoxAfter Int
     | MoveBoxSelectBox Int
     | EditBoxSelectBox Int
-    | ViewOdlModal
     | SetOdlString String
     | ApplyOdl
     | SetOdlStringInsideBox String
