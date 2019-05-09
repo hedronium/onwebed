@@ -1,0 +1,38 @@
+{% extends "onwebed/base.html" %}
+
+{% block content %}
+
+<form action="{% url 'users:register' %}" method="POST">
+    {% csrf_token %}
+    <div class="field">
+        <label class="label">Username</label>
+        <div class="control">
+            <input class="input" name="username" type="text" placeholder="Username">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Email Address</label>
+        <div class="control">
+            <input class="input" name="email_address" type="text" placeholder="Email Address">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Password</label>
+        <div class="control">
+            <input class="input" name="password" type="password" placeholder="Password">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label">Confirm Password</label>
+        <div class="control">
+            <input class="input" name="confirm_password" type="password" placeholder="Confirm Password">
+        </div>
+    </div>
+
+    <input type="submit" class="button" value="Register"/> or <a href="{% url 'users:login' %}">Login</a>
+</form>
+
+{% endblock %}

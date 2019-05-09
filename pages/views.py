@@ -2,21 +2,26 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Page
 from onwebed import core
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+@login_required()
 def index(request):
 	return render(request, "pages/index.html")
 
 
+@login_required
 def list(request):
 	context = {
-		'pages': Page.objects.all()
+		'user': request.user,
+		'pages': Page.objects.all(),
 	}
 
 	return render(request, "pages/list.html", context)
 
 
+@login_required
 def create(request):
 	if request.method == "POST":
 		title = request.POST['title']
@@ -31,6 +36,7 @@ def create(request):
 	return render(request, "pages/create.html")
 
 
+@login_required
 def edit(request, page_id):
 	page = get_object_or_404(Page, pk = page_id)
 
@@ -56,6 +62,7 @@ def edit(request, page_id):
 	return render(request, "pages/edit.html", context)
 
 
+@login_required
 def delete(request, page_id):
 	if request.method == "POST":
 		page = get_object_or_404(Page, pk = page_id)
@@ -86,6 +93,28 @@ def detail(request, page_id):
 
 def detail_by_name(request, page_name):
 	page = get_object_or_404(Page, name = page_name)
+
+	context = {
+		'page': page,
+		'pages': Page.objects.all()
+	}
+
+	if not page.is_cached:
+		core.cache_page(page.name, page.html_content)
+
+	return render(request, "pages/cached/" + page.name + ".html", context)
+
+def default_page(request):
+	from onwebed.models import SiteAttribute
+
+	default_page_filter = SiteAttribute.objects.filter(key = "default_page")
+
+	if default_page_filter.exists():
+		default_page_id = int(default_page_filter.first().value)
+	else:
+		default_page_id = Page.objects.first().id
+
+	page = get_object_or_404(Page, id = default_page_id)
 
 	context = {
 		'page': page,

@@ -9,10 +9,6 @@ import LabelProcessor exposing (..)
 import Types exposing (..)
 
 
-
---import States exposing (..)
-
-
 documentWithOneBox : List Box
 documentWithOneBox =
     [ generateBox 1 (Just "div") Nothing 0 SolidBox ]

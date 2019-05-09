@@ -36,6 +36,18 @@
 							            <a class="navbar-item" href="{% url 'pages:list' %}">
 							                Pages
 							            </a>
+
+							            <a class="navbar-item" href="/admin">
+							                Admin
+							            </a>
+							        </div>
+							        <div class="navbar-end">
+							        	<span class="navbar-item">
+							        		{{ user.username }}
+							        	</span>
+							            <a class="navbar-item" href="{% url 'users:logout' %}">
+							                Logout
+							            </a>
 							        </div>
 							    </div>
 							</nav>
@@ -60,11 +72,19 @@
 
 					{% if messages %}
 					{% for message in messages %}
+					{% if message.tags == "error" %}
+					<article class="message is-danger">
+					    <div class="message-body">
+					        {{ message }}
+					    </div>
+					</article>
+					{% else %}
 					<article class="message is-{{ message.tags }}">
 					    <div class="message-body">
 					        {{ message }}
 					    </div>
 					</article>
+					{% endif %}
 					{% endfor %}
 					{% endif %}
 

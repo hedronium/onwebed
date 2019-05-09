@@ -547,9 +547,10 @@ update msg model =
                         (List.intersperse "\n\n" boxesToOdlStrings)
 
                 newModel =
-                    { model
-                        | odlString = odlString
-                    }
+                    Debug.log "viewOdlModal"
+                        { model
+                            | odlString = odlString
+                        }
             in
             ( newModel
             , Cmd.none
