@@ -76,39 +76,29 @@ body {
 /* Solid and Liquid Box */
 
 .solid_box, .liquid_box {
-	margin: 0.7em;
+	margin: 0.5em;
 	border-radius: 3px;
-	min-height: 1em;
+	/*min-height: 1em;*/
 }
 
 .solid_box {
 	border: 1px solid #CCC;
+	padding: 0.7em;
+	min-width: calc(100% - 1em);
+	display: flex;
+	flex-wrap: wrap;
+	align-content: space-between;
+	align-items: flex-start;
 }
 
 .liquid_box {
-	margin-left: 0.7em;
 	padding: 0.5em;
-	display: inline-block;
-	max-width: 98%;
 	background: #F0F0F0;
 	border: 1px solid #F0F0F0;
 	white-space: pre-wrap;
 	vertical-align: top;
 	font-size: 1em;
 }
-
-/*.liquid_box > .content {
-	display: inline-block;
-	line-height: 1.5em;
-	padding: 0.3em;
-	resize: none;
-	border: 0px;
-	background: inherit;
-	font-size: 1em;
-	font-family: inherit;
-	max-width: 100%;
-	overflow: hidden;
-}*/
 
 .selected {
 	border-color: #4d55c6;
@@ -121,28 +111,20 @@ body {
 
 .solid_box > .box-label {
 	background: #545BE2;
-	margin: 0.7em 0em 0.7em 0.7em;
+	/*margin: 0.7em 0em 0.7em 0.7em;*/
 	padding: 0.1em 0.5em 0.1em 0.5em;
 	color: white;
 	border-radius: 3px;
 }
 
-/*.solid_box > .box-label:focus {
-	background: #4700C4;
-}*/
-
 .liquid_box > .box-label {
 	background: #8589e5;
-	margin: 0em 0.3em 0em 0em;
+	margin: 0em 0.5em 0em 0em;
 	padding: 0em 0.4em 0em 0.4em;
 	border-radius: 3px;
 	vertical-align: top;
 	color: white;
 }
-
-/*.liquid_box > .box-label:focus {
-	background: #FF97D9;
-}*/
 
 .box-label {
 	display: inline-block;
@@ -153,6 +135,7 @@ body {
 	font-size: 1.05em;
 	font-family: inherit;
 	max-width: 100%;
+	margin: 0.5em;
 }
 
 /* Miscellaneous */
