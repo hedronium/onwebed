@@ -46,18 +46,12 @@ view model =
                     ]
                     [ div
                         []
-                        [ div
-                            [ class "field" ]
-                            [ div
-                                [ class "control" ]
-                                [ textarea
-                                    [ class "textarea"
-                                    , Html.Attributes.attribute "rows" "20"
-                                    , on "blur" (Decode.map SetImport targetValue)
-                                    ]
-                                    [ text (documentToJsonString model) ]
-                                ]
+                        [ textarea
+                            [ class "textarea"
+                            , Html.Attributes.attribute "rows" "20"
+                            , on "blur" (Decode.map SetImport targetValue)
                             ]
+                            [ text (documentToJsonString model) ]
                         ]
                     ]
                 ]
@@ -72,29 +66,17 @@ view model =
                     ]
                     [ div
                         []
-                        [ div
-                            [ class "field" ]
-                            [ div
-                                [ class "control" ]
-                                [ textarea
-                                    [ class "textarea"
-                                    , Html.Attributes.attribute "rows" "20"
-                                    , on "blur" (Decode.map SetImport targetValue)
-                                    ]
-                                    []
-                                ]
+                        [ textarea
+                            [ class "textarea"
+                            , Html.Attributes.attribute "rows" "20"
+                            , on "blur" (Decode.map SetImport targetValue)
                             ]
-                        , div
-                            [ class "field" ]
-                            [ div
-                                [ class "control" ]
-                                [ button
-                                    [ Html.Events.onClick Import
-                                    , class "button is-success"
-                                    ]
-                                    [ text "Import" ]
-                                ]
+                            []
+                        , button
+                            [ Html.Events.onClick Import
+                            , class "button is-success is-outlined"
                             ]
+                            [ text "Import" ]
                         ]
                     ]
                 ]
@@ -110,29 +92,17 @@ view model =
                     ]
                     [ div
                         []
-                        [ div
-                            [ class "field" ]
-                            [ div
-                                [ class "control" ]
-                                [ textarea
-                                    [ class "textarea"
-                                    , attribute "rows" "20"
-                                    , on "blur" (Decode.map SetOdlString targetValue)
-                                    ]
-                                    [ text model.odlString ]
-                                ]
+                        [ textarea
+                            [ class "textarea"
+                            , attribute "rows" "20"
+                            , on "blur" (Decode.map SetOdlString targetValue)
                             ]
-                        , div
-                            [ class "field" ]
-                            [ div
-                                [ class "control" ]
-                                [ button
-                                    [ Html.Events.onClick ApplyOdl
-                                    , class "button is-success"
-                                    ]
-                                    [ text "Apply ODL" ]
-                                ]
+                            [ text model.odlString ]
+                        , button
+                            [ Html.Events.onClick ApplyOdl
+                            , class "button is-success is-outlined"
                             ]
+                            [ text "Apply ODL" ]
                         ]
                     ]
                 ]

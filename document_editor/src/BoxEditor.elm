@@ -18,77 +18,65 @@ boxToBoxEditorHtml (Box box) model =
             [ text "Press Escape to get back. Any change is applied immediately." ]
         ]
     , div
-        [ class "field" ]
-        [ div
-            [ class "label" ]
-            [ text "Label: " ]
-        , div
-            [ class "control" ]
-            [ input
-                [ class "input"
-                , attribute
-                    "value"
-                    (case box.label of
-                        Just label ->
-                            label
+        [ class "label" ]
+        [ text "Label: " ]
+    , input
+        [ class "input"
+        , attribute
+            "value"
+            (case box.label of
+                Just label ->
+                    label
 
-                        Nothing ->
-                            ""
-                    )
-                , on
-                    "keyup"
-                    (Decode.map
-                        (LabelUpdate box.id)
-                        targetValue
-                    )
-                ]
-                []
-            ]
+                Nothing ->
+                    ""
+            )
+        , on
+            "keyup"
+            (Decode.map
+                (LabelUpdate box.id)
+                targetValue
+            )
         ]
+        []
     , div
-        [ class "field" ]
-        [ div
-            [ class "label" ]
-            [ text "Content: " ]
-        , div
-            [ class "control" ]
-            [ textarea
-                ([ class "textarea"
-                 , attribute "rows" "20"
-                 ]
-                    ++ (if box.type_ == LiquidBox then
-                            [ on
-                                "keyup"
-                                (Decode.map
-                                    (LiquidBoxUpdate box.id)
-                                    targetValue
-                                )
-                            ]
+        [ class "label" ]
+        [ text "Content: " ]
+    , textarea
+        ([ class "textarea"
+         , attribute "rows" "20"
+         ]
+            ++ (if box.type_ == LiquidBox then
+                    [ on
+                        "keyup"
+                        (Decode.map
+                            (LiquidBoxUpdate box.id)
+                            targetValue
+                        )
+                    ]
 
-                        else
-                            [ on
-                                "keyup"
-                                (Decode.map
-                                    SetOdlStringInsideBox
-                                    targetValue
-                                )
-                            ]
-                       )
-                )
-                [ text
-                    (if box.type_ == SolidBox then
-                        model.odlStringInsideBox
+                else
+                    [ on
+                        "keyup"
+                        (Decode.map
+                            SetOdlStringInsideBox
+                            targetValue
+                        )
+                    ]
+               )
+        )
+        [ text
+            (if box.type_ == SolidBox then
+                model.odlStringInsideBox
 
-                     else
-                        case box.content of
-                            Just content ->
-                                content
+             else
+                case box.content of
+                    Just content ->
+                        content
 
-                            Nothing ->
-                                ""
-                    )
-                ]
-            ]
+                    Nothing ->
+                        ""
+            )
         ]
     , button
         [ class "button is-success is-outlined"

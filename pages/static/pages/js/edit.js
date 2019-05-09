@@ -8333,124 +8333,88 @@ var author$project$BoxEditor$boxToBoxEditorHtml = F2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('field')
+						elm$html$Html$Attributes$class('label')
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('label')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Label: ')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('control')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$input,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('input'),
-										A2(
-										elm$html$Html$Attributes$attribute,
-										'value',
-										function () {
-											var _n1 = box.label;
-											if (_n1.$ === 'Just') {
-												var label = _n1.a;
-												return label;
-											} else {
-												return '';
-											}
-										}()),
-										A2(
-										elm$html$Html$Events$on,
-										'keyup',
-										A2(
-											elm$json$Json$Decode$map,
-											author$project$Types$LabelUpdate(box.id),
-											elm$html$Html$Events$targetValue))
-									]),
-								_List_Nil)
-							]))
+						elm$html$Html$text('Label: ')
 					])),
+				A2(
+				elm$html$Html$input,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('input'),
+						A2(
+						elm$html$Html$Attributes$attribute,
+						'value',
+						function () {
+							var _n1 = box.label;
+							if (_n1.$ === 'Just') {
+								var label = _n1.a;
+								return label;
+							} else {
+								return '';
+							}
+						}()),
+						A2(
+						elm$html$Html$Events$on,
+						'keyup',
+						A2(
+							elm$json$Json$Decode$map,
+							author$project$Types$LabelUpdate(box.id),
+							elm$html$Html$Events$targetValue))
+					]),
+				_List_Nil),
 				A2(
 				elm$html$Html$div,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$class('field')
+						elm$html$Html$Attributes$class('label')
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('label')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Content: ')
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('control')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$textarea,
-								_Utils_ap(
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('textarea'),
-											A2(elm$html$Html$Attributes$attribute, 'rows', '20')
-										]),
-									_Utils_eq(box.type_, author$project$Types$LiquidBox) ? _List_fromArray(
-										[
-											A2(
-											elm$html$Html$Events$on,
-											'keyup',
-											A2(
-												elm$json$Json$Decode$map,
-												author$project$Types$LiquidBoxUpdate(box.id),
-												elm$html$Html$Events$targetValue))
-										]) : _List_fromArray(
-										[
-											A2(
-											elm$html$Html$Events$on,
-											'keyup',
-											A2(elm$json$Json$Decode$map, author$project$Types$SetOdlStringInsideBox, elm$html$Html$Events$targetValue))
-										])),
-								_List_fromArray(
-									[
-										elm$html$Html$text(
-										function () {
-											if (_Utils_eq(box.type_, author$project$Types$SolidBox)) {
-												return model.odlStringInsideBox;
-											} else {
-												var _n2 = box.content;
-												if (_n2.$ === 'Just') {
-													var content = _n2.a;
-													return content;
-												} else {
-													return '';
-												}
-											}
-										}())
-									]))
-							]))
+						elm$html$Html$text('Content: ')
+					])),
+				A2(
+				elm$html$Html$textarea,
+				_Utils_ap(
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('textarea'),
+							A2(elm$html$Html$Attributes$attribute, 'rows', '20')
+						]),
+					_Utils_eq(box.type_, author$project$Types$LiquidBox) ? _List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'keyup',
+							A2(
+								elm$json$Json$Decode$map,
+								author$project$Types$LiquidBoxUpdate(box.id),
+								elm$html$Html$Events$targetValue))
+						]) : _List_fromArray(
+						[
+							A2(
+							elm$html$Html$Events$on,
+							'keyup',
+							A2(elm$json$Json$Decode$map, author$project$Types$SetOdlStringInsideBox, elm$html$Html$Events$targetValue))
+						])),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						function () {
+							if (_Utils_eq(box.type_, author$project$Types$SolidBox)) {
+								return model.odlStringInsideBox;
+							} else {
+								var _n2 = box.content;
+								if (_n2.$ === 'Just') {
+									var content = _n2.a;
+									return content;
+								} else {
+									return '';
+								}
+							}
+						}())
 					])),
 				A2(
 				elm$html$Html$button,
@@ -9139,66 +9103,30 @@ var author$project$View$view = function (model) {
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$textarea,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('field')
+									elm$html$Html$Attributes$class('textarea'),
+									A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
+									A2(
+									elm$html$Html$Events$on,
+									'blur',
+									A2(elm$json$Json$Decode$map, author$project$Types$SetOdlString, elm$html$Html$Events$targetValue))
 								]),
 							_List_fromArray(
 								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('control')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$textarea,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('textarea'),
-													A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
-													A2(
-													elm$html$Html$Events$on,
-													'blur',
-													A2(elm$json$Json$Decode$map, author$project$Types$SetOdlString, elm$html$Html$Events$targetValue))
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text(model.odlString)
-												]))
-										]))
+									elm$html$Html$text(model.odlString)
 								])),
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$button,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('field')
+									elm$html$Html$Events$onClick(author$project$Types$ApplyOdl),
+									elm$html$Html$Attributes$class('button is-success is-outlined')
 								]),
 							_List_fromArray(
 								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('control')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$button,
-											_List_fromArray(
-												[
-													elm$html$Html$Events$onClick(author$project$Types$ApplyOdl),
-													elm$html$Html$Attributes$class('button is-success')
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text('Apply ODL')
-												]))
-										]))
+									elm$html$Html$text('Apply ODL')
 								]))
 						]))
 				]))
@@ -9219,63 +9147,27 @@ var author$project$View$view = function (model) {
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$textarea,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('field')
-								]),
-							_List_fromArray(
-								[
+									elm$html$Html$Attributes$class('textarea'),
+									A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
 									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('control')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$textarea,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('textarea'),
-													A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
-													A2(
-													elm$html$Html$Events$on,
-													'blur',
-													A2(elm$json$Json$Decode$map, author$project$Types$SetImport, elm$html$Html$Events$targetValue))
-												]),
-											_List_Nil)
-										]))
-								])),
+									elm$html$Html$Events$on,
+									'blur',
+									A2(elm$json$Json$Decode$map, author$project$Types$SetImport, elm$html$Html$Events$targetValue))
+								]),
+							_List_Nil),
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$button,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('field')
+									elm$html$Html$Events$onClick(author$project$Types$Import),
+									elm$html$Html$Attributes$class('button is-success is-outlined')
 								]),
 							_List_fromArray(
 								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('control')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$button,
-											_List_fromArray(
-												[
-													elm$html$Html$Events$onClick(author$project$Types$Import),
-													elm$html$Html$Attributes$class('button is-success')
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text('Import')
-												]))
-										]))
+									elm$html$Html$text('Import')
 								]))
 						]))
 				]))
@@ -9352,38 +9244,20 @@ var author$project$View$view = function (model) {
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$div,
+							elm$html$Html$textarea,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('field')
+									elm$html$Html$Attributes$class('textarea'),
+									A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
+									A2(
+									elm$html$Html$Events$on,
+									'blur',
+									A2(elm$json$Json$Decode$map, author$project$Types$SetImport, elm$html$Html$Events$targetValue))
 								]),
 							_List_fromArray(
 								[
-									A2(
-									elm$html$Html$div,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('control')
-										]),
-									_List_fromArray(
-										[
-											A2(
-											elm$html$Html$textarea,
-											_List_fromArray(
-												[
-													elm$html$Html$Attributes$class('textarea'),
-													A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
-													A2(
-													elm$html$Html$Events$on,
-													'blur',
-													A2(elm$json$Json$Decode$map, author$project$Types$SetImport, elm$html$Html$Events$targetValue))
-												]),
-											_List_fromArray(
-												[
-													elm$html$Html$text(
-													author$project$Box$documentToJsonString(model))
-												]))
-										]))
+									elm$html$Html$text(
+									author$project$Box$documentToJsonString(model))
 								]))
 						]))
 				]))

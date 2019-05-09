@@ -27,19 +27,42 @@ body {
    left: 0;
    z-index: 1;
    background: rgba(40, 40, 40, .75);
+   display: flex;
+   flex-direction: column;
 }
 
 .overlay > div {
-   margin: 5vh auto 5vh auto;
-   width: 80%;
-   /*max-width: 650px;*/
-   padding: 30px;
-   /*min-height: 100vh;*/
-   /*background: rgba(255, 255, 255, .95);*/
-   background: white;
-   word-wrap: break-word;
-   z-index: 2;
-   min-height: 90vh;
+	flex-grow: 1;
+   	margin: 5vh auto 5vh auto;
+	width: 80%;
+	/*max-width: 650px;*/
+	padding: 30px;
+	/*min-height: 100vh;*/
+	/*background: rgba(255, 255, 255, .95);*/
+	background: white;
+	word-wrap: break-word;
+	z-index: 2;
+	/*min-height: 90vh;*/
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.overlay > div > .textarea {
+	flex-grow: 1;
+}
+
+.overlay > div > .button {
+	margin-top: 1em;
+}
+
+.overlay > div > .label {
+	margin-top: 1em;
+}
+
+.overlay > div > .message {
+	margin-bottom: 0em;
+	width: 100%;
 }
 
 #menu_header span > div[contenteditable='true'] {
@@ -48,8 +71,6 @@ body {
 }
 
 #menu {
-	/*display: flex;
-	flex-direction: row;*/
 	position: fixed;
 	top: 0px;
 	padding: 1em;
@@ -57,9 +78,6 @@ body {
 	border-bottom: 1px solid #CCC;
 	z-index: 1;
 	min-width: 100%;
-	/*flex-wrap: wrap;*/
-	/*box-sizing: border-box;*/
-	/*max-width: 100%;*/
 	box-shadow: 0px 2px 10px #CCC;
 }
 
@@ -78,7 +96,6 @@ body {
 .solid_box, .liquid_box {
 	margin: 0.5em;
 	border-radius: 3px;
-	/*min-height: 1em;*/
 }
 
 .solid_box {
