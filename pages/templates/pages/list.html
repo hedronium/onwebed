@@ -11,9 +11,8 @@ List of Pages
 {% endblock %}
 
 {% block content %}
-<a href="{% url 'pages:create' %}" class="button">Create New Page</a>
-<hr/>
-<table class="table" width="100%">
+<a href="{% url 'pages:create' %}" class="btn btn-outline-primary">Create New Page</a>
+<table class="table mt-4" width="100%">
 	<thead>
 		<tr>
 			<th>#</th>
@@ -37,10 +36,10 @@ List of Pages
 				{{ page.name }}
 			</td>
 			<td>
-				<a href="{% url 'pages:edit' page.id %}" class="button">
+				<a href="{% url 'pages:edit' page.id %}" class="btn btn-outline-primary">
 					Edit
 				</a>
-				<a href="{% url 'pages:delete' page.id %}" class="button">
+				<a href="{% url 'pages:delete' page.id %}" class="btn btn-outline-primary">
 					Delete
 				</a>
 			</td>

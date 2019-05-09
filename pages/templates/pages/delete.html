@@ -1,11 +1,11 @@
 {% extends "onwebed/base.html" %}
 
 {% block breadcrumbs %}
-<li>
+<li class="breadcrumb-item">
 	<a href="{% url 'pages:list' %}">Pages</a>
 </li>
-<li class="is active">
-	<a href="">Delete</a>
+<li class="breadcrumb-item active" aria-current="page">
+	Delete
 </li>
 {% endblock %}
 
