@@ -74,8 +74,6 @@ type Msg
     | LabelUpdate Int String
     | LiquidBoxUpdate Int String
     | MenuItemClicked String
-    | RemoveLabel Int
-    | AddLabel Int
     | RemoveBox Int
     | ResetExport
     | ResetImport
@@ -85,7 +83,6 @@ type Msg
     | ResetOdlModal
     | SetImport String
     | AdjustHeight Int
-    | Expand
     | DuplicateBoxSelectBox Int
     | DuplicateBoxBefore Int
     | DuplicateBoxInsideFirst Int
@@ -120,7 +117,6 @@ type alias Model =
     , odlString : String
     , importString : String
     , csrfToken : String
-    , documentValidity : Int
     , duplicateSubjectId : Maybe Int
     , odlStringInsideBox : String
     }
@@ -138,8 +134,6 @@ type DocumentStatus
     | LiquidBoxAdditionInsideFirstChooseBox
     | SolidBoxAdditionInsideLastChooseBox
     | LiquidBoxAdditionInsideLastChooseBox
-    | RemoveLabelChooseBox
-    | AddLabelChooseBox
     | RemoveBoxChooseBox
     | DuplicateBoxChooseBox
     | DuplicateBoxShowOptions

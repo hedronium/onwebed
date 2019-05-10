@@ -1,4 +1,4 @@
-module Box exposing (addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentValidityIncrement, documentWithOneBox, duplicateBox, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, duplicateBoxStep, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeBoxes, removeLabel, updateBoxContent, updateBoxLabel)
+module Box exposing (addLabel, boxById, boxByIdStep, boxSetLabel, boxToHtml, boxToHtmlString, boxToJson, boxesByParentId, boxesToHtml, documentToHtmlString, documentToJsonString, documentWithOneBox, duplicateBox, duplicateBoxAfter, duplicateBoxBefore, duplicateBoxInsideFirst, duplicateBoxInsideLast, duplicateBoxStep, escapeString, generateBox, highestBoxId, indexOfBoxById, indexOfBoxByIdStep, innerHtmlDecoder, insertBoxAfter, insertBoxBefore, insertBoxByIndex, insertBoxInsideFirst, insertBoxInsideLast, isDocumentEmpty, jsonStringToDocument, labelToHtml, liquidBoxToHtml, processBoxType, removeBox, removeBoxStep, removeBoxes, removeLabel, updateBoxContent, updateBoxLabel)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -30,13 +30,6 @@ highestBoxId document =
 innerHtmlDecoder : Decoder String
 innerHtmlDecoder =
     Decode.at [ "target", "innerHTML" ] Decode.string
-
-
-documentValidityIncrement : Model -> Model
-documentValidityIncrement model =
-    { model
-        | documentValidity = model.documentValidity + 1
-    }
 
 
 
@@ -141,16 +134,6 @@ boxToHtml model (Box boxToBeConvertedToHtml) =
 
             else if model.status == LiquidBoxAdditionInsideLastChooseBox && boxToBeConvertedToHtml.type_ == SolidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( LiquidBoxAdditionInsideLast boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
-                ]
-
-            else if model.status == RemoveLabelChooseBox && boxToBeConvertedToHtml.label /= Nothing then
-                [ stopPropagationOn "click" (Decode.succeed ( RemoveLabel boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
-                ]
-
-            else if model.status == AddLabelChooseBox && boxToBeConvertedToHtml.label == Nothing then
-                [ stopPropagationOn "click" (Decode.succeed ( AddLabel boxToBeConvertedToHtml.id, True ))
                 , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
@@ -464,25 +447,19 @@ duplicateBoxStep oldBoxes newBoxes model =
                             List.map
                                 (\(Box box) ->
                                     if box.id == newFirstNewBoxId && box.type_ == LiquidBox then
-                                        Debug.log
-                                            "updatedContentAndLabel"
-                                            (Box
-                                                { box
-                                                    | content = firstOldBox.content
-                                                    , label = firstOldBox.label
-                                                    , labelElements = processLabel (Maybe.withDefault "" firstOldBox.label)
-                                                }
-                                            )
+                                        Box
+                                            { box
+                                                | content = firstOldBox.content
+                                                , label = firstOldBox.label
+                                                , labelElements = processLabel (Maybe.withDefault "" firstOldBox.label)
+                                            }
 
                                     else if box.id == newFirstNewBoxId && box.type_ == SolidBox then
-                                        Debug.log
-                                            "updatedContentAndLabel"
-                                            (Box
-                                                { box
-                                                    | label = firstOldBox.label
-                                                    , labelElements = processLabel (Maybe.withDefault "" firstOldBox.label)
-                                                }
-                                            )
+                                        Box
+                                            { box
+                                                | label = firstOldBox.label
+                                                , labelElements = processLabel (Maybe.withDefault "" firstOldBox.label)
+                                            }
 
                                     else
                                         Box box
@@ -551,7 +528,7 @@ duplicateBoxBefore duplicateBeforeId model =
                     Nothing ->
                         SolidBox
                 )
-                (documentValidityIncrement model)
+                model
 
         maybeNewBoxId =
             highestBoxId newModel.document
@@ -587,7 +564,7 @@ duplicateBoxInsideFirst duplicateInsideFirstId model =
                     Nothing ->
                         SolidBox
                 )
-                (documentValidityIncrement model)
+                model
 
         maybeNewBoxId =
             highestBoxId newModel.document
@@ -623,7 +600,7 @@ duplicateBoxInsideLast duplicateInsideLastId model =
                     Nothing ->
                         SolidBox
                 )
-                (documentValidityIncrement model)
+                model
 
         maybeNewBoxId =
             highestBoxId newModel.document
@@ -659,7 +636,7 @@ duplicateBoxAfter duplicateAfterId model =
                     Nothing ->
                         SolidBox
                 )
-                (documentValidityIncrement model)
+                model
 
         maybeNewBoxId =
             highestBoxId newModel.document

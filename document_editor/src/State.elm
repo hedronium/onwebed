@@ -51,7 +51,6 @@ initialModel flags =
       , odlString = ""
       , importString = ""
       , csrfToken = flags.csrfToken
-      , documentValidity = 0
       , duplicateSubjectId = Nothing
       , odlStringInsideBox = ""
       }
@@ -152,13 +151,6 @@ update msg model =
                             model
             in
             ( newModel, overlay True )
-
-        Expand ->
-            let
-                newModel =
-                    documentValidityIncrement model
-            in
-            ( newModel, Cmd.none )
 
         -- Add box inside another box
         AdjustHeight height ->
@@ -396,34 +388,6 @@ update msg model =
             , Cmd.none
             )
 
-        RemoveLabel boxId ->
-            let
-                newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = List.map (removeLabel boxId) model.document
-                            , status = Default
-                            , selectedBoxId = 0
-                        }
-            in
-            ( newModel
-            , Cmd.none
-            )
-
-        AddLabel boxId ->
-            let
-                newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = List.map (addLabel boxId) model.document
-                            , status = Default
-                            , selectedBoxId = 0
-                        }
-            in
-            ( newModel
-            , Cmd.none
-            )
-
         RemoveBox boxId ->
             let
                 newModel =
@@ -613,10 +577,9 @@ update msg model =
                     case machine_name of
                         "add_solid_box" ->
                             if isDocumentEmpty model then
-                                documentValidityIncrement
-                                    { model
-                                        | document = documentWithOneBox
-                                    }
+                                { model
+                                    | document = documentWithOneBox
+                                }
 
                             else
                                 { model
@@ -645,10 +608,9 @@ update msg model =
 
                         "add_liquid_box" ->
                             if isDocumentEmpty model then
-                                documentValidityIncrement
-                                    { model
-                                        | document = documentWithOneBox
-                                    }
+                                { model
+                                    | document = documentWithOneBox
+                                }
 
                             else
                                 { model
@@ -673,16 +635,6 @@ update msg model =
                         "add_liquid_box_inside_last" ->
                             { model
                                 | status = LiquidBoxAdditionInsideLastChooseBox
-                            }
-
-                        "remove_label" ->
-                            { model
-                                | status = RemoveLabelChooseBox
-                            }
-
-                        "add_label" ->
-                            { model
-                                | status = AddLabelChooseBox
                             }
 
                         "remove_box" ->
