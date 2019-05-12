@@ -102,7 +102,7 @@ view model =
                             [ Html.Events.onClick ApplyOdl
                             , class "button is-success is-outlined"
                             ]
-                            [ text "Apply ODL" ]
+                            [ text "Apply Changes" ]
                         ]
                     ]
                 ]

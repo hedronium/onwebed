@@ -15,7 +15,7 @@ boxToBoxEditorHtml (Box box) model =
         [ class "message" ]
         [ div
             [ class "message-body" ]
-            [ text "Press Escape to get back. Any change is applied immediately." ]
+            [ text "Press Escape to get back, but any change you make will be discarded unless you apply them." ]
         ]
     , div
         [ class "label" ]
@@ -41,7 +41,14 @@ boxToBoxEditorHtml (Box box) model =
         []
     , div
         [ class "label" ]
-        [ text "Content: " ]
+        [ text
+            (if box.type_ == LiquidBox then
+                "Content: "
+
+             else
+                "Content (ODL): "
+            )
+        ]
     , textarea
         ([ class "textarea"
          , attribute "rows" "20"
