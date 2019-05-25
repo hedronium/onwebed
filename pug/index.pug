@@ -20,8 +20,8 @@ html
 
                 ul.menu
                     li
-                        a(href="#features").
-                            Features
+                        a(href="#about").
+                            About
                     li
                         a(href="#").
                             Guide
@@ -29,12 +29,72 @@ html
                         a(href="#").
                             Documentation
 
-        div#features.mt-5
+        div#about.mt-5
             div.container
-                div.row
-                    div.col-sm.
-                        Hey
-                    div.col-sm.
-                        Hey
-                    div.col-sm.
-                        Hey
+                h1.mb-5 About
+                p.
+                    Onwebed is a visual way to create HTML documents. HTML can get messy at times, Onwebed keeps it clean!
+
+                p.
+                    It doesn't settle with static pages, it's powerful enough to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
+
+            div.container.mt-5#about-points
+                h3.
+                    Simplicity
+                p.
+                    Every single webpage you create with Onwebed is composed of "boxes."
+
+                p.
+                    Boxes can be used to define your content, act as placeholders for reducing redundancy, house other boxs, or even include other pages.
+                    
+                h3.
+                    Code HTML but Visually
+                p.
+                    As mentioned in the previous heading, your webpages are built with what is known as "boxes." Each box may have a label attached to it.
+
+                p.
+                    Let's look at few examples to understand the concept behind labels:
+
+                ul
+                    li.
+                        A box with label, "div" will be seen as a "div" element.
+
+                    li.
+                        A box with label, "div h1.title" will be seen as a "div" element with an "h1" element inside, having a class of "title".
+
+                    li.
+                        A box with label, "link[rel='stylesheet']." will be seen as a "link" element with an attribute "rel='stylesheet'." The fullstop resembles that the element won't have an ending tag.
+                p.
+                    When your page is rendered, the boxes are basically going to be converted to HTML, labels define what the box is.
+
+                
+                h3.
+                    Extensible
+                p.
+                    The concept of boxes lets you extend the features of Onwebed pretty easily. You can define your own type of boxes which can do whatever you program it to do.
+
+            
+                h3.
+                    It Got You Covered
+                p.
+                    Ever thought of going back to plain old text-based editing? Onwebed has a built-in markup language to help you out when visual editing isn't the most efficient.
+        
+                h3.
+                    It's for Lazy People
+                p.
+                    Ever made a section in your website which is included in multiple pages? That sounds like a dynamic website! Onwebed got your back on this.
+                p.
+                    Onwebed also lets you "prototype" other pages - that is, inherit its content but replace some of it dynamically (yes, any change you make to a page will be reflected to the other pages which inherit from it).
+
+                p.
+                    At the end of the day, web development shouldn't be redundant, and Onwebed likes to keep it this way!
+            
+                h3.
+                    It's Not WYSIWYG
+                p.
+                    WYSIWYG is cool, but it gets messy at times, it easy to lose control, and it can be limiting. For example, ever wanted to make a box inside another box, which is yet inside another box? Yes, it can get daunting in WYSIWYG! Onwebed is here to make life easier.
+            
+                h3.
+                    Powered by Django
+                p.
+                    Yes, Onwebed is essentially a Django app. This is good news, it means that you have access to all of Django's features, that includes the templating engine!
