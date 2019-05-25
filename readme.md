@@ -1,6 +1,12 @@
 # Onwebed
 
-Ever wanted a way to create webpages in a visual way without writing HTML? Onwebed is what you're looking for. HTML can get messy at times, Onwebed keeps it clean!
+Onwebed is a visual way to create HTML documents. HTML can get messy at times, Onwebed keeps it clean!
+
+This is how a simple HTML document may look like in Onwebed's editor:
+
+![Simple Page](docs/images/simple_page.png)
+
+It doesn't settle with static pages, it's powerful enough to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
 
 # About
 
@@ -8,7 +14,21 @@ Ever wanted a way to create webpages in a visual way without writing HTML? Onweb
 
 Every single webpage you create with Onwebed is composed of "boxes."
 
-Boxes can be used to define your content, act as placeholders for reducing redundancy, or even include other pages.
+Boxes can be used to define your content, act as placeholders for reducing redundancy, house other boxs, or even include other pages.
+
+## It Lets You Code HTML but Visually
+
+As mentioned in the previous heading, your webpages are built with what is known as "boxes." Each box may have a label attached to it.
+
+Let's look at few examples to understand the concept behind labels:
+
+- A box with label, "div" will be seen as a "div" element.
+
+- A box with label, "div h1.title" will be seen as a "div" element with an "h1" element inside, having a class of "title".
+
+- A box with label, "link[rel='stylesheet']." will be seen as a "link" element with an attribute "rel='stylesheet'." The fullstop resembles that the element won't have an ending tag.
+
+When your page is rendered, the boxes are basically going to be converted to HTML, labels define what the box is.
 
 ## It's Extensible
 
@@ -18,10 +38,6 @@ The concept of boxes lets you extend the features of Onwebed pretty easily. You 
 
 Ever thought of going back to plain old text-based editing? Onwebed has a built-in markup language to help you out when visual editing isn't the most efficient.
 
-## It's Not WYSIWYG
-
-WYSIWYG is cool, but it gets messy at times, it easy to lose control, and it can be limiting. For example, ever wanted to make a box inside another box, which is yet inside another box? Yes, it can get daunting! Onwebed is here to make life easier.
-
 ## It's for Lazy People
 
 Ever made a section in your website which is included in multiple pages? That sounds like a dynamic website! Onwebed got your back on this.
@@ -30,17 +46,13 @@ Onwebed also lets you "prototype" other pages - that is, inherit its content but
 
 At the end of the day, web development shouldn't be redundant, and Onwebed likes to keep it this way!
 
+## It's Not WYSIWYG
+
+WYSIWYG is cool, but it gets messy at times, it easy to lose control, and it can be limiting. For example, ever wanted to make a box inside another box, which is yet inside another box? Yes, it can get daunting in WYSIWYG! Onwebed is here to make life easier.
+
 ## It's Powered by Django
 
 Yes, Onwebed is essentially a Django app. This is good news, it means that you have access to all of Django's features, that includes the templating engine!
-
-## It Uses HTML Tags but Visually
-
-As mentioned earlier, your webpages are built with what is known as "boxes." You can use HTML tags to define a box, though its label.
-
-For example, a box labeled, "div" will be converted into the HTML code: `<div>...</div>` when the page will be rendered as HTML to be viewed by the public.
-
-Another example would be that a box labeled, "div#welcome.is-blue" would be converted to the HTML code: `<div class="is-blue" id="welcome">...</div>`
 
 # Concept
 
@@ -58,14 +70,14 @@ Each box may have a label, which defines it. The label is used primarily for con
 
 Here's an empty solid box labeled, "div."
 
-<img src="docs/images/empty_solid_box.png">
+![Empty Solid Box](docs/images/empty_solid_box.png)
 
 Here's that solid box, empty no more, as it holds a liquid box which contains the text "Hello."
 
-<img src="docs/images/solid_box_with_liquid_box_inside.png">
+![Solid Box with Liquid Box Inside](docs/images/solid_box_with_liquid_box_inside.png)
 
 This is how a small, simple page may look like:
 
-<img src="docs/images/simple_page.png">
+![Simple Page](docs/images/simple_page.png)
 
 As you can see, it's like coding HTML, but in a visual way!
