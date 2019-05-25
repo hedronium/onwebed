@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+venv
+run.sh
+elm-stuff
+pages/templates/pages/cached/*.html
+onwebed_db
+example_pages
+document_editor
+onwebed
+pages
+staticfiles
+users
