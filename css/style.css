@@ -1,0 +1,37 @@
+body {
+  font: 100% "Roboto", sans-serif;
+  scroll-behavior: smooth;
+}
+
+#intro {
+  background: #545BE2;
+  height: 100vh;
+  padding-top: 20vh;
+}
+#intro h1, #intro h3 {
+  color: white;
+  text-align: center;
+}
+#intro h1 {
+  font-size: 10em;
+  font-weight: 700;
+  font-family: "Open Sans";
+}
+#intro h3 {
+  font-size: 2em;
+  color: #CCC;
+}
+#intro .menu {
+  margin-top: 10em;
+  display: flex;
+  justify-content: space-evenly;
+}
+#intro .menu li {
+  list-style: none;
+}
+#intro .menu li a {
+  color: #CCC;
+  font-size: 2em;
+}
+
+/*# sourceMappingURL=style.css.map */
