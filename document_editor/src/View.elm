@@ -14,139 +14,103 @@ import Types exposing (..)
 view : Model -> Html Msg
 view model =
     let
-        export_modal =
+        editBoxModal =
+            if model.status == EditBox then
+                [ div
+                    [ class "overlay"
+                    , id "edit_box_overlay"
+                    ]
+                    [ div
+                        []
+                        (let
+                            maybeBox =
+                                boxById model.selectedBoxId model
+                         in
+                         case maybeBox of
+                            Just (Box box) ->
+                                boxToBoxEditorHtml (Box box) model
+
+                            Nothing ->
+                                [ text "The box doesn't exist!" ]
+                        )
+                    ]
+                ]
+
+            else
+                []
+
+        exportModal =
             if model.status == ViewExportModal then
                 [ div
-                    [ class "modal is-active"
-                    , id "export"
+                    [ class "overlay"
                     ]
                     [ div
-                        [ class "modal-background"
-                        , Html.Events.onClick ResetExport
-                        ]
                         []
-                    , div
-                        [ class "modal-content" ]
-                        [ div
-                            [ class "box" ]
+                        [ textarea
+                            [ class "textarea"
+                            , Html.Attributes.attribute "rows" "20"
+                            , on "blur" (Decode.map SetImport targetValue)
+                            ]
                             [ text (documentToJsonString model) ]
                         ]
-                    , button
-                        [ class "modal-close is-large"
-                        , attribute "aria-label" "close"
-                        , Html.Events.onClick ResetExport
-                        ]
-                        []
                     ]
                 ]
 
             else
                 []
 
-        import_modal =
+        importModal =
             if model.status == ViewImportModal then
                 [ div
-                    [ class "modal is-active"
-                    , id "import"
+                    [ class "overlay"
                     ]
                     [ div
-                        [ class "modal-background"
-                        , Html.Events.onClick ResetImport
-                        ]
                         []
-                    , div
-                        [ class "modal-content" ]
-                        [ div
-                            [ class "box" ]
-                            [ div
-                                [ class "field" ]
-                                [ div
-                                    [ class "control" ]
-                                    [ textarea
-                                        [ class "textarea"
-                                        , on "blur" (Decode.map SetImport targetValue)
-                                        ]
-                                        []
-                                    ]
-                                ]
-                            , div
-                                [ class "field" ]
-                                [ div
-                                    [ class "control" ]
-                                    [ button
-                                        [ Html.Events.onClick Import
-                                        , class "button is-success"
-                                        ]
-                                        [ text "Import" ]
-                                    ]
-                                ]
+                        [ textarea
+                            [ class "textarea"
+                            , Html.Attributes.attribute "rows" "20"
+                            , on "blur" (Decode.map SetImport targetValue)
                             ]
+                            []
+                        , button
+                            [ Html.Events.onClick Import
+                            , class "button is-success is-outlined"
+                            ]
+                            [ text "Import" ]
                         ]
-                    , button
-                        [ class "modal-close is-large"
-                        , attribute "aria-label" "close"
-                        , Html.Events.onClick ResetImport
-                        ]
-                        []
                     ]
                 ]
 
             else
                 []
 
-        odl_modal =
+        odlModal =
             if model.status == ViewOdl then
                 [ div
-                    [ class "modal is-active"
-                    , id "odl"
+                    [ class "overlay"
+                    , Html.Attributes.attribute "aria-hidden" "false"
                     ]
                     [ div
-                        [ class "modal-background"
-                        , Html.Events.onClick ResetOdlModal
-                        ]
                         []
-                    , div
-                        [ class "modal-content" ]
-                        [ div
-                            [ class "box" ]
-                            [ div
-                                [ class "field" ]
-                                [ div
-                                    [ class "control" ]
-                                    [ textarea
-                                        [ class "textarea"
-                                        , attribute "rows" "20"
-                                        , on "blur" (Decode.map SetOdlString targetValue)
-                                        ]
-                                        [ text model.odlString ]
-                                    ]
-                                ]
-                            , div
-                                [ class "field" ]
-                                [ div
-                                    [ class "control" ]
-                                    [ button
-                                        [ Html.Events.onClick ApplyOdl
-                                        , class "button is-success"
-                                        ]
-                                        [ text "Apply ODL" ]
-                                    ]
-                                ]
+                        [ textarea
+                            [ class "textarea"
+                            , attribute "rows" "20"
+                            , on "blur" (Decode.map SetOdlString targetValue)
                             ]
+                            [ text model.odlString ]
+                        , button
+                            [ Html.Events.onClick ApplyOdl
+                            , class "button is-success is-outlined"
+                            ]
+                            [ text "Apply Changes" ]
                         ]
-                    , button
-                        [ class "modal-close is-large"
-                        , attribute "aria-label" "close"
-                        , Html.Events.onClick ResetOdlModal
-                        ]
-                        []
                     ]
                 ]
 
             else
                 []
 
-        form_content =
+        formContent =
             [ input
                 [ attribute "type" "hidden"
                 , attribute "name" "content"
@@ -180,38 +144,40 @@ view model =
             ]
     in
     div
-        [ id "document" ]
+        [ id "document"
+        ]
         [ Html.form
             [ attribute "method" "POST"
             , attribute "action" ""
             ]
             ([ generateMenu model ]
-                ++ form_content
+                ++ formContent
             )
         , div
             []
             ([]
-                ++ export_modal
-                ++ import_modal
-                ++ odl_modal
+                ++ exportModal
+                ++ importModal
+                ++ odlModal
+                ++ editBoxModal
             )
         , div
             [ id "playground"
             , class "container"
             ]
-            (if model.status /= EditBox then
-                boxesToHtml (boxesByParentId 0 model) model
+            (boxesToHtml (boxesByParentId 0 model) model)
 
-             else
-                let
-                    maybeBox =
-                        boxById model.selectedBoxId model
-                in
-                case maybeBox of
-                    Just (Box box) ->
-                        boxToBoxEditorHtml (Box box) model
-
-                    Nothing ->
-                        [ text "The box doesn't exist!" ]
-            )
+        --(if model.status /= EditBox then
+        --    boxesToHtml (boxesByParentId 0 model) model
+        -- else
+        --    let
+        --        maybeBox =
+        --            boxById model.selectedBoxId model
+        --    in
+        --    case maybeBox of
+        --        Just (Box box) ->
+        --            boxToBoxEditorHtml (Box box) model
+        --        Nothing ->
+        --            [ text "The box doesn't exist!" ]
+        --)
         ]

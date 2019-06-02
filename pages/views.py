@@ -3,6 +3,7 @@ from django.contrib import messages
 from .models import Page
 from onwebed import core
 from django.contrib.auth.decorators import login_required
+from django.template.exceptions import TemplateDoesNotExist
 
 # Create your views here.
 
@@ -88,7 +89,12 @@ def detail(request, page_id):
 	if not page.is_cached:
 		core.cache_page(page.name, page.html_content)
 
-	return render(request, "pages/cached/" + page.name + ".html", context)
+	try:
+		return render(request, "pages/cached/" + page.name + ".html", context)
+	except TemplateDoesNotExist:
+		core.cache_page(page.name, page.html_content)
+		return render(request, "pages/cached/" + page.name + ".html", context)
+
 
 
 def detail_by_name(request, page_name):
@@ -102,7 +108,12 @@ def detail_by_name(request, page_name):
 	if not page.is_cached:
 		core.cache_page(page.name, page.html_content)
 
-	return render(request, "pages/cached/" + page.name + ".html", context)
+	try:
+		return render(request, "pages/cached/" + page.name + ".html", context)
+	except TemplateDoesNotExist:
+		core.cache_page(page.name, page.html_content)
+		return render(request, "pages/cached/" + page.name + ".html", context)
+		
 
 def default_page(request):
 	from onwebed.models import SiteAttribute
@@ -114,14 +125,4 @@ def default_page(request):
 	else:
 		default_page_id = Page.objects.first().id
 
-	page = get_object_or_404(Page, id = default_page_id)
-
-	context = {
-		'page': page,
-		'pages': Page.objects.all()
-	}
-
-	if not page.is_cached:
-		core.cache_page(page.name, page.html_content)
-
-	return render(request, "pages/cached/" + page.name + ".html", context)
+	return detail(request, default_page_id)

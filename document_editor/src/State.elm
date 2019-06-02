@@ -9,7 +9,7 @@ import Rest exposing (..)
 import Types exposing (..)
 
 
-port expandElements : () -> Cmd msg
+port overlay : Bool -> Cmd msg
 
 
 
@@ -51,7 +51,6 @@ initialModel flags =
       , odlString = ""
       , importString = ""
       , csrfToken = flags.csrfToken
-      , documentValidity = 0
       , duplicateSubjectId = Nothing
       , odlStringInsideBox = ""
       }
@@ -151,14 +150,7 @@ update msg model =
                         Nothing ->
                             model
             in
-            ( newModel, Cmd.none )
-
-        Expand ->
-            let
-                newModel =
-                    documentValidityIncrement model
-            in
-            ( newModel, expandElements () )
+            ( newModel, overlay True )
 
         -- Add box inside another box
         AdjustHeight height ->
@@ -203,7 +195,7 @@ update msg model =
                                 | status = EditBoxChooseBox
                             }
 
-                        else if key == "r" then
+                        else if key == "x" then
                             { model
                                 | status = RemoveBoxChooseBox
                             }
@@ -279,9 +271,16 @@ update msg model =
 
                     else
                         model
+
+                command =
+                    if key == "Escape" && model.status /= Default then
+                        overlay False
+
+                    else
+                        Cmd.none
             in
             ( newModel
-            , Cmd.none
+            , command
             )
 
         SolidBoxAdditionBefore addBeforeBoxId ->
@@ -290,7 +289,7 @@ update msg model =
                     insertBoxBefore addBeforeBoxId SolidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         LiquidBoxAdditionBefore addBeforeLiquidBoxId ->
@@ -299,7 +298,7 @@ update msg model =
                     insertBoxBefore addBeforeLiquidBoxId LiquidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         SolidBoxAdditionAfter addAfterBoxId ->
@@ -308,7 +307,7 @@ update msg model =
                     insertBoxAfter addAfterBoxId SolidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         LiquidBoxAdditionAfter addAfterLiquidBoxId ->
@@ -317,7 +316,7 @@ update msg model =
                     insertBoxAfter addAfterLiquidBoxId LiquidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         SolidBoxAdditionInsideFirst addInsideFirstBoxId ->
@@ -326,7 +325,7 @@ update msg model =
                     insertBoxInsideFirst addInsideFirstBoxId SolidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         LiquidBoxAdditionInsideFirst addInsideFirstLiquidBoxId ->
@@ -335,7 +334,7 @@ update msg model =
                     insertBoxInsideFirst addInsideFirstLiquidBoxId LiquidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         SolidBoxAdditionInsideLast addInsideLastBoxId ->
@@ -344,7 +343,7 @@ update msg model =
                     insertBoxInsideLast addInsideLastBoxId SolidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         LiquidBoxAdditionInsideLast addInsideLastLiquidBoxId ->
@@ -353,7 +352,7 @@ update msg model =
                     insertBoxInsideLast addInsideLastLiquidBoxId LiquidBox model
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         SelectBox boxToBeSelectedId ->
@@ -389,34 +388,6 @@ update msg model =
             , Cmd.none
             )
 
-        RemoveLabel boxId ->
-            let
-                newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = List.map (removeLabel boxId) model.document
-                            , status = Default
-                            , selectedBoxId = 0
-                        }
-            in
-            ( newModel
-            , expandElements ()
-            )
-
-        AddLabel boxId ->
-            let
-                newModel =
-                    documentValidityIncrement
-                        { model
-                            | document = List.map (addLabel boxId) model.document
-                            , status = Default
-                            , selectedBoxId = 0
-                        }
-            in
-            ( newModel
-            , expandElements ()
-            )
-
         RemoveBox boxId ->
             let
                 newModel =
@@ -427,7 +398,7 @@ update msg model =
                     }
             in
             ( newModel
-            , expandElements ()
+            , Cmd.none
             )
 
         ResetExport ->
@@ -529,31 +500,7 @@ update msg model =
                     }
             in
             ( newModel
-            , Cmd.none
-            )
-
-        ViewOdlModal ->
-            let
-                children =
-                    boxesByParentId 0 model
-
-                boxesToOdlStrings =
-                    List.map (boxToOdl model 0) children
-
-                odlString =
-                    List.foldr
-                        (++)
-                        ""
-                        (List.intersperse "\n\n" boxesToOdlStrings)
-
-                newModel =
-                    Debug.log "viewOdlModal"
-                        { model
-                            | odlString = odlString
-                        }
-            in
-            ( newModel
-            , Cmd.none
+            , overlay False
             )
 
         SetOdlStringInsideBox odlStringInsideBox ->
@@ -621,7 +568,7 @@ update msg model =
                     }
             in
             ( newModel
-            , Cmd.none
+            , overlay False
             )
 
         MenuItemClicked machine_name ->
@@ -630,10 +577,9 @@ update msg model =
                     case machine_name of
                         "add_solid_box" ->
                             if isDocumentEmpty model then
-                                documentValidityIncrement
-                                    { model
-                                        | document = documentWithOneBox
-                                    }
+                                { model
+                                    | document = documentWithOneBox
+                                }
 
                             else
                                 { model
@@ -662,10 +608,9 @@ update msg model =
 
                         "add_liquid_box" ->
                             if isDocumentEmpty model then
-                                documentValidityIncrement
-                                    { model
-                                        | document = documentWithOneBox
-                                    }
+                                { model
+                                    | document = documentWithOneBox
+                                }
 
                             else
                                 { model
@@ -690,16 +635,6 @@ update msg model =
                         "add_liquid_box_inside_last" ->
                             { model
                                 | status = LiquidBoxAdditionInsideLastChooseBox
-                            }
-
-                        "remove_label" ->
-                            { model
-                                | status = RemoveLabelChooseBox
-                            }
-
-                        "add_label" ->
-                            { model
-                                | status = AddLabelChooseBox
                             }
 
                         "remove_box" ->
@@ -773,7 +708,21 @@ update msg model =
 
                         _ ->
                             model
+
+                command =
+                    case machine_name of
+                        "view_odl" ->
+                            overlay True
+
+                        "import" ->
+                            overlay True
+
+                        "export" ->
+                            overlay True
+
+                        _ ->
+                            Cmd.none
             in
             ( newModel
-            , expandElements ()
+            , command
             )

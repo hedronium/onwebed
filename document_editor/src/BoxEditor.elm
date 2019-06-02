@@ -15,83 +15,78 @@ boxToBoxEditorHtml (Box box) model =
         [ class "message" ]
         [ div
             [ class "message-body" ]
-            [ text "Press Escape to get back. Any change is applied immediately." ]
+            [ text "Press Escape to get back, but any change you make will be discarded unless you apply them." ]
         ]
     , div
-        [ class "field" ]
-        [ div
-            [ class "label" ]
-            [ text "Label: " ]
-        , div
-            [ class "control" ]
-            [ input
-                [ class "input"
-                , attribute
-                    "value"
-                    (case box.label of
-                        Just label ->
-                            label
+        [ class "label" ]
+        [ text "Label: " ]
+    , input
+        [ class "input"
+        , attribute
+            "value"
+            (case box.label of
+                Just label ->
+                    label
 
-                        Nothing ->
-                            ""
-                    )
-                , on
-                    "keyup"
-                    (Decode.map
-                        (LabelUpdate box.id)
-                        targetValue
-                    )
-                ]
-                []
-            ]
+                Nothing ->
+                    ""
+            )
+        , on
+            "keyup"
+            (Decode.map
+                (LabelUpdate box.id)
+                targetValue
+            )
         ]
+        []
     , div
-        [ class "field" ]
-        [ div
-            [ class "label" ]
-            [ text "Content: " ]
-        , div
-            [ class "control" ]
-            [ textarea
-                ([ class "textarea"
-                 , attribute "rows" "10"
-                 ]
-                    ++ (if box.type_ == LiquidBox then
-                            [ on
-                                "keyup"
-                                (Decode.map
-                                    (LiquidBoxUpdate box.id)
-                                    targetValue
-                                )
-                            ]
+        [ class "label" ]
+        [ text
+            (if box.type_ == LiquidBox then
+                "Content: "
 
-                        else
-                            [ on
-                                "keyup"
-                                (Decode.map
-                                    SetOdlStringInsideBox
-                                    targetValue
-                                )
-                            ]
-                       )
-                )
-                [ text
-                    (if box.type_ == SolidBox then
-                        model.odlStringInsideBox
+             else
+                "Content (ODL): "
+            )
+        ]
+    , textarea
+        ([ class "textarea"
+         , attribute "rows" "20"
+         ]
+            ++ (if box.type_ == LiquidBox then
+                    [ on
+                        "keyup"
+                        (Decode.map
+                            (LiquidBoxUpdate box.id)
+                            targetValue
+                        )
+                    ]
 
-                     else
-                        case box.content of
-                            Just content ->
-                                content
+                else
+                    [ on
+                        "keyup"
+                        (Decode.map
+                            SetOdlStringInsideBox
+                            targetValue
+                        )
+                    ]
+               )
+        )
+        [ text
+            (if box.type_ == SolidBox then
+                model.odlStringInsideBox
 
-                            Nothing ->
-                                ""
-                    )
-                ]
-            ]
+             else
+                case box.content of
+                    Just content ->
+                        content
+
+                    Nothing ->
+                        ""
+            )
         ]
     , button
-        [ class "button is-primary is-outlined"
+        [ class "button is-success is-outlined"
         , onClick
             (ApplyOdlInsideBox box.id)
         ]

@@ -106,28 +106,10 @@ generateMenu model =
                     [ text "Choose box inside which you want to insert the new solid box as the last item." ]
                 ]
 
-            else if model.status == RemoveLabelChooseBox then
-                [ div
-                    [ class "column" ]
-                    [ text "Choose box whose label you want to be removed." ]
-                ]
-
             else if model.status == EditBoxChooseBox then
                 [ div
                     [ class "column" ]
                     [ text "Choose box which you want to edit." ]
-                ]
-
-            else if model.status == AddLabelChooseBox then
-                [ div
-                    [ class "column" ]
-                    [ text "Choose box you want to add the new label in." ]
-                ]
-
-            else if model.status == RemoveBoxChooseBox then
-                [ div
-                    [ class "column" ]
-                    [ text "Choose box which you want to be removed." ]
                 ]
 
             else if model.status == DuplicateBoxChooseBox then

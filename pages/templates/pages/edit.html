@@ -27,89 +27,11 @@
         }
     });
 
-    app.ports.expandElements.subscribe(function(){
-        // console.log("Expand");
-        expand();
+    app.ports.overlay.subscribe(function(e){
+        if (e == true)
+            document.querySelector("html").classList.add("noscroll");
+        else
+            document.querySelector("html").classList.remove("noscroll");
     });
-
-
-    let autoexpand_textarea = function (target) {
-        // dummy_div = document.createElement("div");
-        // dummy_div.innerText = target.value;
-        // dummy_div.setAttribute("id", "dummy_div");
-        // // dummy_div.setAttribute("class", ".textarea");
-        // document.querySelector("body").appendChild(dummy_div);
-        // dummy_div.style.visibility = "hidden";
-        // dummy_div.style.position = "absolute";
-        // // dummy_div.style.background = "yellow";
-
-        // // target.style.height = "inherit";
-
-        // if (target.value[target.value.length - 1] == "\n")
-        //     dummy_div.innerHTML += "."
-
-        // target.style.width = (12 + dummy_div.offsetWidth) + "px";
-        // target.style.height = (5 + dummy_div.offsetHeight) + "px";
-        
-        // document.getElementById("dummy_div").remove();
-    };
-
-    let autoexpand_input = function (target) {
-        // dummy_div = document.createElement("div");
-        // dummy_div.innerHTML = target.value;
-        // dummy_div.setAttribute("id", "dummy_div");
-        // dummy_div.setAttribute("class", "box-label");
-        // document.querySelector("body").appendChild(dummy_div);
-        // dummy_div.style.visibility = "hidden";
-        // dummy_div.style.position = "absolute";
-
-        // // target.style.height = "inherit";
-
-        // target.style.width = (8 + dummy_div.offsetWidth) + "px";
-        
-        // document.getElementById("dummy_div").remove();
-    };
-
-    document.addEventListener('input', function (event) {
-        // let tag_name = event.target.tagName.toLowerCase();
-
-        // if (tag_name === "textarea")
-        //     autoexpand_textarea(event.target);
-        // else if (tag_name === "input")
-        //     autoexpand_input(event.target);
-    }, false);
-
-    let autoexpand_textareas = function () {
-        // document.querySelectorAll("textarea.content").forEach(function(textarea){
-        //     autoexpand_textarea(textarea);
-        // });
-    };
-
-    let autoexpand_inputs = function () {
-        // document.querySelectorAll("input.box-label").forEach(function(input){
-        //     autoexpand_input(input);
-        // });
-    };
-
-    let expand = function () {
-        // autoexpand_inputs();
-        // autoexpand_textareas();
-    };
-
-    window.onload = function () {
-        // expand();
-
-        // var document_validity_js = 0;
-
-        // setInterval(function() {
-        //     let document_validity = document.getElementById("document_validity").value;
-
-        //     if (document_validity_js != document_validity) {
-        //         console.log("validified");
-        //         expand();
-        //         document_validity_js = document_validity;
-        //     }
-        // }, 100);
-    };
 </script>
 {% endblock %}
