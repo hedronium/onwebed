@@ -10,16 +10,20 @@ body {
   max-width: 900px;
 }
 
+p {
+  line-height: 1.8rem;
+}
+
 #intro {
   background: #545BE2;
-  height: 100vh;
-  padding-top: 20vh;
+  padding: 1em;
 }
 #intro h1, #intro h3 {
   color: white;
   text-align: center;
 }
 #intro h1 {
+  margin-top: 1em;
   font-size: 10em;
   font-weight: 700;
   font-family: "Open Sans";
@@ -55,4 +59,21 @@ body {
   font-size: 1.1em;
 }
 
-/*# sourceMappingURL=style.css.map */
+@media (min-width: 1200px) {
+  #intro h1 {
+    font-size: 5em;
+  }
+  #intro h3 {
+    font-size: 1.5em;
+  }
+
+  #about h1 {
+    font-size: 3.5em;
+    text-decoration: underline;
+  }
+  #about h3 {
+    font-size: 2em;
+  }
+}
+
+/*# sourceMappingURL=index.css.map */

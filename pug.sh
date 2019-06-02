@@ -1,1 +1,1 @@
-pug -w pug/* -o .
+pug -w pug/index.pug -o .
