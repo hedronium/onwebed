@@ -16,7 +16,7 @@ port overlay : Bool -> Cmd msg
 port setupTextEditor : String -> Cmd msg
 
 
-port setOdlStringInsideBox : (String -> msg) -> Sub msg
+port setOdlString : (String -> msg) -> Sub msg
 
 
 
@@ -27,7 +27,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ onKeyDown (Decode.map2 (KeyInteraction Down) keyDecoder shiftKeyDecoder)
-        , setOdlStringInsideBox SetOdlStringInsideBox
+        , setOdlString SetOdlString
         ]
 
 
@@ -158,13 +158,23 @@ update msg model =
 
                         Nothing ->
                             model
+
+                additionalCommands =
+                    case box of
+                        Just (Box justBox) ->
+                            if justBox.type_ == SolidBox then
+                                [ setupTextEditor newModel.odlStringInsideBox ]
+
+                            else
+                                []
+
+                        Nothing ->
+                            []
             in
             ( newModel
             , Cmd.batch
-                [ overlay True
-                , setupTextEditor
-                    newModel.odlStringInsideBox
-                ]
+                ([ overlay True ]
+                    ++ additionalCommands)
             )
 
         -- Add box inside another box
@@ -400,8 +410,16 @@ update msg model =
                     { model
                         | documentDraft = List.map (updateBoxLabel boxId label) model.document
                     }
+
+                newModel2 =
+                    if newModel.status == EditBoxWarnUnsavedDraft then
+                        { newModel
+                            | status = EditBox
+                        }
+                    else
+                        newModel
             in
-            ( newModel
+            ( newModel2
             , Cmd.none
             )
 
@@ -411,8 +429,16 @@ update msg model =
                     { model
                         | documentDraft = List.map (updateBoxContent boxId content) model.document
                     }
+
+                newModel2 =
+                    if newModel.status == EditBoxWarnUnsavedDraft then
+                        { newModel
+                            | status = EditBox
+                        }
+                    else
+                        newModel
             in
-            ( newModel
+            ( newModel2
             , Cmd.none
             )
 
@@ -511,9 +537,21 @@ update msg model =
         SetOdlString odlString ->
             let
                 newModel =
-                    { model
-                        | odlString = odlString
-                    }
+                    if model.status == EditBox then
+                        { model
+                            | odlStringInsideBox = odlString
+                            , documentDraft = model.document
+                        }
+                    else if model.status == EditBoxWarnUnsavedDraft then
+                        { model
+                            | odlStringInsideBox = odlString
+                            , documentDraft = model.document
+                            , status = EditBox
+                        }
+                    else
+                        { model
+                            | odlString = odlString
+                        }
             in
             ( newModel
             , Cmd.none
@@ -531,17 +569,17 @@ update msg model =
             , overlay False
             )
 
-        SetOdlStringInsideBox odlStringInsideBox ->
-            let
-                newModel =
-                    { model
-                        | odlStringInsideBox = odlStringInsideBox
-                        , documentDraft = model.document
-                    }
-            in
-            ( newModel
-            , Cmd.none
-            )
+        --SetOdlStringInsideBox odlStringInsideBox ->
+        --    let
+        --        newModel =
+        --            { model
+        --                | odlStringInsideBox = odlStringInsideBox
+        --                , documentDraft = model.document
+        --            }
+        --    in
+        --    ( newModel
+        --    , Cmd.none
+        --    )
 
         ApplyOdlInsideBox boxId ->
             let
@@ -727,6 +765,16 @@ update msg model =
                             }
 
                         "view_odl" ->
+                            { model
+                                | status = ViewOdl
+                            }
+
+                        _ ->
+                            model
+
+                command =
+                    case machine_name of
+                        "view_odl" ->
                             let
                                 children =
                                     boxesByParentId 0 model
@@ -740,18 +788,10 @@ update msg model =
                                         ""
                                         (List.intersperse "\n\n" boxesToOdlStrings)
                             in
-                            { model
-                                | status = ViewOdl
-                                , odlString = odlString
-                            }
-
-                        _ ->
-                            model
-
-                command =
-                    case machine_name of
-                        "view_odl" ->
-                            overlay True
+                            Cmd.batch
+                                [ overlay True
+                                , setupTextEditor odlString
+                                ]
 
                         "import" ->
                             overlay True

@@ -36,11 +36,10 @@
 
     app.ports.setupTextEditor.subscribe(function(value) {
         var editor = ace.edit("odl_editor");
+
         editor.session.setValue(value);
-        // editor.setTheme("ace/theme/monokai");
-        // editor.session.setMode("ace/mode/javascript");
         editor.on("change", function(e) {
-            app.ports.setOdlStringInsideBox.send(editor.getValue());
+            app.ports.setOdlString.send(editor.getValue());
         });
     });
 

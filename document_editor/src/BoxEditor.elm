@@ -41,7 +41,7 @@ boxToBoxEditorHtml (Box box) model =
                     ""
             )
         , on
-            "keyup"
+            "input"
             (Decode.map
                 (LabelUpdate box.id)
                 targetValue
@@ -63,7 +63,7 @@ boxToBoxEditorHtml (Box box) model =
             [ class "textarea"
             , attribute "rows" "20"
             , on
-                "keyup"
+                "input"
                 (Decode.map
                     (LiquidBoxUpdate box.id)
                     targetValue

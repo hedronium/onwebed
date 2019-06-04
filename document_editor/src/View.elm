@@ -92,12 +92,12 @@ view model =
                     ]
                     [ div
                         []
-                        [ textarea
+                        [ div
                             [ class "textarea"
+                            , id "odl_editor"
                             , attribute "rows" "20"
-                            , on "blur" (Decode.map SetOdlString targetValue)
                             ]
-                            [ text model.odlString ]
+                            [ text "" ]
                         , button
                             [ Html.Events.onClick ApplyOdl
                             , class "button is-success is-outlined"
@@ -166,18 +166,4 @@ view model =
             , class "container"
             ]
             (boxesToHtml (boxesByParentId 0 model) model)
-
-        --(if model.status /= EditBox then
-        --    boxesToHtml (boxesByParentId 0 model) model
-        -- else
-        --    let
-        --        maybeBox =
-        --            boxById model.selectedBoxId model
-        --    in
-        --    case maybeBox of
-        --        Just (Box box) ->
-        --            boxToBoxEditorHtml (Box box) model
-        --        Nothing ->
-        --            [ text "The box doesn't exist!" ]
-        --)
         ]

@@ -92,7 +92,7 @@ type Msg
     | EditBoxSelectBox Int
     | SetOdlString String
     | ApplyOdl
-    | SetOdlStringInsideBox String
+    --| SetOdlStringInsideBox String
     | ApplyOdlInsideBox Int
 
 
