@@ -108,6 +108,7 @@ type KeyInteractionType
 
 type alias Model =
     { document : List Box
+    , documentDraft : List Box
     , menu : List MenuItem
     , status : DocumentStatus
     , menuMessage : Maybe String
@@ -144,6 +145,7 @@ type DocumentStatus
     | MoveBoxChooseBox
     | EditBoxChooseBox
     | EditBox
+    | EditBoxWarnUnsavedDraft
     | ViewOdl
     | ViewImportModal
     | ViewExportModal

@@ -11,12 +11,21 @@ import Types exposing (..)
 
 boxToBoxEditorHtml : Box -> Model -> List (Html Msg)
 boxToBoxEditorHtml (Box box) model =
-    [ div
-        [ class "message" ]
-        [ div
-            [ class "message-body" ]
-            [ text "Press Escape to get back, but any change you make will be discarded unless you apply them." ]
-        ]
+    [ if model.status == EditBoxWarnUnsavedDraft then
+        div
+            [ class "message is-danger" ]
+            [ div
+                [ class "message-body" ]
+                [ text "You have unsaved draft. Apply the changes or press escape again to discard the changes." ]
+            ]
+
+      else
+        div
+            [ class "message" ]
+            [ div
+                [ class "message-body" ]
+                [ text "Press Escape to go back, but any change you make will be discarded unless you apply it." ]
+            ]
     , div
         [ class "label" ]
         [ text "Label: " ]

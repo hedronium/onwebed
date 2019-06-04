@@ -15,7 +15,7 @@ view : Model -> Html Msg
 view model =
     let
         editBoxModal =
-            if model.status == EditBox then
+            if model.status == EditBox || model.status == EditBoxWarnUnsavedDraft then
                 [ div
                     [ class "overlay"
                     , id "edit_box_overlay"

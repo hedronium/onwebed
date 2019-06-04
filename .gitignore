@@ -1,9 +1,10 @@
 __pycache__
 *.pyc
 venv
-run.sh
+django.sh
 elm-stuff
 pages/templates/pages/cached/*.html
 onwebed_db
 example_pages
-# **/migrations
+elm.sh
+elm_optimized.sh

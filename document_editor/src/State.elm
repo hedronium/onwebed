@@ -31,6 +31,7 @@ initialModel : FlagType -> ( Model, Cmd Msg )
 initialModel flags =
     ( { document =
             jsonStringToDocument flags.content
+      , documentDraft = []
       , status = Default
       , menu =
             [ menuItem "+ solid box" "add_solid_box"
@@ -210,8 +211,21 @@ update msg model =
 
                     else if key == "Escape" then
                         if model.status == EditBox then
+                            if List.isEmpty model.documentDraft then
+                                { model
+                                    | status = Default
+                                    , selectedBoxId = 0
+                                }
+
+                            else
+                                { model
+                                    | status = EditBoxWarnUnsavedDraft
+                                }
+
+                        else if model.status == EditBoxWarnUnsavedDraft then
                             { model
                                 | status = Default
+                                , documentDraft = []
                                 , selectedBoxId = 0
                             }
 
@@ -370,7 +384,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | document = List.map (updateBoxLabel boxId label) model.document
+                        | documentDraft = List.map (updateBoxLabel boxId label) model.document
                     }
             in
             ( newModel
@@ -381,7 +395,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | document = List.map (updateBoxContent boxId content) model.document
+                        | documentDraft = List.map (updateBoxContent boxId content) model.document
                     }
             in
             ( newModel
@@ -508,6 +522,7 @@ update msg model =
                 newModel =
                     { model
                         | odlStringInsideBox = odlStringInsideBox
+                        , documentDraft = model.document
                     }
             in
             ( newModel
@@ -516,13 +531,22 @@ update msg model =
 
         ApplyOdlInsideBox boxId ->
             let
+                newModel =
+                    if List.length model.documentDraft == 0 then
+                        model
+
+                    else
+                        { model
+                            | document = model.documentDraft
+                        }
+
                 boxesFromOdlString =
                     odlToBoxes
-                        model.odlStringInsideBox
+                        newModel.odlStringInsideBox
                         initialOdlParserModel
 
                 idOffset =
-                    Maybe.withDefault -1 (highestBoxId model.document) + 1
+                    Maybe.withDefault -1 (highestBoxId newModel.document) + 1
 
                 boxesFromOdlStringWithOffsetIds =
                     List.map
@@ -554,20 +578,21 @@ update msg model =
                         (\(Box box) ->
                             box.id
                         )
-                        (boxesByParentId boxId model)
+                        (boxesByParentId boxId newModel)
 
                 newDocument =
-                    removeBoxes childrenIds model
+                    removeBoxes childrenIds newModel
                         ++ boxesWithUpdatedParents
 
-                newModel =
-                    { model
+                newModel2 =
+                    { newModel
                         | document = newDocument
+                        , documentDraft = []
                         , status = Default
                         , selectedBoxId = 0
                     }
             in
-            ( newModel
+            ( newModel2
             , overlay False
             )
 
