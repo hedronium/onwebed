@@ -3,6 +3,7 @@ port module State exposing (initialModel, subscriptions, update)
 import Box exposing (..)
 import Browser.Events exposing (..)
 import Json.Decode as Decode exposing (..)
+import Json.Encode as Encode exposing (..)
 import Menu exposing (..)
 import Odl exposing (..)
 import Rest exposing (..)
@@ -10,6 +11,12 @@ import Types exposing (..)
 
 
 port overlay : Bool -> Cmd msg
+
+
+port setupTextEditor : String -> Cmd msg
+
+
+port setOdlStringInsideBox : (String -> msg) -> Sub msg
 
 
 
@@ -20,6 +27,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ onKeyDown (Decode.map2 (KeyInteraction Down) keyDecoder shiftKeyDecoder)
+        , setOdlStringInsideBox SetOdlStringInsideBox
         ]
 
 
@@ -151,7 +159,13 @@ update msg model =
                         Nothing ->
                             model
             in
-            ( newModel, overlay True )
+            ( newModel
+            , Cmd.batch
+                [ overlay True
+                , setupTextEditor
+                    newModel.odlStringInsideBox
+                ]
+            )
 
         -- Add box inside another box
         AdjustHeight height ->

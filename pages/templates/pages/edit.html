@@ -27,11 +27,31 @@
         }
     });
 
-    app.ports.overlay.subscribe(function(e){
-        if (e == true)
+    app.ports.overlay.subscribe(function(enable) {
+        if (enable == true)
             document.querySelector("html").classList.add("noscroll");
         else
             document.querySelector("html").classList.remove("noscroll");
     });
+
+    app.ports.setupTextEditor.subscribe(function(value) {
+        var editor = ace.edit("odl_editor");
+        editor.session.setValue(value);
+        // editor.setTheme("ace/theme/monokai");
+        // editor.session.setMode("ace/mode/javascript");
+        editor.on("change", function(e) {
+            app.ports.setOdlStringInsideBox.send(editor.getValue());
+        });
+    });
+
+
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.4/ace.js"></script>
+<!-- <script type="text/javascript">
+    function apply_editor() {
+        var editor = ace.edit("odl_editor");
+        // editor.setTheme("ace/theme/monokai");
+        // editor.session.setMode("ace/mode/javascript");
+    }
+</script> -->
 {% endblock %}

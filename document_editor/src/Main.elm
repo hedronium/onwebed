@@ -1,4 +1,4 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Browser exposing (..)
 import State exposing (initialModel, subscriptions, update)

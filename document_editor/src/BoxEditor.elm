@@ -58,42 +58,40 @@ boxToBoxEditorHtml (Box box) model =
                 "Content (ODL): "
             )
         ]
-    , textarea
-        ([ class "textarea"
-         , attribute "rows" "20"
-         ]
-            ++ (if box.type_ == LiquidBox then
-                    [ on
-                        "keyup"
-                        (Decode.map
-                            (LiquidBoxUpdate box.id)
-                            targetValue
-                        )
-                    ]
-
-                else
-                    [ on
-                        "keyup"
-                        (Decode.map
-                            SetOdlStringInsideBox
-                            targetValue
-                        )
-                    ]
-               )
-        )
-        [ text
-            (if box.type_ == SolidBox then
-                model.odlStringInsideBox
-
-             else
-                case box.content of
+    , if box.type_ == LiquidBox then
+        textarea
+            [ class "textarea"
+            , attribute "rows" "20"
+            , on
+                "keyup"
+                (Decode.map
+                    (LiquidBoxUpdate box.id)
+                    targetValue
+                )
+            ]
+            [ text
+                (case box.content of
                     Just content ->
                         content
 
                     Nothing ->
                         ""
-            )
-        ]
+                )
+            ]
+
+      else
+        div
+            [ class "textarea"
+            , id "odl_editor"
+
+            --, on
+            --    "keyup"
+            --    (Decode.map
+            --        SetOdlStringInsideBox
+            --        targetValue
+            --    )
+            ]
+            [ text "" ]
     , button
         [ class "button is-success is-outlined"
         , onClick

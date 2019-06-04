@@ -5767,11 +5767,15 @@ var author$project$State$initialModel = function (flags) {
 var author$project$Rest$keyDecoder = A2(elm$json$Json$Decode$field, 'key', elm$json$Json$Decode$string);
 var elm$json$Json$Decode$bool = _Json_decodeBool;
 var author$project$Rest$shiftKeyDecoder = A2(elm$json$Json$Decode$field, 'shiftKey', elm$json$Json$Decode$bool);
+var author$project$State$setOdlStringInsideBox = _Platform_incomingPort('setOdlStringInsideBox', elm$json$Json$Decode$string);
 var author$project$Types$Down = {$: 'Down'};
 var author$project$Types$KeyInteraction = F3(
 	function (a, b, c) {
 		return {$: 'KeyInteraction', a: a, b: b, c: c};
 	});
+var author$project$Types$SetOdlStringInsideBox = function (a) {
+	return {$: 'SetOdlStringInsideBox', a: a};
+};
 var elm$browser$Browser$Events$Document = {$: 'Document'};
 var elm$browser$Browser$Events$MySub = F3(
 	function (a, b, c) {
@@ -10140,7 +10144,8 @@ var author$project$State$subscriptions = function (model) {
 					elm$json$Json$Decode$map2,
 					author$project$Types$KeyInteraction(author$project$Types$Down),
 					author$project$Rest$keyDecoder,
-					author$project$Rest$shiftKeyDecoder))
+					author$project$Rest$shiftKeyDecoder)),
+				author$project$State$setOdlStringInsideBox(author$project$Types$SetOdlStringInsideBox)
 			]));
 };
 var author$project$Box$boxByIdStep = F2(
@@ -11352,6 +11357,7 @@ var author$project$Odl$odlToBoxes = F2(
 	});
 var elm$json$Json$Encode$bool = _Json_wrap;
 var author$project$State$overlay = _Platform_outgoingPort('overlay', elm$json$Json$Encode$bool);
+var author$project$State$setupTextEditor = _Platform_outgoingPort('setupTextEditor', elm$json$Json$Encode$string);
 var author$project$Types$DuplicateBoxAfterChooseBox = {$: 'DuplicateBoxAfterChooseBox'};
 var author$project$Types$DuplicateBoxBeforeChooseBox = {$: 'DuplicateBoxBeforeChooseBox'};
 var author$project$Types$DuplicateBoxChooseBox = {$: 'DuplicateBoxChooseBox'};
@@ -11453,7 +11459,12 @@ var author$project$State$update = F2(
 				}();
 				return _Utils_Tuple2(
 					newModel,
-					author$project$State$overlay(true));
+					elm$core$Platform$Cmd$batch(
+						_List_fromArray(
+							[
+								author$project$State$overlay(true),
+								author$project$State$setupTextEditor(newModel.odlStringInsideBox)
+							])));
 			case 'AdjustHeight':
 				var height = msg.a;
 				var newModel = _Utils_update(
@@ -12366,9 +12377,6 @@ var author$project$Types$LiquidBoxUpdate = F2(
 	function (a, b) {
 		return {$: 'LiquidBoxUpdate', a: a, b: b};
 	});
-var author$project$Types$SetOdlStringInsideBox = function (a) {
-	return {$: 'SetOdlStringInsideBox', a: a};
-};
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
 var elm$virtual_dom$VirtualDom$attribute = F2(
@@ -12477,46 +12485,42 @@ var author$project$BoxEditor$boxToBoxEditorHtml = F2(
 						elm$html$Html$text(
 						_Utils_eq(box.type_, author$project$Types$LiquidBox) ? 'Content: ' : 'Content (ODL): ')
 					])),
-				A2(
+				_Utils_eq(box.type_, author$project$Types$LiquidBox) ? A2(
 				elm$html$Html$textarea,
-				_Utils_ap(
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('textarea'),
-							A2(elm$html$Html$Attributes$attribute, 'rows', '20')
-						]),
-					_Utils_eq(box.type_, author$project$Types$LiquidBox) ? _List_fromArray(
-						[
-							A2(
-							elm$html$Html$Events$on,
-							'keyup',
-							A2(
-								elm$json$Json$Decode$map,
-								author$project$Types$LiquidBoxUpdate(box.id),
-								elm$html$Html$Events$targetValue))
-						]) : _List_fromArray(
-						[
-							A2(
-							elm$html$Html$Events$on,
-							'keyup',
-							A2(elm$json$Json$Decode$map, author$project$Types$SetOdlStringInsideBox, elm$html$Html$Events$targetValue))
-						])),
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('textarea'),
+						A2(elm$html$Html$Attributes$attribute, 'rows', '20'),
+						A2(
+						elm$html$Html$Events$on,
+						'keyup',
+						A2(
+							elm$json$Json$Decode$map,
+							author$project$Types$LiquidBoxUpdate(box.id),
+							elm$html$Html$Events$targetValue))
+					]),
 				_List_fromArray(
 					[
 						elm$html$Html$text(
 						function () {
-							if (_Utils_eq(box.type_, author$project$Types$SolidBox)) {
-								return model.odlStringInsideBox;
+							var _n2 = box.content;
+							if (_n2.$ === 'Just') {
+								var content = _n2.a;
+								return content;
 							} else {
-								var _n2 = box.content;
-								if (_n2.$ === 'Just') {
-									var content = _n2.a;
-									return content;
-								} else {
-									return '';
-								}
+								return '';
 							}
 						}())
+					])) : A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('textarea'),
+						elm$html$Html$Attributes$id('odl_editor')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('')
 					])),
 				A2(
 				elm$html$Html$button,
