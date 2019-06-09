@@ -1,6 +1,6 @@
-<center>
+<p align="center">
 	<img src="img/logo.png">
-</center>
+</p>
 
 # What is Onwebed?
 
