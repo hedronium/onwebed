@@ -7,13 +7,19 @@
 {% endblock %}
 
 {% block head %}
+
 {% load static %}
 {{ block.super }}
+
 <link rel="stylesheet" href="{% static 'pages/css/edit.css' %}"/>
+<link href="https://fonts.googleapis.com/css?family=Roboto:400|Inconsolata:700&display=swap" rel="stylesheet">
+
 <script type="text/javascript" src="{% static 'pages/js/edit.js' %}"></script>
+
 {% endblock %}
 
 {% block body %}
+
 <div class="content"></div>
 
 <script>
@@ -53,4 +59,5 @@
         // editor.session.setMode("ace/mode/javascript");
     }
 </script> -->
+
 {% endblock %}
