@@ -1,64 +1,30 @@
-# Onwebed
+<center>
+	<img src="img/logo.png">
+</center>
 
-Onwebed is a visual way to create HTML documents. HTML can get messy at times, Onwebed keeps it clean!
+# What is Onwebed?
 
-This is how a simple HTML document may look like in Onwebed's editor:
+- **Lets You Code HTML Visually** - Onwebed is a visual way to create HTML documents. HTML can get messy at times, Onwebed keeps it clean!
 
-![Simple Page](docs/images/simple_page.png)
+- **Helps Create Dynamic Sites** - It doesn't settle with static pages, it's powerful enough to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
 
-It doesn't settle with static pages, it's powerful enough to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
+- **Simple** - Every Onwebed document is composed of *boxes*, making it consistent and easy to learn.
 
-# About
+- **Extensible** - The concept of boxes make it extremely easy to extend the features of Onwebed. Define your own boxes whenever you wish.
 
-## It's Simple
+- **It's Hybrid** - Sometimes visual editing isn't efficient, that's when markup languages come into play, Onwebed lets you use both.
 
-Every single webpage you create with Onwebed is composed of "boxes."
+- **Makes Web Development Less Redundant** - Its simple, yet powerful templating system makes web development least redundant.
 
-Boxes can be used to define your content, act as placeholders for reducing redundancy, house other boxs, or even include other pages.
+- **Not WYSIWYG** - Onwebed visualizes structure, not looks and feel.
 
-## It Lets You Code HTML but Visually
+- **Powered by Django** - It's built on top of Django and inherits all its features, letting you use Django's templating engine and more!
 
-As mentioned in the previous heading, your webpages are built with what is known as "boxes." Each box may have a label attached to it.
-
-Let's look at few examples to understand the concept behind labels:
-
-- A box with label, "div" will be seen as a "div" element.
-
-- A box with label, "div h1.title" will be seen as a "div" element with an "h1" element inside, having a class of "title".
-
-- A box with label, "link[rel='stylesheet']." will be seen as a "link" element with an attribute "rel='stylesheet'." The fullstop resembles that the element won't have an ending tag.
-
-When your page is rendered, the boxes are basically going to be converted to HTML, labels define what the box is.
-
-## It's Extensible
-
-The concept of boxes lets you extend the features of Onwebed pretty easily. You can define your own type of boxes which can do whatever you program it to do.
-
-## It Got You Covered
-
-Ever thought of going back to plain old text-based editing? Onwebed has a built-in markup language to help you out when visual editing isn't the most efficient.
-
-## It's for Lazy People
-
-Ever made a section in your website which is included in multiple pages? That sounds like a dynamic website! Onwebed got your back on this.
-
-Onwebed also lets you "prototype" other pages - that is, inherit its content but replace some of it dynamically (yes, any change you make to a page will be reflected to the other pages which inherit from it).
-
-At the end of the day, web development shouldn't be redundant, and Onwebed likes to keep it this way!
-
-## It's Not WYSIWYG
-
-WYSIWYG is cool, but it gets messy at times, it easy to lose control, and it can be limiting. For example, ever wanted to make a box inside another box, which is yet inside another box? Yes, it can get daunting in WYSIWYG! Onwebed is here to make life easier.
-
-## It's Powered by Django
-
-Yes, Onwebed is essentially a Django app. This is good news, it means that you have access to all of Django's features, that includes the templating engine!
-
-# Concept
+# Basic Concepts
 
 ## Boxes
 
-Every single page built with Onwebed is composed of "boxes."
+Every single page built with Onwebed is composed of *boxes*.
 
 Boxes are converted to HTML when a person visits your page.
 
