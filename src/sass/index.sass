@@ -6,28 +6,71 @@ html
 
 body
     font: 100% $font-stack
+    line-height: 1.5
 
-.navbar-brand .navbar-item
-    color: $primary-color
-    font-size: 1rem
-    font-weight: bold
+.navbar
+    .container
+        margin-top: 0em
+
+    .navbar-brand .navbar-item
+        color: $primary-color
+        font-size: 1rem
+        font-weight: bold
 
 .container
     margin-top: 1em
 
+.content pre
+    padding: 0em
+
 #intro
+    .column
+        display: flex
+        align-items: center
+
     .transition
         font-size: 2rem
         display: flex
         justify-content: center
-        width: 100%
+        align-items: center
+        // width: 100%
+
+        .fa-arrow-right
+            display: none
+
+    .window
+        margin: 0em 1em 0em 1em
     
 
 @media (min-width: 769px)
+    #intro
+        .transition
+            .fa-arrow-down
+                display: none
+            .fa-arrow-right
+                display: block
+
+        .transition.two
+            .fa-arrow-down
+                display: block
+            .fa-arrow-right
+                display: none
+        .window
+            margin: 0em
+
+    // body > .container
+    //     margin: 1em
     
 
 @media (min-width: 1024px)
+    #intro
+        .transition.two
+            .fa-arrow-down
+                display: none
+            .fa-arrow-right
+                display: block
 
+        margin-top: 2em
 
 @media (min-width: 1216px)
     

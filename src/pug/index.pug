@@ -3,8 +3,8 @@ extends base.pug
 block content
     div.container
         div#intro
-            div.columns
-                div.column
+            div.columns.is-multiline
+                div.column.is-4-desktop.one.is-5-tablet
                     div.window
                         div.level
                             div.level-left
@@ -13,15 +13,30 @@ block content
                                 span.dot(style="background:#5AC05A;")
 
                         div.content
-                            h3.
-                                Onwebed document
-                            p.
-                                How to create a detailed browser window look with CSS.
+                            div.solid_box
+                                span.label.
+                                    html
 
-                div.column.transition
+                                div.solid_box
+                                    span.label.
+                                        head
+                                    div.liquid_box
+                                        span.label.
+                                            title
+                                        span.
+                                            Hello!
+
+                                div.liquid_box
+                                    span.label.
+                                        body p
+                                    span.
+                                        Welcome my liege!
+
+                div.column.transition.one.is-auto
                     i.fas.fa-arrow-down
+                    i.fas.fa-arrow-right
 
-                div.column
+                div.column.is-4-desktop.two.is-5-tablet
                     div.window
                         div.level
                             div.level-left
@@ -30,15 +45,22 @@ block content
                                 span.dot(style="background:#5AC05A;")
 
                         div.content
-                            h3.
-                                HTML
-                            p.
-                                How to create a detailed browser window look with CSS.
+                            pre
+                                code.html.
+                                    &#x3C;html&#x3E;
+                                        &#x3C;head&#x3E;
+                                           &#x3C;title&#x3E;Hello!&#x3C;/title&#x3E;
+                                        &#x3C;/head&#x3E;
+                                        &#x3C;body&#x3E;
+                                           &#x3C;p&#x3E;Welcome my liege!&#x3C;/p&#x3E;
+                                        &#x3C;/body&#x3E;
+                                    &#x3C;/html&#x3E;
 
-                div.column.transition
+                div.column.transition.two.is-1-desktop.is-full-tablet.is-auto
                     i.fas.fa-arrow-down
+                    i.fas.fa-arrow-right
 
-                div.column
+                div.column.is-2-desktop.three.is-full-tablet
                     div.window
                         div.level
                             div.level-left
@@ -46,8 +68,12 @@ block content
                                 span.dot(style="background:#FDD800;")
                                 span.dot(style="background:#5AC05A;")
 
-                        div.content
-                            h3.
-                                Result
-                            p.
-                                How to create a detailed browser window look with CSS.
+                                span(style="margin-left: 0.5em") Hello!
+                        div.content.
+                            Welcome my liege!
+
+        hr
+
+        section.section.about
+            h2.subtitle.
+                Code HTML in a visual way!

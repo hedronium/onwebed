@@ -3,12 +3,14 @@ doctype html
 html
     head
         link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css")
+        link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.8/styles/github-gist.min.css")
             
         link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css")
 
         block styles
             link(rel="stylesheet" href="../sass/index.sass")
             link(rel="stylesheet" href="../sass/browser-window.sass")
+            link(rel="stylesheet" href="../sass/onwebed-document.sass")
 
         link(href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300|Ubuntu|Mandali|Open+Sans|Roboto:400,700&display=swap" rel="stylesheet")
 
@@ -19,23 +21,24 @@ html
         title Onwebed
     body
         block menu
-            nav.navbar(role="navigation" aria-label="main navigation")
-                div.navbar-brand
-                    a.navbar-item(href="https://bulma.io").
-                        Onwebed
+            nav.navbar(role="navigation" aria-label="main navigation").is-link
+                div.container
+                    div.navbar-brand
+                        a.navbar-item(href="https://bulma.io").
+                            Onwebed
 
-                    a(role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar")
-                        span(aria-hidden="true")
-                        span(aria-hidden="true")
-                        span(aria-hidden="true")
+                        a(role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar")
+                            span(aria-hidden="true")
+                            span(aria-hidden="true")
+                            span(aria-hidden="true")
 
-                div.navbar-menu.navbar-end#navbar
-                    a.navbar-item.
-                        Home
-                    a.navbar-item.
-                        Guides
-                    a.navbar-item.
-                        Documentation
+                    div.navbar-menu.navbar-end#navbar
+                        a.navbar-item.
+                            Home
+                        a.navbar-item.
+                            Guides
+                        a.navbar-item.
+                            Documentation
 
         block content
 
