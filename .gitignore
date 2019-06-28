@@ -11,3 +11,12 @@ onwebed
 pages
 staticfiles
 users
+django.sh
+elm.sh
+elm_optimized.sh
+parcel.sh
+pug.sh
+sass.sh
+node_modules
+.cache
+dist
