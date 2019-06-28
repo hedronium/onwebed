@@ -8,3 +8,7 @@ onwebed_db
 example_pages
 elm.sh
 elm_optimized.sh
+.cache
+dist
+node_modules
+parcel.sh
