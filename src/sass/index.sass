@@ -1,5 +1,6 @@
 $font-stack: 'Roboto', sans-serif
 $primary-color: #466CBE
+$primary-color-darker: #37579b
 
 html
     scroll-behavior: smooth
@@ -9,13 +10,18 @@ body
     line-height: 1.5
 
 .navbar
+    background-color: $primary-color
+
+    .navbar-brand a
+        color: white
+
     .container
         margin-top: 0em
 
-    .navbar-brand .navbar-item
-        color: $primary-color
-        font-size: 1rem
-        font-weight: bold
+    .navbar-brand .navbar-item:hover
+        background: $primary-color-darker
+        color: white
+
 
 .container
     margin-top: 1em
@@ -67,6 +73,14 @@ hr
                 display: none
         .window
             margin: 0em
+
+    .navbar
+        .navbar-item, .navbar-link
+            color: white
+
+        .navbar-item:hover
+            background: $primary-color-darker
+            color: white
 
     // body > .container
     //     margin: 1em
