@@ -14,26 +14,50 @@ There are two types of boxes - solid, and liquid. However, every single box has 
 
 Solid boxes are more like pencil holders, they're there to organize things - that is, they hold other boxes. Liquid boxes, on the other side, hold text as their content, and as its name defines - it needs to be stored in a container \(solid box\), otherwise it'll spill all over the place!
 
+> Every page is rendered to HTML to present to the viewer of the web page. Boxes, the building blocks of pages, are converted to HTML based on the label and its contents.
+
 ## Label
 
-A label gives a box its identity, and is primarily used to define HTML elements. We'll look more into how elements are defined in the following sections.
+A label gives a box its identity, especially when the box is rendered to HTML.
 
-### Name of Element
+A box, based on its label, may be rendered into multiple HTML elements. We'll look more into how a box is rendered into such elements in the following sections.
 
-A label is equal to the name of an HTML element \(except for few cases which we'll look in the following sections\).
+### Simple Labels
 
-For example:
+A label which is composed of a single word. E.g. `h1`, `div`, `this-is-a-single-word`, `div[id='lorem' class='ipsum']`.
 
-* A box with label, "h1" will be rendered as an HTML element named "h1", `<h1>...</h1>`, where `...` is its content.
+> In the context of a label, a word is a series of characters without any space in between. An exception is when the space is enclosed in square brackets \(`[` and `]`\).
 
-### Names of Multiple Elements
+Boxes with simple labels always render to a single HTML element.
 
-As mentioned in the previous section, a label is equal to the name of an HTML element - except when you use spaces. Spaces will split the label into multiple pieces, each piece representing an HTML element's name.
+Example:
 
-Here are few examples to help you understand the concept:
+| Label | HTML \(`...` represents the content of the box\) |
+| :--- | :--- |
+| `h1` | `<h1>...</h1>` |
 
-* A box with label, "div h1" will be rendered as `<div><h1>...</h1></div>` , where `...` is its content.
-* A box with label, "body div h1" will be rendered as `<body><div><h1>...</h1></div></body>`, where `...` is its content.
+### Composite Labels
+
+A label which is composed of multiple words. E.g. `div h1`, `first-word second-word third-word`, `div.first[id='intro'] div.second`. In the examples, the first and third labels contain 2 words, whilst the second label contains three words.
+
+A label which has n-words will render to n-elements. So, a label with 5 words will render to 5 HTML elements. The ratio of words to elements is always 1:1.
+
+Examples \(`...` represents the content of the box\):
+
+* A box with label, "div h1" will be rendered to 2 HTML elements:  `<div><h1>...</h1></div>`.
+* A box with label, "body div h1" will be rendered into 3 HTML elements:  `<body><div><h1>...</h1></div></body>`.
+
+### Attributes
+
+Each word in a label can have one or more attributes. When a word of a label gets rendered as an HTML element, its attributes are be put inside it.
+
+Attributes are key-value pairs, separated with spaces, and enclosed in square brackets \(`[` and `]`\).
+
+Examples \(`...` represents the content of the box\):
+
+* A box with label, "h1\[class='title'\]" will be rendered as `<h1 class="title">...</h1>`.
+* A box with label, "div\[id='menu'\]" will be rendered as `<div id="menu">...<div>`.
+* A box with label, "button\[id='login' class='button is-primary'\]" will be rendered as `<button id="login" class="button is-primary">...</button>`.
 
 ### IDs and Classes of Elements
 
