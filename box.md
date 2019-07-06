@@ -42,54 +42,40 @@ A label which is composed of multiple words. E.g. `div h1`, `first-word second-w
 
 A label which has n-words will render to n-elements. So, a label with 5 words will render to 5 HTML elements. The ratio of words to elements is always 1:1.
 
-Examples \(`...` represents the content of the box\):
+Examples:
 
-* A box with label, "div h1" will be rendered to 2 HTML elements:  `<div><h1>...</h1></div>`.
-* A box with label, "body div h1" will be rendered into 3 HTML elements:  `<body><div><h1>...</h1></div></body>`.
+| Label | HTML \(`...` represents the content of the box\) |
+| :--- | :--- |
+| `div h1` | `<div><h1>...</h1></div>` |
+| `body div h1` | `<body><div><h1>...</h1></div></body>` |
 
 ### Attributes
 
-Each word in a label can have one or more attributes. When a word of a label gets rendered as an HTML element, its attributes are be put inside it.
+Each word in a label can have one or more attributes. When a word of a label gets rendered as an HTML element, its attributes are put inside the element.
 
-Attributes are key-value pairs, separated with spaces, and enclosed in square brackets \(`[` and `]`\).
+Attributes of words are key-value pairs, separated with spaces, and enclosed in square brackets (`[` and `]`), just like the attributes of elements in HTML.
 
-Examples \(`...` represents the content of the box\):
+Examples:
 
-* A box with label, "h1\[class='title'\]" will be rendered as `<h1 class="title">...</h1>`.
-* A box with label, "div\[id='menu'\]" will be rendered as `<div id="menu">...<div>`.
-* A box with label, "button\[id='login' class='button is-primary'\]" will be rendered as `<button id="login" class="button is-primary">...</button>`.
+| Label | HTML (`...` represents the content of the box) |
+| :--- | :--- |
+| `h1[class='title']` | `<h1 class="title">...</h1>` |
+| `div[id='menu']` | `<div id="menu">...<div>` |
+| `button[id='login' class='button is-primary']` | `<button id="login" class="button is-primary">...</button>` |
 
-### IDs and Classes of Elements
+### Shortcuts for adding ID and Class Attributes
 
-Anything in the label followed by a `#` is the `id` attribute of an HTML element, whereas anything followed by `.` is part of its `class` attribute.
+Instead of adding `id` and `class` attribute from what we've seen in the previous section, we can use shortcuts for doing the same thing.
 
-> An HTML element can have multiple classes, but only one ID - for obvious reasons!
+Anything in the word followed by a `#` is the `id` attribute of an HTML element, whereas anything followed by `.` is part of its `class` attribute.
 
-For example:
+> An HTML element can have multiple classes, but only one ID which must be unique throughout the HTML document - for obvious reasons!
 
-* A box with label, "h1.title" will be rendered as `<h1 class="title">...</h1>`, where `...` is its content.
-* A box with label, "div\#menu" will be rendered as `<div id="menu">...<div>`, where `...` is its content.
-* A box with label, "button\#login.button.is-primary" will be rendered as `<button id="login" class="button is-primary">...</button>`, where `...` is its content.
+Examples:
 
-### Attributes of Elements
-
-Anything in a label enclosed with square brackets, `[` and `]`, is regarded as the attribute of an element.
-
-`id` and `class` are technically HTML attributes. You can define ID and classes using this way too.
-
-So, for example:
-
-* A box with label, "h1\[class='title'\]" will be rendered as `<h1 class="title">...</h1>`, where `...` is its content.
-* A box with label, "div\[id='menu'\]" will be rendered as `<div id="menu">...<div>`, where `...` is its content.
-* A box with label, "button\[id='login' class='button is-primary'\]" will be rendered as `<button id="login" class="button is-primary">...</button>`, where `...` is its content.
-
-### Attributes of Multiple Elements
-
-As seen in the previous sections, a single label can represent multiple HTML elements. It has a one-to-many relationship of labels to HTML elements.
-
-As mentioned in one of the previous headings, spaces are used to split a label into multiple pieces, with each piece representing an HTML element's name. Besides the name, we can also add attributes to each piece \(representing an HTML element\).
-
-For example:
-
-* A box with label, "form\#login\_form button\#login.button" will be rendered as, `<form id="login_form"><button id="login" class="button">...</button>`, where `...` is its content.
+| Label | HTML (`...` represents the content of the box) |
+| :--- | :--- |
+| `h1.title` | `<h1 class="title">...</h1>` |
+| `div#menu` | `<div id="menu">...<div>` |
+| `button#login.button.is-primary` | `<button id="login" class="button is-primary">...</button>` |
 
