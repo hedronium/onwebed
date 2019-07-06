@@ -20,3 +20,4 @@ sass.sh
 node_modules
 .cache
 dist
+clean.sh

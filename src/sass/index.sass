@@ -10,17 +10,27 @@ body
     line-height: 1.5
 
 .navbar
-    background-color: $primary-color
+    // background-color: white
 
-    .navbar-brand a
-        color: white
+    .navbar-item
+        // color: black
+
+        img
+            max-height: 100em
+            max-width: 100em
+
+    .navbar-brand
+        a
+            img
+                width: calc(300px / 2)
+                height: calc(68px / 2)
 
     .container
         margin-top: 0em
 
     .navbar-brand .navbar-item:hover
-        background: $primary-color-darker
-        color: white
+        // background: $primary-color-darker
+        // color: white
 
 
 .container
@@ -76,11 +86,11 @@ hr
 
     .navbar
         .navbar-item, .navbar-link
-            color: white
+            color: black
 
         .navbar-item:hover
-            background: $primary-color-darker
-            color: white
+            background: white
+            // color: white
 
     // body > .container
     //     margin: 1em
@@ -95,6 +105,20 @@ hr
                 display: block
 
         margin-top: 2em
+
+    .navbar
+        background-color: #F0F0F0
+
+        .navbar-brand
+            a
+                img
+                    width: calc(300px / 1.5)
+                    height: calc(68px / 1.5)
+
+        .navbar-item
+            color: #666
+            font-size: 1.3rem
+            font-weight: bold
 
 @media (min-width: 1216px)
     
