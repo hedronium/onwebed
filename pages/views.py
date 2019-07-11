@@ -4,6 +4,7 @@ from .models import Page
 from onwebed import core
 from django.contrib.auth.decorators import login_required
 from django.template.exceptions import TemplateDoesNotExist
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -79,40 +80,36 @@ def delete(request, page_id):
 	return render(request, "pages/delete.html", context)
 
 
-def detail(request, page_id):
-	page = get_object_or_404(Page, pk = page_id)
-
+def detail_base(request, page):
 	context = {
 		'page': page
 	}
 
-	if not page.is_cached:
-		core.cache_page(page.name, page.html_content)
+	if page.name[0] == "_":
+		return HttpResponse("Page not found.")
 
-	try:
-		return render(request, "pages/cached/" + page.name + ".html", context)
-	except TemplateDoesNotExist:
-		core.cache_page(page.name, page.html_content)
-		return render(request, "pages/cached/" + page.name + ".html", context)
+	else:
+		if not page.is_cached:
+			core.cache_page(page.name, page.html_content)
+
+		try:
+			return render(request, "pages/cached/" + page.name + ".html", context)
+		except TemplateDoesNotExist:
+			core.cache_page(page.name, page.html_content)
+			return render(request, "pages/cached/" + page.name + ".html", context)
+
+
+def detail(request, page_id):
+	page = get_object_or_404(Page, pk = page_id)
+
+	return detail_base(request, page)
 
 
 
 def detail_by_name(request, page_name):
 	page = get_object_or_404(Page, name = page_name)
 
-	context = {
-		'page': page,
-		'pages': Page.objects.all()
-	}
-
-	if not page.is_cached:
-		core.cache_page(page.name, page.html_content)
-
-	try:
-		return render(request, "pages/cached/" + page.name + ".html", context)
-	except TemplateDoesNotExist:
-		core.cache_page(page.name, page.html_content)
-		return render(request, "pages/cached/" + page.name + ".html", context)
+	return detail_base(request, page)
 		
 
 def default_page(request):
