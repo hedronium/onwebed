@@ -54,8 +54,6 @@ def edit(request, page_id):
 
 		# write the template file
 		core.cache_page(page.name, page.html_content)
-		
-		# messages.success(request, 'Page saved successfully!')
 
 	context = {
 		'page': page
