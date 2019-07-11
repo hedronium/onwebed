@@ -17,8 +17,8 @@ List of Pages
 	<thead>
 		<tr>
 			<th>#</th>
-			<th>Title</th>
 			<th>Name</th>
+			<th>Title</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
@@ -30,11 +30,11 @@ List of Pages
 			</td>
 			<td>
 				<a href="{% url 'pages:detail' page.id %}">
-					{{ page.title }}
+					{{ page.name }}
 				</a>
 			</td>
 			<td>
-				{{ page.name }}
+				{{ page.title }}
 			</td>
 			<td>
 				<a href="{% url 'pages:edit' page.id %}" class="button">
