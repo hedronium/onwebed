@@ -1,9 +1,27 @@
-module Odl exposing (boxContentToOdl, boxToOdl, currentBoxId, currentBoxIdAtLowerLevel, initialOdlParserModel, odlToBoxes, removeLastCurrentBox)
+module Odl exposing (boxContentToOdl, boxToOdl, currentBoxId, currentBoxIdAtLowerLevel, initialOdlParserModel, odlToBoxes, removeLastCurrentBox, odlStringOfDocument)
 
 import Box exposing (..)
 import Debug exposing (..)
 import LabelProcessor exposing (..)
 import Types exposing (..)
+
+
+odlStringOfDocument : Model -> String
+odlStringOfDocument model =
+    let
+        children =
+            boxesByParentId 0 model
+
+        boxesToOdlStrings =
+            List.map (boxToOdl model 0) children
+
+        odlString =
+            List.foldr
+                (++)
+                ""
+                (List.intersperse "\n\n" boxesToOdlStrings)
+    in
+    odlString
 
 
 boxToOdl : Model -> Int -> Box -> String
@@ -17,28 +35,6 @@ boxToOdl model level (Box box) =
                     level
                     "    "
                 )
-
-        opening_tag =
-            if box.type_ == SolidBox then
-                indentation ++ "<! "
-
-            else
-                indentation ++ "[! "
-
-        closing_tag =
-            if box.type_ == SolidBox then
-                indentation ++ " !>"
-
-            else
-                " !]"
-
-        label =
-            case box.label of
-                Just justLabel ->
-                    "[ " ++ justLabel ++ " ] "
-
-                Nothing ->
-                    ""
 
         content =
             if box.type_ == SolidBox then
@@ -59,6 +55,31 @@ boxToOdl model level (Box box) =
 
             else
                 Maybe.withDefault "" box.content
+
+        opening_tag =
+            if box.type_ == SolidBox then
+                indentation ++ "<! "
+
+            else
+                indentation ++ "[! "
+
+        closing_tag =
+            if box.type_ == SolidBox then
+                if (String.length content) == 0 then
+                    "!>"
+                else
+                    indentation ++ "!>"
+
+            else
+                " !]"
+
+        label =
+            case box.label of
+                Just justLabel ->
+                    "[ " ++ justLabel ++ " ] "
+
+                Nothing ->
+                    ""
     in
     opening_tag ++ label ++ content ++ closing_tag
 

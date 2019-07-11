@@ -38,10 +38,19 @@ innerHtmlDecoder =
 
 generateBox : Int -> Maybe String -> Maybe String -> Int -> BoxType -> Box
 generateBox id label content parent type_ =
+    let
+        labelElements =
+            case label of
+                Nothing ->
+                    []
+
+                Just label_ ->
+                    processLabel label_
+    in
     Box
         { id = id
         , label = label
-        , labelElements = processLabel (Maybe.withDefault "" label)
+        , labelElements = labelElements
         , content = content
         , parent = parent
         , type_ = type_
@@ -1032,7 +1041,17 @@ jsonStringToDocument jsonString =
                 )
 
         boxContentDecoder =
-            Decode.field "content" (Decode.maybe Decode.string)
+            Decode.field
+                "content"
+                (Decode.string
+                    |> Decode.andThen
+                        (\content ->
+                            if (String.length content) == 0 then
+                                Decode.succeed (Nothing)
+                            else
+                                Decode.succeed (Just content)
+                        )
+                )
 
         boxParentDecoder =
             Decode.field "parent" Decode.int

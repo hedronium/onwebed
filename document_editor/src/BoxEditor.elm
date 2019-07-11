@@ -16,7 +16,7 @@ boxToBoxEditorHtml (Box box) model =
             [ class "message is-danger" ]
             [ div
                 [ class "message-body" ]
-                [ text "You have unsaved draft. Apply the changes or press escape again to discard the changes." ]
+                [ text "You have an unsaved draft. Apply the changes or press escape again to discard the changes." ]
             ]
 
       else
@@ -83,13 +83,6 @@ boxToBoxEditorHtml (Box box) model =
         div
             [ class "textarea"
             , id "odl_editor"
-
-            --, on
-            --    "keyup"
-            --    (Decode.map
-            --        SetOdlStringInsideBox
-            --        targetValue
-            --    )
             ]
             [ text "" ]
     , button

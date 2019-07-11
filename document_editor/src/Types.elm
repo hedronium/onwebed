@@ -92,7 +92,6 @@ type Msg
     | EditBoxSelectBox Int
     | SetOdlString String
     | ApplyOdl
-    --| SetOdlStringInsideBox String
     | ApplyOdlInsideBox Int
 
 
@@ -147,9 +146,10 @@ type DocumentStatus
     | EditBox
     | EditBoxWarnUnsavedDraft
     | ViewOdl
+    | ViewOdlWarnUnsavedDraft
     | ViewImportModal
     | ViewExportModal
-
+    
 
 type alias MenuItem =
     { name : String

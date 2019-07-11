@@ -1,14 +1,11 @@
 __pycache__
 *.pyc
 venv
-django.sh
+*.sh
 elm-stuff
 pages/templates/pages/cached/*.html
 onwebed_db
 example_pages
-elm.sh
-elm_optimized.sh
 .cache
 dist
 node_modules
-parcel.sh

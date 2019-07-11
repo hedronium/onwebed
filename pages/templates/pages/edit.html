@@ -11,10 +11,8 @@
 {% load static %}
 {{ block.super }}
 
-<link rel="stylesheet" href="{% static 'pages/css/edit.css' %}"/>
+<link rel="stylesheet" href="{% static 'pages/dist/edit.css' %}"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:400|Inconsolata:700&display=swap" rel="stylesheet">
-
-<script type="text/javascript" src="{% static 'pages/js/edit.js' %}"></script>
 
 {% endblock %}
 
@@ -22,42 +20,15 @@
 
 <div class="content"></div>
 
-<script>
-	var app = Elm.Main.init({
-        node: document.querySelector(".content"),
-        flags: {
-        	pageName: "{{ page.name }}",
-        	pageTitle: "{{ page.title }}",
-        	content: "{{ page.content|safe }}",
-            csrfToken: "{{ csrf_token }}"
-        }
-    });
-
-    app.ports.overlay.subscribe(function(enable) {
-        if (enable == true)
-            document.querySelector("html").classList.add("noscroll");
-        else
-            document.querySelector("html").classList.remove("noscroll");
-    });
-
-    app.ports.setupTextEditor.subscribe(function(value) {
-        var editor = ace.edit("odl_editor");
-
-        editor.session.setValue(value);
-        editor.on("change", function(e) {
-            app.ports.setOdlString.send(editor.getValue());
-        });
-    });
-
-
-</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.4/ace.js"></script>
-<!-- <script type="text/javascript">
-    function apply_editor() {
-        var editor = ace.edit("odl_editor");
-        // editor.setTheme("ace/theme/monokai");
-        // editor.session.setMode("ace/mode/javascript");
-    }
-</script> -->
+
+<script type="text/javascript">
+    var page_name = "{{ page.name }}";
+    var page_title = "{{ page.title }}";
+    var page_content = "{{ page.content|safe }}";
+    var csrf_token = "{{ csrf_token }}";
+</script>
+
+<script type="text/javascript" src="{% static 'pages/dist/edit.js' %}"></script>
 
 {% endblock %}

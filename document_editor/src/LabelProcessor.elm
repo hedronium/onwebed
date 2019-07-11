@@ -375,6 +375,7 @@ processLabel label =
     (processLabelStep model).labelElements
 
 
+
 handleElementStart : LabelElement -> String
 handleElementStart element =
     case element.name of

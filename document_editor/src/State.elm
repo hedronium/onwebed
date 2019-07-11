@@ -8,6 +8,7 @@ import Menu exposing (..)
 import Odl exposing (..)
 import Rest exposing (..)
 import Types exposing (..)
+import Debug exposing (log)
 
 
 port overlay : Bool -> Cmd msg
@@ -154,6 +155,7 @@ update msg model =
                             { model
                                 | status = EditBox
                                 , odlStringInsideBox = boxContentToOdl (Box justBox) model 0
+                                , documentDraft = model.document
                             }
 
                         Nothing ->
@@ -235,7 +237,7 @@ update msg model =
 
                     else if key == "Escape" then
                         if model.status == EditBox then
-                            if List.isEmpty model.documentDraft then
+                            if model.document == model.documentDraft then
                                 { model
                                     | status = Default
                                     , selectedBoxId = 0
@@ -245,6 +247,23 @@ update msg model =
                                 { model
                                     | status = EditBoxWarnUnsavedDraft
                                 }
+
+                        else if model.status == ViewOdl then
+                            let
+                                originalOdlString =
+                                    odlStringOfDocument model
+                            in
+                            if model.odlString == originalOdlString then
+                                { model
+                                    | status = Default
+                                    , selectedBoxId = 0
+                                }
+
+                            else
+                                { model
+                                    | status = ViewOdlWarnUnsavedDraft
+                                }
+
 
                         else if model.status == EditBoxWarnUnsavedDraft then
                             { model
@@ -408,7 +427,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | documentDraft = List.map (updateBoxLabel boxId label) model.document
+                        | documentDraft = List.map (updateBoxLabel boxId label) model.documentDraft
                     }
 
                 newModel2 =
@@ -427,7 +446,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | documentDraft = List.map (updateBoxContent boxId content) model.document
+                        | documentDraft = List.map (updateBoxContent boxId content) model.documentDraft
                     }
 
                 newModel2 =
@@ -540,13 +559,16 @@ update msg model =
                     if model.status == EditBox then
                         { model
                             | odlStringInsideBox = odlString
-                            , documentDraft = model.document
                         }
                     else if model.status == EditBoxWarnUnsavedDraft then
                         { model
                             | odlStringInsideBox = odlString
-                            , documentDraft = model.document
                             , status = EditBox
+                        }
+                    else if model.status == ViewOdlWarnUnsavedDraft then
+                        { model
+                            | odlString = odlString
+                            , status = ViewOdl
                         }
                     else
                         { model
@@ -568,18 +590,6 @@ update msg model =
             ( newModel
             , overlay False
             )
-
-        --SetOdlStringInsideBox odlStringInsideBox ->
-        --    let
-        --        newModel =
-        --            { model
-        --                | odlStringInsideBox = odlStringInsideBox
-        --                , documentDraft = model.document
-        --            }
-        --    in
-        --    ( newModel
-        --    , Cmd.none
-        --    )
 
         ApplyOdlInsideBox boxId ->
             let
@@ -767,6 +777,7 @@ update msg model =
                         "view_odl" ->
                             { model
                                 | status = ViewOdl
+                                , odlString = odlStringOfDocument model
                             }
 
                         _ ->
@@ -776,17 +787,8 @@ update msg model =
                     case machine_name of
                         "view_odl" ->
                             let
-                                children =
-                                    boxesByParentId 0 model
-
-                                boxesToOdlStrings =
-                                    List.map (boxToOdl model 0) children
-
                                 odlString =
-                                    List.foldr
-                                        (++)
-                                        ""
-                                        (List.intersperse "\n\n" boxesToOdlStrings)
+                                    odlStringOfDocument model
                             in
                             Cmd.batch
                                 [ overlay True

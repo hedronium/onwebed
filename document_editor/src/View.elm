@@ -85,14 +85,35 @@ view model =
                 []
 
         odlModal =
-            if model.status == ViewOdl then
+            if model.status == ViewOdl || model.status == ViewOdlWarnUnsavedDraft then
                 [ div
                     [ class "overlay"
                     , Html.Attributes.attribute "aria-hidden" "false"
                     ]
                     [ div
                         []
-                        [ div
+                        [(if model.status == ViewOdlWarnUnsavedDraft then
+                            div
+                                [ class "message is-danger" ]
+                                [ div
+                                    [ class "message-body" ]
+                                    [ text "You have an unsaved draft. Apply the changes or press escape again to discard the changes." ]
+                                ]
+
+                          else
+                            div
+                                [ class "message" ]
+                                [ div
+                                    [ class "message-body" ]
+                                    [ text "Press Escape to go back, but any change you make will be discarded unless you apply it." ]
+                                ]
+                         )
+                        , div
+                            [ class "label"
+                            ]
+                            [ text "Content (ODL):"
+                            ]
+                        , div
                             [ class "textarea"
                             , id "odl_editor"
                             , attribute "rows" "20"
