@@ -257,14 +257,30 @@ generateMenu model =
         [ class "navbar main-menu"
         , id "menu"
         , attribute "role" "navigation"
+        , attribute "aria-label" "main navigation"
         ]
         [ div
-            [ class "container" ]
-            menuHeader
-        , div
-            [ class "container" ]
-            [ div
-                [ class "columns is-variable is-1" ]
-                menuContent
-            ]
+            [ class "navbar-brand" ]
+            ([ a
+                   [ attribute "role" "button"
+                   , class "navbar-burger"
+                   , attribute "aria-label" "menu"
+                   , attribute "aria-expanded" "false"
+                   ]
+                   [ span
+                        [ attribute "aria-hidden" "true"
+                        , attribute "aria-hidden" "true"
+                        , attribute "aria-hidden" "true"
+                        ]
+                        []
+                   ]
+             ]
+                --++ menuHeader
+            )
+        --, div
+        --    [ class "container" ]
+        --    [ div
+        --        [ class "columns is-variable is-1" ]
+        --        menuContent
+        --    ]
         ]
