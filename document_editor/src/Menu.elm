@@ -72,80 +72,86 @@ generateMenu model =
 
             else if model.status == SolidBoxAdditionBeforeChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box before which you want to insert the new solid box." ]
                 ]
 
             else if model.status == LiquidBoxAdditionBeforeChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box before which you want to insert the new liquid box." ]
                 ]
 
             else if model.status == SolidBoxAdditionAfterChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box after which you want to insert the new solid box." ]
                 ]
 
             else if model.status == LiquidBoxAdditionAfterChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box after which you want to insert the new liquid box." ]
                 ]
 
             else if model.status == SolidBoxAdditionInsideFirstChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box inside which you want to insert the new solid box as the first item." ]
                 ]
 
             else if model.status == SolidBoxAdditionInsideLastChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box inside which you want to insert the new solid box as the last item." ]
                 ]
 
             else if model.status == EditBoxChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box which you want to edit." ]
                 ]
 
             else if model.status == DuplicateBoxChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box which you want to duplicate." ]
                 ]
 
             else if model.status == DuplicateBoxBeforeChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box before which you want to place the duplicated box." ]
                 ]
 
             else if model.status == DuplicateBoxInsideFirstChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box inside which you want to place the duplicated box as the first item." ]
                 ]
 
             else if model.status == DuplicateBoxInsideLastChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box inside which you want to place the duplicated box as the last item." ]
                 ]
 
             else if model.status == DuplicateBoxAfterChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box after which you want to place the duplicated box." ]
                 ]
 
             else if model.status == MoveBoxChooseBox then
                 [ div
-                    [ class "column" ]
+                    []
                     [ text "Choose box which you want to move." ]
+                ]
+
+            else if model.status == RemoveBoxChooseBox then
+                [ div
+                    []
+                    [ text "Choose box which you want to remove." ]
                 ]
 
             else
@@ -239,12 +245,10 @@ generateMenu model =
         ]
         [ div
             [ class "container"
-            , id "menu_header"
             ]
             menuHeader
         , div
             [ class "container"
-            , id "menu_body"
             ]
             menuBody
         ]

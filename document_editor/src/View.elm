@@ -15,121 +15,135 @@ view : Model -> Html Msg
 view model =
     let
         editBoxModal =
-            if model.status == EditBox || model.status == EditBoxWarnUnsavedDraft then
-                [ div
-                    [ class "overlay"
-                    , id "edit_box_overlay"
-                    ]
-                    [ div
-                        []
-                        (let
-                            maybeBox =
-                                boxById model.selectedBoxId model
-                         in
-                         case maybeBox of
-                            Just (Box box) ->
-                                boxToBoxEditorHtml (Box box) model
-
-                            Nothing ->
-                                [ text "The box doesn't exist!" ]
-                        )
-                    ]
+            let
+                classValue =
+                    if model.status == EditBox || model.status == EditBoxWarnUnsavedDraft then
+                        "overlay"
+                    else
+                        "overlay" ++ " invisible"
+            in
+            [ div
+                [ class classValue
+                , id "edit_box_overlay"
                 ]
+                [ div
+                    []
+                    (let
+                        maybeBox =
+                            boxById model.selectedBoxId model
+                     in
+                     case maybeBox of
+                        Just (Box box) ->
+                            boxToBoxEditorHtml (Box box) model
 
-            else
-                []
+                        Nothing ->
+                            [ text "The box doesn't exist!" ]
+                    )
+                ]
+            ]
 
         exportModal =
-            if model.status == ViewExportModal then
+            let
+                classValue =
+                    if model.status == ViewExportModal then
+                        "overlay"
+                    else
+                        "overlay" ++ " invisible"
+            in
+            [ div
+                [ class classValue
+                ]
                 [ div
-                    [ class "overlay"
-                    ]
-                    [ div
-                        []
-                        [ textarea
-                            [ class "textarea"
-                            , Html.Attributes.attribute "rows" "20"
-                            , on "blur" (Decode.map SetImport targetValue)
-                            ]
-                            [ text (documentToJsonString model) ]
+                    []
+                    [ textarea
+                        [ class "textarea"
+                        , Html.Attributes.attribute "rows" "20"
+                        , on "blur" (Decode.map SetImport targetValue)
                         ]
+                        [ text (documentToJsonString model) ]
                     ]
                 ]
-
-            else
-                []
+            ]
 
         importModal =
-            if model.status == ViewImportModal then
+            let
+                classValue =
+                    if model.status == ViewImportModal then
+                        "overlay"
+                    else
+                        "overlay" ++ " invisible"
+            in
+            [ div
+                [ class classValue
+                ]
                 [ div
-                    [ class "overlay"
-                    ]
-                    [ div
-                        []
-                        [ textarea
-                            [ class "textarea"
-                            , Html.Attributes.attribute "rows" "20"
-                            , on "blur" (Decode.map SetImport targetValue)
-                            ]
-                            []
-                        , button
-                            [ Html.Events.onClick Import
-                            , class "button is-success is-outlined"
-                            ]
-                            [ text "Import" ]
+                    []
+                    [ textarea
+                        [ class "textarea"
+                        , Html.Attributes.attribute "rows" "20"
+                        , on "blur" (Decode.map SetImport targetValue)
                         ]
+                        []
+                    , button
+                        [ Html.Events.onClick Import
+                        , class "button is-success is-outlined"
+                        ]
+                        [ text "Import" ]
                     ]
                 ]
-
-            else
-                []
+            ]
 
         odlModal =
-            if model.status == ViewOdl || model.status == ViewOdlWarnUnsavedDraft then
+            let
+                classValue =
+                    if model.status == ViewOdl || model.status == ViewOdlWarnUnsavedDraft then
+                        "overlay"
+                    else
+                        "overlay" ++ " invisible"
+            in
+            [ div
+                [ class classValue
+                , Html.Attributes.attribute "aria-hidden" "false"
+                , id "view_odl_overlay"
+                ]
                 [ div
-                    [ class "overlay"
-                    , Html.Attributes.attribute "aria-hidden" "false"
-                    ]
-                    [ div
-                        []
-                        [(if model.status == ViewOdlWarnUnsavedDraft then
-                            div
-                                [ class "message is-danger" ]
-                                [ div
-                                    [ class "message-body" ]
-                                    [ text "You have an unsaved draft. Apply the changes or press escape again to discard the changes." ]
-                                ]
+                    []
+                    [(if model.status == ViewOdlWarnUnsavedDraft then
+                        div
+                            [ class "message is-danger" ]
+                            [ div
+                                [ class "message-body" ]
+                                [ text "You have an unsaved draft. Apply the changes or press escape again to discard the changes." ]
+                            ]
 
-                          else
-                            div
-                                [ class "message" ]
-                                [ div
-                                    [ class "message-body" ]
-                                    [ text "Press Escape to go back, but any change you make will be discarded unless you apply it." ]
-                                ]
-                         )
-                        , div
-                            [ class "label"
+                      else
+                        div
+                            [ class "message" ]
+                            [ div
+                                [ class "message-body" ]
+                                [ text "Press Escape to go back, but any change you make will be discarded unless you apply it." ]
                             ]
-                            [ text "Content (ODL):"
-                            ]
-                        , div
-                            [ class "textarea"
-                            , id "odl_editor"
-                            , attribute "rows" "20"
-                            ]
-                            [ text "" ]
-                        , button
-                            [ Html.Events.onClick ApplyOdl
-                            , class "button is-success is-outlined"
-                            ]
-                            [ text "Apply Changes" ]
+                     )
+                    , div
+                        [ class "label"
                         ]
+                        [ text "Content (ODL):"
+                        ]
+                    , div
+                        [ class "textarea"
+                        , id "odl_editor"
+                        , attribute "rows" "20"
+                        ]
+                        [ text "" ]
+                    , button
+                        [ Html.Events.onClick ApplyOdl
+                        , class "button is-success is-outlined"
+                        ]
+                        [ text "Apply Changes" ]
                     ]
                 ]
+            ]
 
-            else
-                []
 
         formContent =
             [ input
