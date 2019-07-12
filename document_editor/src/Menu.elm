@@ -22,7 +22,7 @@ menuItem name machineName =
 menuItemToHtml : MenuItem -> Html Msg
 menuItemToHtml menuItemToBeConverted =
     div
-        [ class "column is-narrow" ]
+        []
         [ input
             [ type_ "button"
             , Html.Attributes.value menuItemToBeConverted.name
@@ -45,7 +45,7 @@ menuItemsToHtml menuItemsToBeConverted =
 generateMenu : Model -> Html Msg
 generateMenu model =
     let
-        menuContent =
+        menuBody =
             if model.status == SolidBoxAdditionShowOptions then
                 menuItemsToHtml
                     [ menuItem "+before" "add_solid_box_before"
@@ -160,127 +160,91 @@ generateMenu model =
                         menuItemsToHtml model.menu
 
         menuHeader =
-            [ div
-                [ id "menu_header"
-                , class "columns is-variable is-1 is-vcentered"
+            [ a
+                [ href "../"
+                , class "button is-outlined"
                 ]
-                [ div
-                    [ class "column is-narrow" ]
-                    [ a
-                        [ href "../"
-                        , class "level-item button"
-                        ]
-                        [ span
-                            [ class "icon is-small" ]
-                            [ i
-                                [ class "fas fa-arrow-left" ]
-                                []
-                            ]
-                        , span
-                            []
-                            [ text "back" ]
-                        ]
+                [ span
+                    [ class "icon is-small" ]
+                    [ i
+                        [ class "fas fa-arrow-left" ]
+                        []
                     ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ a
-                        [ class "level-item button"
-                        , attribute "href" ("../../" ++ model.pageName)
-                        , attribute "target" "__parent"
-                        ]
-                        [ span
-                            [ class "icon is-small" ]
-                            [ i
-                                [ class "fas fa-eye" ]
-                                []
-                            ]
-                        , span
-                            []
-                            [ text "view" ]
-                        ]
+                , span
+                    []
+                    [ text "back" ]
+                ]
+            , a
+                [ attribute "href" ("../../" ++ model.pageName)
+                , attribute "target" "__parent"
+                , class "button is-outlined"
+                ]
+                [ span
+                    [ class "icon is-small" ]
+                    [ i
+                        [ class "fas fa-eye" ]
+                        []
                     ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ button
-                        [ class "button is-success is-outlined"
-                        , attribute "type" "submit"
-                        ]
-                        [ span
-                            [ class "icon is-small" ]
-                            [ i
-                                [ class "fas fa-save" ]
-                                []
-                            ]
-                        , span
-                            []
-                            [ text "save" ]
-                        ]
+                , span
+                    []
+                    [ text "view" ]
+                ]
+            , button
+                [ class "button is-success is-outlined"
+                , attribute "type" "submit"
+                ]
+                [ span
+                    [ class "icon is-small" ]
+                    [ i
+                        [ class "fas fa-save" ]
+                        []
                     ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ b
-                        [ class "level-item" ]
-                        [ text "Name:" ]
-                    ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ span
-                        [ class "level-item" ]
-                        [ div
-                            [ contenteditable True
-                            , on "blur" (Decode.map PageNameChanged innerHtmlDecoder)
-                            ]
-                            [ text model.pageName ]
+                , span
+                    []
+                    [ text "save" ]
+                ]
+            , div
+                [ class "input-field" ]
+                [ b
+                    []
+                    [ text "Name:" ]
+                , span
+                    []
+                    [ div
+                        [ contenteditable True
+                        , on "blur" (Decode.map PageNameChanged innerHtmlDecoder)
                         ]
+                        [ text model.pageName ]
                     ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ b
-                        [ class "level-item" ]
-                        [ text "Title:" ]
-                    ]
-                , div
-                    [ class "column is-narrow" ]
-                    [ span
-                        [ class "level-item" ]
-                        [ div
-                            [ contenteditable True
-                            , on "blur" (Decode.map PageTitleChanged innerHtmlDecoder)
-                            ]
-                            [ text model.pageTitle ]
+                ]
+            , div
+                [ class "input-field" ]
+                [ b
+                    []
+                    [ text "Title:" ]
+                , span
+                    []
+                    [ div
+                        [ contenteditable True
+                        , on "blur" (Decode.map PageTitleChanged innerHtmlDecoder)
                         ]
+                        [ text model.pageTitle ]
                     ]
                 ]
             ]
     in
     nav
-        [ class "navbar main-menu"
+        [ class "main-menu"
         , id "menu"
-        , attribute "role" "navigation"
-        , attribute "aria-label" "main navigation"
         ]
         [ div
-            [ class "navbar-brand" ]
-            ([ a
-                   [ attribute "role" "button"
-                   , class "navbar-burger"
-                   , attribute "aria-label" "menu"
-                   , attribute "aria-expanded" "false"
-                   ]
-                   [ span
-                        [ attribute "aria-hidden" "true"
-                        , attribute "aria-hidden" "true"
-                        , attribute "aria-hidden" "true"
-                        ]
-                        []
-                   ]
-             ]
-                --++ menuHeader
-            )
-        --, div
-        --    [ class "container" ]
-        --    [ div
-        --        [ class "columns is-variable is-1" ]
-        --        menuContent
-        --    ]
+            [ class "container"
+            , id "menu_header"
+            ]
+            menuHeader
+        , div
+            [ class "container"
+            , id "menu_body"
+            ]
+            menuBody
         ]

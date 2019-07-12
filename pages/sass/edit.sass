@@ -6,6 +6,10 @@ body
 .noscroll
     overflow: hidden
 
+
+/* Overlay */
+
+
 .overlay
    position: fixed 
    overflow-y: scroll
@@ -53,20 +57,38 @@ body
     width: 100%
 
 
-#menu_header span > div[contenteditable='true']
-    background: #F5F5F5
-    padding: 0.3em 0.5em 0.3em 0.5em
-
+/* Menu */
 
 #menu
-    position: fixed
-    top: 0px
     padding: 1em
     background: white
     border-bottom: 1px solid #CCC
-    z-index: 1
     min-width: 100%
     box-shadow: 0px 2px 10px #CCC
+
+    // a, button, div
+        // margin-right: 1em
+        // margin-bottom: 1em
+
+    .input-field
+        display: flex
+
+        b
+            align-self: center
+
+        span
+            div[contenteditable='true']
+                background: #F5F5F5
+                padding: 0.3em 0.5em 0.3em 0.5em
+
+    .container
+        display: flex
+        flex-wrap: wrap
+
+        a, button, div
+            margin: 0.3em
+
+        
 
 
 /* Playground */
@@ -89,7 +111,7 @@ body
 .solid_box
     border: 1px solid #CCC
     padding: 0.7em
-    min-width: calc(100% - 1em)
+    width: calc(100% - 1em)
     display: flex
     flex-wrap: wrap
     align-content: space-between
@@ -121,14 +143,6 @@ body
         color: white
 
 
-.selected
-    border-color: #4d55c6
-
-.selected:hover
-    cursor: pointer
-
-/* Box Label */
-
 .box-label
     display: inline-block
     line-height: 1.5em
@@ -136,8 +150,16 @@ body
     background: inherit
     font-size: 1.1rem
     font-family: inherit
-    max-width: 100%
+    max-width: calc(100% - 1em)
     word-wrap: break-word
+    margin: 0.5em
+
+
+.selected
+    border-color: #4d55c6
+
+.selected:hover
+    cursor: pointer
 
 
 /* Miscellaneous */
@@ -153,3 +175,29 @@ body
     -moz-user-select: none
     -ms-user-select: none
     user-select: none
+
+
+/* Media queries */
+
+@media (min-width: 769px)
+    #menu_header span > div[contenteditable='true']
+        background: #F5F5F5
+        padding: 0.3em 0.5em 0.3em 0.5em
+
+    #menu
+        position: fixed
+        top: 0px
+        padding: 1em
+        background: white
+        border-bottom: 1px solid #CCC
+        z-index: 1
+        min-width: 100%
+        box-shadow: 0px 2px 10px #CCC
+
+@media (min-width: 1024px)
+    
+
+@media (min-width: 1216px)
+    
+ 
+@media (min-width: 1408px)
