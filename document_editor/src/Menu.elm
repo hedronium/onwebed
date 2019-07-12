@@ -254,16 +254,13 @@ generateMenu model =
             ]
     in
     nav
-        [ class "main-menu"
+        [ class "navbar main-menu"
         , id "menu"
+        , attribute "role" "navigation"
         ]
         [ div
             [ class "container" ]
             menuHeader
-
-        --, hr
-        --    []
-        --    []
         , div
             [ class "container" ]
             [ div

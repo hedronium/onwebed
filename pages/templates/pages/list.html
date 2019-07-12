@@ -13,39 +13,43 @@ List of Pages
 {% block content %}
 <a href="{% url 'pages:create' %}" class="button">Create New Page</a>
 <hr/>
-<table class="table" width="100%">
-	<thead>
-		<tr>
-			<th>#</th>
-			<th>Name</th>
-			<th>Title</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for page in pages %}
-		<tr>
-			<td>
-				{{ page.id }}
-			</td>
-			<td>
-				<a href="{% url 'pages:detail' page.id %}">
-					{{ page.name }}
-				</a>
-			</td>
-			<td>
-				{{ page.title }}
-			</td>
-			<td>
-				<a href="{% url 'pages:edit' page.id %}" class="button">
-					Edit
-				</a>
-				<a href="{% url 'pages:delete' page.id %}" class="button">
-					Delete
-				</a>
-			</td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
+<div class="table-container">
+	<table class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Name</th>
+				<th>Title</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for page in pages %}
+			<tr>
+				<td>
+					{{ page.id }}
+				</td>
+				<td>
+					<a href="{% url 'pages:detail' page.id %}">
+						{{ page.name }}
+					</a>
+				</td>
+				<td>
+					{{ page.title }}
+				</td>
+				<td>
+					<div class="buttons">
+						<a href="{% url 'pages:edit' page.id %}" class="button">
+							Edit
+						</a>
+						<a href="{% url 'pages:delete' page.id %}" class="button">
+							Delete
+						</a>
+					</div>
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
 {% endblock %}

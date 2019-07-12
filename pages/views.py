@@ -78,6 +78,8 @@ def delete(request, page_id):
 	return render(request, "pages/delete.html", context)
 
 
+# Procedure created just for reducing redundancy
+
 def detail_base(request, page):
 	context = {
 		'page': page
