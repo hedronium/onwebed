@@ -7,6 +7,6 @@ pages/templates/pages/cached/*.html
 onwebed_db
 example_pages
 .cache
-dist
+./dist
 node_modules
 staticfiles/*

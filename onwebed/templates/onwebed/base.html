@@ -50,13 +50,13 @@
 					            </a>
 					        </div>
 					        <div class="navbar-end">
-					        	<span class="navbar-item">
-					        		Logged in as: {{ user.username }}
-					        	</span>
-
 					        	<a class="navbar-item" href="{% url 'base_url' %}" target="_new">
 					                View Site
 					            </a>
+
+					        	<span class="navbar-item">
+					        		Logged in as&nbsp;<b>{{ user.username }}</b>
+					        	</span>
 
 					            {% if user.is_authenticated %}
 					            <a class="navbar-item" href="{% url 'users:logout' %}">
