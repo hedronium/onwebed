@@ -39,6 +39,28 @@ def create(request):
 
 
 @login_required
+def settings(request):
+	from onwebed.models import SiteAttribute
+
+	default_page_site_attribute = SiteAttribute.objects.get(key = "default_page")
+
+	if request.method == "POST":
+		default_page = request.POST['default_page']
+
+		default_page_site_attribute.value = default_page
+		default_page_site_attribute.save()
+
+		messages.success(request, 'Settings updated successfully!')
+
+	context = {
+		'default_page': int(default_page_site_attribute.value),
+		'pages': Page.objects.exclude(name__istartswith = "_")
+	}
+
+	return render(request, "pages/settings.html", context)
+
+
+@login_required
 def edit(request, page_id):
 	page = get_object_or_404(Page, pk = page_id)
 
