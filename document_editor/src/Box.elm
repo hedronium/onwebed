@@ -108,82 +108,82 @@ boxToHtml model (Box boxToBeConvertedToHtml) =
         attributes =
             if model.status == SolidBoxAdditionBeforeChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( SolidBoxAdditionBefore boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == LiquidBoxAdditionBeforeChooseBox && boxToBeConvertedToHtml.type_ == LiquidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( LiquidBoxAdditionBefore boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == SolidBoxAdditionAfterChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( SolidBoxAdditionAfter boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == LiquidBoxAdditionAfterChooseBox && boxToBeConvertedToHtml.type_ == LiquidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( LiquidBoxAdditionAfter boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == SolidBoxAdditionInsideFirstChooseBox && boxToBeConvertedToHtml.type_ == SolidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( SolidBoxAdditionInsideFirst boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == LiquidBoxAdditionInsideFirstChooseBox && boxToBeConvertedToHtml.type_ == SolidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( LiquidBoxAdditionInsideFirst boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == SolidBoxAdditionInsideLastChooseBox && boxToBeConvertedToHtml.type_ == SolidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( SolidBoxAdditionInsideLast boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == LiquidBoxAdditionInsideLastChooseBox && boxToBeConvertedToHtml.type_ == SolidBox then
                 [ stopPropagationOn "click" (Decode.succeed ( LiquidBoxAdditionInsideLast boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == RemoveBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( RemoveBox boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == EditBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( EditBoxSelectBox boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == DuplicateBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxSelectBox boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == DuplicateBoxBeforeChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxBefore boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == DuplicateBoxInsideFirstChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxInsideFirst boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == DuplicateBoxInsideLastChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxInsideLast boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == DuplicateBoxAfterChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( DuplicateBoxAfter boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else if model.status == MoveBoxChooseBox then
                 [ stopPropagationOn "click" (Decode.succeed ( MoveBoxSelectBox boxToBeConvertedToHtml.id, True ))
-                , stopPropagationOn "mouseover" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
+                , stopPropagationOn "mousemove" (Decode.succeed ( SelectBox boxToBeConvertedToHtml.id, True ))
                 ]
 
             else
@@ -1046,8 +1046,9 @@ jsonStringToDocument jsonString =
                 (Decode.string
                     |> Decode.andThen
                         (\content ->
-                            if (String.length content) == 0 then
-                                Decode.succeed (Nothing)
+                            if String.length content == 0 then
+                                Decode.succeed Nothing
+
                             else
                                 Decode.succeed (Just content)
                         )
