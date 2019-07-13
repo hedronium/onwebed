@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h1 class="title">Register</h1>
+
 <form action="{% url 'users:register' %}" method="POST">
     {% csrf_token %}
     <div class="field">
@@ -32,7 +34,7 @@
         </div>
     </div>
 
-    <input type="submit" class="button" value="Register"/> or <a href="{% url 'users:login' %}">Login</a>
+    <input type="submit" class="button is-outlined is-link" value="Register"/> or <a href="{% url 'users:login' %}">Login</a>
 </form>
 
 {% endblock %}

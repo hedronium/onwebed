@@ -1,0 +1,32 @@
+{% extends "onwebed/base.html" %}
+
+{% block breadcrumbs %}
+<li>
+	<a href="{% url 'pages:settings' %}">Settings</a>
+</li>
+{% endblock %}
+
+{% block heading %}
+Settings
+{% endblock %}
+
+{% block content %}
+<form action='' method='POST'>
+	{% csrf_token %}
+	<div class="field">
+	    <label class="label">Default Page</label>
+	    <div class="control">
+	    	<div class="select">
+		        <select name="default_page">
+				{% for page in pages %}
+					<option value="{{ page.id }}"{% if page.id == default_page %}  selected {% endif %}>{{ page.name }}</option>
+				{% endfor %}
+		        </select>
+		    </div>
+	    </div>
+	    <p class="help">Default page is the one which will be presented to the visitor when they visit the base URL of the website.</p>
+	</div>
+
+	<input type="submit" class="button is-success is-outlined" value="Save Changes">
+</form>
+{% endblock %}

@@ -8,18 +8,21 @@ from django.core.exceptions import ValidationError
 # Create your views here.
 
 def index(request):
-	data = {
-		'userIsLoggedIn': request.user.is_authenticated,
-		'user': request.user,
-	}
+	# data = {
+	# 	'userIsLoggedIn': request.user.is_authenticated,
+	# 	'user': request.user,
+	# }
 
-	return render(request, "users/index.html", data)
+	if request.user.is_authenticated:
+		return redirect("pages:list")
+
+	else:
+		return redirect("users:login")
 
 def login(request):
 	if request.user.is_authenticated:
-		print("Hey")
 		messages.info(request, "You are already logged in!")
-		return redirect("users:index")
+		return redirect("pages:list")
 
 	if request.method == "POST":
 		username = request.POST['username']
@@ -28,9 +31,9 @@ def login(request):
 		user = authenticate(request, username = username, password = password)
 
 		if user is not None:
-				auth_login(request, user)
-				messages.success(request, "User logged in successfully!")
-				return redirect("users:index")
+			auth_login(request, user)
+			messages.success(request, "User logged in successfully!")
+			return redirect("pages:list")
 		else:
 			messages.error(request, "Incorrect credentials.")
 
