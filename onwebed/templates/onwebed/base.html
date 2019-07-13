@@ -41,20 +41,28 @@
 					                Pages
 					            </a>
 
+                                <a class="navbar-item" href="{% url 'pages:settings' %}">
+                                    Settings
+                                </a>
+
 					            <a class="navbar-item" href="/admin" target="_new">
 					                Django Control Panel
 					            </a>
 					        </div>
 					        <div class="navbar-end">
 					        	<span class="navbar-item">
-					        		{{ user.username }}
+					        		Logged in as: {{ user.username }}
 					        	</span>
+
 					        	<a class="navbar-item" href="{% url 'base_url' %}" target="_new">
 					                View Site
 					            </a>
+
+					            {% if user.is_authenticated %}
 					            <a class="navbar-item" href="{% url 'users:logout' %}">
 					                Logout
 					            </a>
+					            {% endif %}
 					        </div>
 					    </div>
 					</div>

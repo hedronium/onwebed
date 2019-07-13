@@ -8,7 +8,6 @@ import Menu exposing (..)
 import Odl exposing (..)
 import Rest exposing (..)
 import Types exposing (..)
-import Debug exposing (log)
 
 
 port overlay : Bool -> Cmd msg
@@ -156,6 +155,7 @@ update msg model =
                                 | status = EditBox
                                 , odlStringInsideBox = boxContentToOdl (Box justBox) model 0
                                 , documentDraft = model.document
+                                , selectedBoxId = editBoxId
                             }
 
                         Nothing ->
@@ -176,7 +176,8 @@ update msg model =
             ( newModel
             , Cmd.batch
                 ([ overlay True ]
-                    ++ additionalCommands)
+                    ++ additionalCommands
+                )
             )
 
         -- Add box inside another box
@@ -263,7 +264,6 @@ update msg model =
                                 { model
                                     | status = ViewOdlWarnUnsavedDraft
                                 }
-
 
                         else if model.status == EditBoxWarnUnsavedDraft then
                             { model
@@ -435,6 +435,7 @@ update msg model =
                         { newModel
                             | status = EditBox
                         }
+
                     else
                         newModel
             in
@@ -454,6 +455,7 @@ update msg model =
                         { newModel
                             | status = EditBox
                         }
+
                     else
                         newModel
             in
@@ -560,16 +562,19 @@ update msg model =
                         { model
                             | odlStringInsideBox = odlString
                         }
+
                     else if model.status == EditBoxWarnUnsavedDraft then
                         { model
                             | odlStringInsideBox = odlString
                             , status = EditBox
                         }
+
                     else if model.status == ViewOdlWarnUnsavedDraft then
                         { model
                             | odlString = odlString
                             , status = ViewOdl
                         }
+
                     else
                         { model
                             | odlString = odlString
