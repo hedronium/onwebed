@@ -11,6 +11,11 @@ a {
   color: #466CBE;
 }
 
+.columns {
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+
 a:hover {
   color: #37579b;
   text-decoration: underline;

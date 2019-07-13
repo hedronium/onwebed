@@ -1,7 +1,7 @@
 __pycache__
 *.pyc
 venv
-run.sh
+*.sh
 elm-stuff
 pages/templates/pages/cached/*.html
 onwebed_db
@@ -11,13 +11,6 @@ onwebed
 pages
 staticfiles
 users
-django.sh
-elm.sh
-elm_optimized.sh
-parcel.sh
-pug.sh
-sass.sh
 node_modules
 .cache
 dist
-clean.sh
