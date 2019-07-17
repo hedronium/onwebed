@@ -73,15 +73,15 @@ type Msg
     | SelectBox Int
     | LabelUpdate Int String
     | LiquidBoxUpdate Int String
-    | MenuItemClicked String
+    | MenuItemClick String
     | RemoveBox Int
     | ResetExport
     | ResetImport
-    | PageNameChanged String
-    | PageTitleChanged String
+    | PageNameChange String
+    | PageTitleChange String
     | Import
     | ResetOdlModal
-    | SetImport String
+    | SetImportString String
     | AdjustHeight Int
     | DuplicateBoxSelectBox Int
     | DuplicateBoxBefore Int
@@ -119,36 +119,37 @@ type alias Model =
     , csrfToken : String
     , duplicateSubjectId : Maybe Int
     , odlStringInsideBox : String
+    , unsavedDraft : Bool
     }
 
 
 type DocumentStatus
     = Default
-    | SolidBoxAdditionShowOptions
-    | LiquidBoxAdditionShowOptions
-    | SolidBoxAdditionBeforeChooseBox
-    | LiquidBoxAdditionBeforeChooseBox
-    | SolidBoxAdditionAfterChooseBox
-    | LiquidBoxAdditionAfterChooseBox
-    | SolidBoxAdditionInsideFirstChooseBox
-    | LiquidBoxAdditionInsideFirstChooseBox
-    | SolidBoxAdditionInsideLastChooseBox
-    | LiquidBoxAdditionInsideLastChooseBox
-    | RemoveBoxChooseBox
-    | DuplicateBoxChooseBox
-    | DuplicateBoxShowOptions
-    | DuplicateBoxBeforeChooseBox
-    | DuplicateBoxInsideFirstChooseBox
-    | DuplicateBoxInsideLastChooseBox
-    | DuplicateBoxAfterChooseBox
-    | MoveBoxChooseBox
-    | EditBoxChooseBox
-    | EditBox
-    | EditBoxWarnUnsavedDraft
-    | ViewOdl
-    | ViewOdlWarnUnsavedDraft
-    | ViewImportModal
-    | ViewExportModal
+    | SolidBoxAdditionOptions
+    | LiquidBoxAdditionOptions
+    | SolidBoxAdditionBeforeBoxSelection
+    | LiquidBoxAdditionBeforeBoxSelection
+    | SolidBoxAdditionAfterBoxSelection
+    | LiquidBoxAdditionAfterBoxSelection
+    | SolidBoxAdditionInsideFirstBoxSelection
+    | LiquidBoxAdditionInsideFirstBoxSelection
+    | SolidBoxAdditionInsideLastBoxSelection
+    | LiquidBoxAdditionInsideLastBoxSelection
+    | RemoveBoxBoxSelection
+    | DuplicateBoxBoxSelection
+    | DuplicateBoxOptions
+    | DuplicateBoxBeforeBoxSelection
+    | DuplicateBoxInsideFirstBoxSelection
+    | DuplicateBoxInsideLastBoxSelection
+    | DuplicateBoxAfterBoxSelection
+    | MoveBoxBoxSelection
+    | EditBoxBoxSelection
+    | EditBoxModal
+    | EditBoxUnsavedDraftWarning
+    | ViewOdlModal
+    | ViewOdlUnsavedDraftWarning
+    | ImportModal
+    | ExportModal
     
 
 type alias MenuItem =

@@ -62,6 +62,7 @@ initialModel flags =
       , csrfToken = flags.csrfToken
       , duplicateSubjectId = Nothing
       , odlStringInsideBox = ""
+      , unsavedDraft = False
       }
     , Cmd.none
     )
@@ -79,7 +80,7 @@ update msg model =
                 newModel =
                     { model
                         | duplicateSubjectId = Just duplicateSubjectId
-                        , status = DuplicateBoxShowOptions
+                        , status = DuplicateBoxOptions
                         , selectedBoxId = 0
                     }
             in
@@ -152,7 +153,7 @@ update msg model =
                     case box of
                         Just (Box justBox) ->
                             { model
-                                | status = EditBox
+                                | status = EditBoxModal
                                 , odlStringInsideBox = boxContentToOdl (Box justBox) model 0
                                 , documentDraft = model.document
                                 , selectedBoxId = editBoxId
@@ -210,35 +211,35 @@ update msg model =
                     if model.status == Default then
                         if key == "s" then
                             { model
-                                | status = SolidBoxAdditionShowOptions
+                                | status = SolidBoxAdditionOptions
                             }
 
                         else if key == "l" then
                             { model
-                                | status = LiquidBoxAdditionShowOptions
+                                | status = LiquidBoxAdditionOptions
                             }
 
                         else if key == "e" then
                             { model
-                                | status = EditBoxChooseBox
+                                | status = EditBoxBoxSelection
                             }
 
                         else if key == "x" then
                             { model
-                                | status = RemoveBoxChooseBox
+                                | status = RemoveBoxBoxSelection
                             }
 
                         else if key == "d" then
                             { model
-                                | status = DuplicateBoxChooseBox
+                                | status = DuplicateBoxBoxSelection
                             }
 
                         else
                             model
 
                     else if key == "Escape" then
-                        if model.status == EditBox then
-                            if model.document == model.documentDraft then
+                        if model.status == EditBoxModal then
+                            if model.document == model.documentDraft && model.unsavedDraft == False then
                                 { model
                                     | status = Default
                                     , selectedBoxId = 0
@@ -246,10 +247,10 @@ update msg model =
 
                             else
                                 { model
-                                    | status = EditBoxWarnUnsavedDraft
+                                    | status = EditBoxUnsavedDraftWarning
                                 }
 
-                        else if model.status == ViewOdl then
+                        else if model.status == ViewOdlModal then
                             let
                                 originalOdlString =
                                     odlStringOfDocument model
@@ -262,14 +263,15 @@ update msg model =
 
                             else
                                 { model
-                                    | status = ViewOdlWarnUnsavedDraft
+                                    | status = ViewOdlUnsavedDraftWarning
                                 }
 
-                        else if model.status == EditBoxWarnUnsavedDraft then
+                        else if model.status == EditBoxUnsavedDraftWarning then
                             { model
                                 | status = Default
                                 , documentDraft = []
                                 , selectedBoxId = 0
+                                , unsavedDraft = False
                             }
 
                         else
@@ -278,49 +280,49 @@ update msg model =
                                 , selectedBoxId = 0
                             }
 
-                    else if model.status == SolidBoxAdditionShowOptions then
+                    else if model.status == SolidBoxAdditionOptions then
                         if key == "a" then
                             { model
-                                | status = SolidBoxAdditionBeforeChooseBox
+                                | status = SolidBoxAdditionBeforeBoxSelection
                             }
 
                         else if key == "d" then
                             { model
-                                | status = SolidBoxAdditionAfterChooseBox
+                                | status = SolidBoxAdditionAfterBoxSelection
                             }
 
                         else if key == "w" then
                             { model
-                                | status = SolidBoxAdditionInsideFirstChooseBox
+                                | status = SolidBoxAdditionInsideFirstBoxSelection
                             }
 
                         else if key == "s" then
                             { model
-                                | status = SolidBoxAdditionInsideLastChooseBox
+                                | status = SolidBoxAdditionInsideLastBoxSelection
                             }
 
                         else
                             model
 
-                    else if model.status == LiquidBoxAdditionShowOptions then
+                    else if model.status == LiquidBoxAdditionOptions then
                         if key == "a" then
                             { model
-                                | status = LiquidBoxAdditionBeforeChooseBox
+                                | status = LiquidBoxAdditionBeforeBoxSelection
                             }
 
                         else if key == "d" then
                             { model
-                                | status = LiquidBoxAdditionAfterChooseBox
+                                | status = LiquidBoxAdditionAfterBoxSelection
                             }
 
                         else if key == "w" then
                             { model
-                                | status = LiquidBoxAdditionInsideFirstChooseBox
+                                | status = LiquidBoxAdditionInsideFirstBoxSelection
                             }
 
                         else if key == "s" then
                             { model
-                                | status = LiquidBoxAdditionInsideLastChooseBox
+                                | status = LiquidBoxAdditionInsideLastBoxSelection
                             }
 
                         else
@@ -330,7 +332,7 @@ update msg model =
                         model
 
                 command =
-                    if key == "Escape" && model.status /= Default then
+                    if key == "Escape" && newModel.status == Default then
                         overlay False
 
                     else
@@ -431,9 +433,9 @@ update msg model =
                     }
 
                 newModel2 =
-                    if newModel.status == EditBoxWarnUnsavedDraft then
+                    if newModel.status == EditBoxUnsavedDraftWarning then
                         { newModel
-                            | status = EditBox
+                            | status = EditBoxModal
                         }
 
                     else
@@ -451,9 +453,9 @@ update msg model =
                     }
 
                 newModel2 =
-                    if newModel.status == EditBoxWarnUnsavedDraft then
+                    if newModel.status == EditBoxUnsavedDraftWarning then
                         { newModel
-                            | status = EditBox
+                            | status = EditBoxModal
                         }
 
                     else
@@ -487,7 +489,7 @@ update msg model =
             , Cmd.none
             )
 
-        PageNameChanged newPageName ->
+        PageNameChange newPageName ->
             let
                 newModel =
                     { model
@@ -498,7 +500,7 @@ update msg model =
             , Cmd.none
             )
 
-        PageTitleChanged newPageTitle ->
+        PageTitleChange newPageTitle ->
             let
                 newModel =
                     { model
@@ -520,7 +522,7 @@ update msg model =
             , Cmd.none
             )
 
-        SetImport importString ->
+        SetImportString importString ->
             let
                 newModel =
                     { model
@@ -558,21 +560,22 @@ update msg model =
         SetOdlString odlString ->
             let
                 newModel =
-                    if model.status == EditBox then
+                    if model.status == EditBoxModal then
                         { model
                             | odlStringInsideBox = odlString
+                            , unsavedDraft = True
                         }
 
-                    else if model.status == EditBoxWarnUnsavedDraft then
+                    else if model.status == EditBoxUnsavedDraftWarning then
                         { model
                             | odlStringInsideBox = odlString
-                            , status = EditBox
+                            , status = EditBoxModal
                         }
 
-                    else if model.status == ViewOdlWarnUnsavedDraft then
+                    else if model.status == ViewOdlUnsavedDraftWarning then
                         { model
                             | odlString = odlString
-                            , status = ViewOdl
+                            , status = ViewOdlModal
                         }
 
                     else
@@ -663,7 +666,7 @@ update msg model =
             , overlay False
             )
 
-        MenuItemClicked machine_name ->
+        MenuItemClick machine_name ->
             let
                 newModel =
                     case machine_name of
@@ -675,27 +678,27 @@ update msg model =
 
                             else
                                 { model
-                                    | status = SolidBoxAdditionShowOptions
+                                    | status = SolidBoxAdditionOptions
                                 }
 
                         "add_solid_box_before" ->
                             { model
-                                | status = SolidBoxAdditionBeforeChooseBox
+                                | status = SolidBoxAdditionBeforeBoxSelection
                             }
 
                         "add_solid_box_after" ->
                             { model
-                                | status = SolidBoxAdditionAfterChooseBox
+                                | status = SolidBoxAdditionAfterBoxSelection
                             }
 
                         "add_solid_box_inside_first" ->
                             { model
-                                | status = SolidBoxAdditionInsideFirstChooseBox
+                                | status = SolidBoxAdditionInsideFirstBoxSelection
                             }
 
                         "add_solid_box_inside_last" ->
                             { model
-                                | status = SolidBoxAdditionInsideLastChooseBox
+                                | status = SolidBoxAdditionInsideLastBoxSelection
                             }
 
                         "add_liquid_box" ->
@@ -706,82 +709,82 @@ update msg model =
 
                             else
                                 { model
-                                    | status = LiquidBoxAdditionShowOptions
+                                    | status = LiquidBoxAdditionOptions
                                 }
 
                         "add_liquid_box_before" ->
                             { model
-                                | status = LiquidBoxAdditionBeforeChooseBox
+                                | status = LiquidBoxAdditionBeforeBoxSelection
                             }
 
                         "add_liquid_box_after" ->
                             { model
-                                | status = LiquidBoxAdditionAfterChooseBox
+                                | status = LiquidBoxAdditionAfterBoxSelection
                             }
 
                         "add_liquid_box_inside_first" ->
                             { model
-                                | status = LiquidBoxAdditionInsideFirstChooseBox
+                                | status = LiquidBoxAdditionInsideFirstBoxSelection
                             }
 
                         "add_liquid_box_inside_last" ->
                             { model
-                                | status = LiquidBoxAdditionInsideLastChooseBox
+                                | status = LiquidBoxAdditionInsideLastBoxSelection
                             }
 
                         "remove_box" ->
                             { model
-                                | status = RemoveBoxChooseBox
+                                | status = RemoveBoxBoxSelection
                             }
 
                         "export" ->
                             { model
-                                | status = ViewExportModal
+                                | status = ExportModal
                             }
 
                         "import" ->
                             { model
-                                | status = ViewImportModal
+                                | status = ImportModal
                             }
 
                         "duplicate_box" ->
                             { model
-                                | status = DuplicateBoxChooseBox
+                                | status = DuplicateBoxBoxSelection
                             }
 
                         "duplicate_box_before" ->
                             { model
-                                | status = DuplicateBoxBeforeChooseBox
+                                | status = DuplicateBoxBeforeBoxSelection
                             }
 
                         "duplicate_box_after" ->
                             { model
-                                | status = DuplicateBoxAfterChooseBox
+                                | status = DuplicateBoxAfterBoxSelection
                             }
 
                         "duplicate_box_inside_first" ->
                             { model
-                                | status = DuplicateBoxInsideFirstChooseBox
+                                | status = DuplicateBoxInsideFirstBoxSelection
                             }
 
                         "duplicate_box_inside_last" ->
                             { model
-                                | status = DuplicateBoxInsideLastChooseBox
+                                | status = DuplicateBoxInsideLastBoxSelection
                             }
 
                         "move_box" ->
                             { model
-                                | status = MoveBoxChooseBox
+                                | status = MoveBoxBoxSelection
                             }
 
                         "edit_box" ->
                             { model
-                                | status = EditBoxChooseBox
+                                | status = EditBoxBoxSelection
                             }
 
                         "view_odl" ->
                             { model
-                                | status = ViewOdl
+                                | status = ViewOdlModal
                                 , odlString = odlStringOfDocument model
                             }
 

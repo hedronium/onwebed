@@ -11,7 +11,7 @@ import Types exposing (..)
 
 boxToBoxEditorHtml : Box -> Model -> List (Html Msg)
 boxToBoxEditorHtml (Box box) model =
-    [ if model.status == EditBoxWarnUnsavedDraft then
+    [ if model.status == EditBoxUnsavedDraftWarning then
         div
             [ class "message is-danger" ]
             [ div

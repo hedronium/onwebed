@@ -109,7 +109,6 @@ body
 
 .solid_box, .liquid_box
     margin: 0.5em
-    // margin: 1em 0.5em 0em 0.5em
     border-radius: 3px
 
 
@@ -125,39 +124,34 @@ body
     .box-label
         background: #545BE2
         padding: 0.1em 0.5em 0.1em 0.5em
-        color: white
-        border-radius: 3px
-        font-family: 'Inconsolata'
-
 
 .liquid_box
+    max-width: calc(100% - 1em)
+    display: inline-block
     padding: 0.5em
     background: #F0F0F0
-    border: 1px solid #F0F0F0
     white-space: pre-wrap
-    vertical-align: top
     font-size: 1.05em
     font-family: 'Roboto'
 
     .box-label
+        max-width: calc(100% - 0.5em)
         background: #8589e5
         margin: 0em 0.5em 0em 0em
-        padding: 0em 0.4em 0em 0.4em
-        border-radius: 3px
-        vertical-align: top
-        color: white
-
+        padding: 0.1em 0.5em 0.1em 0.5em
 
 .box-label
     display: inline-block
     line-height: 1.5em
-    border: 0px
-    background: inherit
     font-size: 1.1rem
     font-family: inherit
     max-width: calc(100% - 1em)
     word-wrap: break-word
     margin: 0.5em
+    font-weight: 700
+    border-radius: 3px
+    color: white
+    font-family: 'Inconsolata'
 
 
 .selected

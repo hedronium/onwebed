@@ -6,6 +6,8 @@ import Html.Events exposing (..)
 import ModuleHandler exposing (..)
 import Types exposing (..)
 
+import Bulma exposing (toHtml)
+
 
 initialLPModel : LPModel
 initialLPModel =
@@ -382,7 +384,7 @@ handleElementStart element =
             "<b><i><u>"
 
         "bulma" ->
-            "<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bulma@0.7.4/css/bulma.min.css'/>"
+            Bulma.toHtml(element)
 
         _ ->
             ""

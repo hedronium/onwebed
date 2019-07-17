@@ -27,7 +27,7 @@ menuItemToHtml menuItemToBeConverted =
             [ type_ "button"
             , Html.Attributes.value menuItemToBeConverted.name
             , class "button"
-            , onClick (MenuItemClicked menuItemToBeConverted.machineName)
+            , onClick (MenuItemClick menuItemToBeConverted.machineName)
             ]
             []
         ]
@@ -46,7 +46,7 @@ generateMenu : Model -> Html Msg
 generateMenu model =
     let
         menuBody =
-            if model.status == SolidBoxAdditionShowOptions then
+            if model.status == SolidBoxAdditionOptions then
                 menuItemsToHtml
                     [ menuItem "+before" "add_solid_box_before"
                     , menuItem "+inside (first)" "add_solid_box_inside_first"
@@ -54,7 +54,7 @@ generateMenu model =
                     , menuItem "+after" "add_solid_box_after"
                     ]
 
-            else if model.status == LiquidBoxAdditionShowOptions then
+            else if model.status == LiquidBoxAdditionOptions then
                 menuItemsToHtml
                     [ menuItem "+before" "add_liquid_box_before"
                     , menuItem "+inside (first)" "add_liquid_box_inside_first"
@@ -62,7 +62,7 @@ generateMenu model =
                     , menuItem "+after" "add_liquid_box_after"
                     ]
 
-            else if model.status == DuplicateBoxShowOptions then
+            else if model.status == DuplicateBoxOptions then
                 menuItemsToHtml
                     [ menuItem "+before" "duplicate_box_before"
                     , menuItem "+inside (first)" "duplicate_box_inside_first"
@@ -70,85 +70,85 @@ generateMenu model =
                     , menuItem "+after" "duplicate_box_after"
                     ]
 
-            else if model.status == SolidBoxAdditionBeforeChooseBox then
+            else if model.status == SolidBoxAdditionBeforeBoxSelection then
                 [ div
                     []
                     [ text "Choose box before which you want to insert the new solid box." ]
                 ]
 
-            else if model.status == LiquidBoxAdditionBeforeChooseBox then
+            else if model.status == LiquidBoxAdditionBeforeBoxSelection then
                 [ div
                     []
                     [ text "Choose box before which you want to insert the new liquid box." ]
                 ]
 
-            else if model.status == SolidBoxAdditionAfterChooseBox then
+            else if model.status == SolidBoxAdditionAfterBoxSelection then
                 [ div
                     []
                     [ text "Choose box after which you want to insert the new solid box." ]
                 ]
 
-            else if model.status == LiquidBoxAdditionAfterChooseBox then
+            else if model.status == LiquidBoxAdditionAfterBoxSelection then
                 [ div
                     []
                     [ text "Choose box after which you want to insert the new liquid box." ]
                 ]
 
-            else if model.status == SolidBoxAdditionInsideFirstChooseBox then
+            else if model.status == SolidBoxAdditionInsideFirstBoxSelection then
                 [ div
                     []
                     [ text "Choose box inside which you want to insert the new solid box as the first item." ]
                 ]
 
-            else if model.status == SolidBoxAdditionInsideLastChooseBox then
+            else if model.status == SolidBoxAdditionInsideLastBoxSelection then
                 [ div
                     []
                     [ text "Choose box inside which you want to insert the new solid box as the last item." ]
                 ]
 
-            else if model.status == EditBoxChooseBox then
+            else if model.status == EditBoxBoxSelection then
                 [ div
                     []
                     [ text "Choose box which you want to edit." ]
                 ]
 
-            else if model.status == DuplicateBoxChooseBox then
+            else if model.status == DuplicateBoxBoxSelection then
                 [ div
                     []
                     [ text "Choose box which you want to duplicate." ]
                 ]
 
-            else if model.status == DuplicateBoxBeforeChooseBox then
+            else if model.status == DuplicateBoxBeforeBoxSelection then
                 [ div
                     []
                     [ text "Choose box before which you want to place the duplicated box." ]
                 ]
 
-            else if model.status == DuplicateBoxInsideFirstChooseBox then
+            else if model.status == DuplicateBoxInsideFirstBoxSelection then
                 [ div
                     []
                     [ text "Choose box inside which you want to place the duplicated box as the first item." ]
                 ]
 
-            else if model.status == DuplicateBoxInsideLastChooseBox then
+            else if model.status == DuplicateBoxInsideLastBoxSelection then
                 [ div
                     []
                     [ text "Choose box inside which you want to place the duplicated box as the last item." ]
                 ]
 
-            else if model.status == DuplicateBoxAfterChooseBox then
+            else if model.status == DuplicateBoxAfterBoxSelection then
                 [ div
                     []
                     [ text "Choose box after which you want to place the duplicated box." ]
                 ]
 
-            else if model.status == MoveBoxChooseBox then
+            else if model.status == MoveBoxBoxSelection then
                 [ div
                     []
                     [ text "Choose box which you want to move." ]
                 ]
 
-            else if model.status == RemoveBoxChooseBox then
+            else if model.status == RemoveBoxBoxSelection then
                 [ div
                     []
                     [ text "Choose box which you want to remove." ]
@@ -218,7 +218,7 @@ generateMenu model =
                     []
                     [ div
                         [ contenteditable True
-                        , on "blur" (Decode.map PageNameChanged innerHtmlDecoder)
+                        , on "blur" (Decode.map PageNameChange innerHtmlDecoder)
                         ]
                         [ text model.pageName ]
                     ]
@@ -232,7 +232,7 @@ generateMenu model =
                     []
                     [ div
                         [ contenteditable True
-                        , on "blur" (Decode.map PageTitleChanged innerHtmlDecoder)
+                        , on "blur" (Decode.map PageTitleChange innerHtmlDecoder)
                         ]
                         [ text model.pageTitle ]
                     ]

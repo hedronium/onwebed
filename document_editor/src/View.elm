@@ -17,7 +17,7 @@ view model =
         editBoxModal =
             let
                 classValue =
-                    if model.status == EditBox || model.status == EditBoxWarnUnsavedDraft then
+                    if model.status == EditBoxModal || model.status == EditBoxUnsavedDraftWarning then
                         "overlay"
                     else
                         "overlay" ++ " invisible"
@@ -45,7 +45,7 @@ view model =
         exportModal =
             let
                 classValue =
-                    if model.status == ViewExportModal then
+                    if model.status == ExportModal then
                         "overlay"
                     else
                         "overlay" ++ " invisible"
@@ -58,7 +58,7 @@ view model =
                     [ textarea
                         [ class "textarea"
                         , Html.Attributes.attribute "rows" "20"
-                        , on "blur" (Decode.map SetImport targetValue)
+                        , on "blur" (Decode.map SetImportString targetValue)
                         ]
                         [ text (documentToJsonString model) ]
                     ]
@@ -68,7 +68,7 @@ view model =
         importModal =
             let
                 classValue =
-                    if model.status == ViewImportModal then
+                    if model.status == ImportModal then
                         "overlay"
                     else
                         "overlay" ++ " invisible"
@@ -81,7 +81,7 @@ view model =
                     [ textarea
                         [ class "textarea"
                         , Html.Attributes.attribute "rows" "20"
-                        , on "blur" (Decode.map SetImport targetValue)
+                        , on "blur" (Decode.map SetImportString targetValue)
                         ]
                         []
                     , button
@@ -96,7 +96,7 @@ view model =
         odlModal =
             let
                 classValue =
-                    if model.status == ViewOdl || model.status == ViewOdlWarnUnsavedDraft then
+                    if model.status == ViewOdlModal || model.status == ViewOdlUnsavedDraftWarning then
                         "overlay"
                     else
                         "overlay" ++ " invisible"
@@ -108,7 +108,7 @@ view model =
                 ]
                 [ div
                     []
-                    [(if model.status == ViewOdlWarnUnsavedDraft then
+                    [(if model.status == ViewOdlUnsavedDraftWarning then
                         div
                             [ class "message is-danger" ]
                             [ div
