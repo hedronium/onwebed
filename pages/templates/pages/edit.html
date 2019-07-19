@@ -1,5 +1,7 @@
 {% extends "onwebed/base.html" %}
 
+{% load static %}
+
 {% block main_menu %}
 {% endblock %}
 
@@ -8,7 +10,6 @@
 
 {% block head %}
 
-    <!-- {% load static %} -->
     {{ block.super }}
 
     <link rel="stylesheet" href="{% static 'pages/dist/edit.css' %}"/>

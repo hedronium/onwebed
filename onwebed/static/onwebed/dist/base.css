@@ -6,4 +6,17 @@
   overflow-x: auto;
 }
 
+.columns:nth-child(1) > .column:nth-child(1) {
+  padding: 0rem;
+}
+
+.columns:nth-child(1) {
+  margin-top: 0rem;
+}
+
+.columns {
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+
 /*# sourceMappingURL=base.css.map */
