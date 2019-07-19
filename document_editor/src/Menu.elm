@@ -48,26 +48,26 @@ generateMenu model =
         menuBody =
             if model.status == SolidBoxAdditionOptions then
                 menuItemsToHtml
-                    [ menuItem "+before" "add_solid_box_before"
-                    , menuItem "+inside (first)" "add_solid_box_inside_first"
-                    , menuItem "+inside (last)" "add_solid_box_inside_last"
-                    , menuItem "+after" "add_solid_box_after"
+                    [ menuItem "+ before" "add_solid_box_before"
+                    , menuItem "+ inside (first)" "add_solid_box_inside_first"
+                    , menuItem "+ inside (last)" "add_solid_box_inside_last"
+                    , menuItem "+ after" "add_solid_box_after"
                     ]
 
             else if model.status == LiquidBoxAdditionOptions then
                 menuItemsToHtml
-                    [ menuItem "+before" "add_liquid_box_before"
-                    , menuItem "+inside (first)" "add_liquid_box_inside_first"
-                    , menuItem "+inside (last)" "add_liquid_box_inside_last"
-                    , menuItem "+after" "add_liquid_box_after"
+                    [ menuItem "+ before" "add_liquid_box_before"
+                    , menuItem "+ inside (first)" "add_liquid_box_inside_first"
+                    , menuItem "+ inside (last)" "add_liquid_box_inside_last"
+                    , menuItem "+ after" "add_liquid_box_after"
                     ]
 
             else if model.status == DuplicateBoxOptions then
                 menuItemsToHtml
-                    [ menuItem "+before" "duplicate_box_before"
-                    , menuItem "+inside (first)" "duplicate_box_inside_first"
-                    , menuItem "+inside (last)" "duplicate_box_inside_last"
-                    , menuItem "+after" "duplicate_box_after"
+                    [ menuItem "+ before" "duplicate_box_before"
+                    , menuItem "+ inside (first)" "duplicate_box_inside_first"
+                    , menuItem "+ inside (last)" "duplicate_box_inside_last"
+                    , menuItem "+ after" "duplicate_box_after"
                     ]
 
             else if model.status == SolidBoxAdditionBeforeBoxSelection then
