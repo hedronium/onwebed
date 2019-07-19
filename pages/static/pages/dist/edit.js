@@ -13027,30 +13027,30 @@ var author$project$Menu$generateMenu = function (model) {
 			return author$project$Menu$menuItemsToHtml(
 				_List_fromArray(
 					[
-						A2(author$project$Menu$menuItem, '+before', 'add_solid_box_before'),
-						A2(author$project$Menu$menuItem, '+inside (first)', 'add_solid_box_inside_first'),
-						A2(author$project$Menu$menuItem, '+inside (last)', 'add_solid_box_inside_last'),
-						A2(author$project$Menu$menuItem, '+after', 'add_solid_box_after')
+						A2(author$project$Menu$menuItem, '+ before', 'add_solid_box_before'),
+						A2(author$project$Menu$menuItem, '+ inside (first)', 'add_solid_box_inside_first'),
+						A2(author$project$Menu$menuItem, '+ inside (last)', 'add_solid_box_inside_last'),
+						A2(author$project$Menu$menuItem, '+ after', 'add_solid_box_after')
 					]));
 		} else {
 			if (_Utils_eq(model.status, author$project$Types$LiquidBoxAdditionOptions)) {
 				return author$project$Menu$menuItemsToHtml(
 					_List_fromArray(
 						[
-							A2(author$project$Menu$menuItem, '+before', 'add_liquid_box_before'),
-							A2(author$project$Menu$menuItem, '+inside (first)', 'add_liquid_box_inside_first'),
-							A2(author$project$Menu$menuItem, '+inside (last)', 'add_liquid_box_inside_last'),
-							A2(author$project$Menu$menuItem, '+after', 'add_liquid_box_after')
+							A2(author$project$Menu$menuItem, '+ before', 'add_liquid_box_before'),
+							A2(author$project$Menu$menuItem, '+ inside (first)', 'add_liquid_box_inside_first'),
+							A2(author$project$Menu$menuItem, '+ inside (last)', 'add_liquid_box_inside_last'),
+							A2(author$project$Menu$menuItem, '+ after', 'add_liquid_box_after')
 						]));
 			} else {
 				if (_Utils_eq(model.status, author$project$Types$DuplicateBoxOptions)) {
 					return author$project$Menu$menuItemsToHtml(
 						_List_fromArray(
 							[
-								A2(author$project$Menu$menuItem, '+before', 'duplicate_box_before'),
-								A2(author$project$Menu$menuItem, '+inside (first)', 'duplicate_box_inside_first'),
-								A2(author$project$Menu$menuItem, '+inside (last)', 'duplicate_box_inside_last'),
-								A2(author$project$Menu$menuItem, '+after', 'duplicate_box_after')
+								A2(author$project$Menu$menuItem, '+ before', 'duplicate_box_before'),
+								A2(author$project$Menu$menuItem, '+ inside (first)', 'duplicate_box_inside_first'),
+								A2(author$project$Menu$menuItem, '+ inside (last)', 'duplicate_box_inside_last'),
+								A2(author$project$Menu$menuItem, '+ after', 'duplicate_box_after')
 							]));
 				} else {
 					if (_Utils_eq(model.status, author$project$Types$SolidBoxAdditionBeforeBoxSelection)) {
@@ -14204,7 +14204,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58467" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61318" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
