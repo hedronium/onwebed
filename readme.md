@@ -2,48 +2,30 @@
 	<img src="img/logo.png">
 </p>
 
-# What is Onwebed?
+# Onwebed
 
-- **Lets You Code HTML Visually** - Onwebed is a visual way to create HTML documents. HTML can get messy at times, Onwebed keeps it clean!
+A visual [web template system](https://en.wikipedia.org/wiki/Web_template_system), designed for creating dynamic and static web pages.
 
-- **Helps Create Dynamic Sites** - It doesn't settle with static pages, it's powerful enough to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
+# Overview
 
-- **Simple** - Every Onwebed document is composed of *boxes*, making it consistent and easy to learn.
+- **Craft Visually** - Create the structure of your web pages visually, utilizing the power of markup to retain utmost control.
 
-- **Extensible** - The concept of boxes make it extremely easy to extend the features of Onwebed. Define your own boxes whenever you wish.
+- **Create Dynamic Sites** - Designed to create fully-featured dynamic sites, housing a markup language, Django's templating engine, and lots more!
 
-- **It's Hybrid** - Sometimes visual editing isn't efficient, that's when markup languages come into play, Onwebed lets you use both.
+- **Simple** - Everything is composed of of building blocks called [boxes](https://onwebed.gitbook.io/onwebed/box); just understanding the basic concepts of boxes means you're already done with 90% of learning.
 
-- **Makes Web Development Less Redundant** - Its simple, yet powerful templating system makes web development least redundant.
+- **Extensible** - The concept of primitive building blocks, [boxes](https://onwebed.gitbook.io/onwebed/box), make it extremely easy to extend the features of Onwebed. Define your own boxes to do anything you want, whenever you wish.
 
-- **Not WYSIWYG** - Onwebed visualizes structure, not looks and feel.
+- **Hybrid** - Sometimes visual editing isn't efficient, that's when markup languages come into play, Onwebed lets you use both.
 
-- **Powered by Django** - It's built on top of Django and inherits all its features, letting you use Django's templating engine and more!
+- **Least Redundant** - Simple yet powerful templating system, which makes web development least redundant.
 
-# Basic Concepts
+- **Not WYSIWYG** - Visualizes structure, not looks and feel.
 
-## Boxes
+- **Powered by Django** - Built on top of Django, inheriting all its features - letting you use Django's templating engine, and more!
 
-Every single page built with Onwebed is composed of *boxes*.
+# Links
 
-Boxes are converted to HTML when a person visits your page.
-
-Each box has a label, and may have some textual content, or may hold yet more boxes.
-
-A box which holds text is called a **liquid box**, and a box which holds other boxes is called a **solid box**.
-
-Each box may have a label, which defines it. The label is used primarily for converting a box to HTML.
-
-Here's an empty solid box labeled, "div."
-
-![Empty Solid Box](docs/images/empty_solid_box.png)
-
-Here's that solid box, empty no more, as it holds a liquid box which contains the text "Hello."
-
-![Solid Box with Liquid Box Inside](docs/images/solid_box_with_liquid_box_inside.png)
-
-This is how a small, simple page may look like:
-
-![Simple Page](docs/images/simple_page.png)
-
-As you can see, it's like coding HTML, but in a visual way!
+- [Official Website](https://hedronium.github.io/onwebed/)
+- [Guides](https://onwebed.gitbook.io/onwebed/v/guides/)
+- [Documentation](https://onwebed.gitbook.io/onwebed/)
