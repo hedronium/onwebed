@@ -2,9 +2,9 @@
 	<img src="img/logo.png">
 </p>
 
-# Onwebed
+# Introduction
 
-A visual [web template system](https://en.wikipedia.org/wiki/Web_template_system), designed for creating dynamic and static web pages.
+Onwebed is a visual [web template system](https://en.wikipedia.org/wiki/Web_template_system), designed for creating dynamic and static web pages.
 
 # Overview
 
